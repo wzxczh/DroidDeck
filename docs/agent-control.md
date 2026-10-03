@@ -1,24 +1,24 @@
-# Agent control
+# Agent 控制
 
-The debug APK exposes a ContentProvider at `content://com.droiddeck.launcher.agent` and an Activity for starting sessions. Android's shell-only `DUMP` permission protects both. They are absent from release APKs.
+调试 APK 在 `content://com.droiddeck.launcher.agent` 暴露了一个 ContentProvider，以及一个用于启动会话的 Activity。Android 仅限 shell 的 `DUMP` 权限保护两者。它们不存在于发布 APK 中。
 
-Build and install the debug APK:
+构建并安装调试 APK：
 
 ```sh
 ./gradlew assembleDebug --console=plain
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The provider can also be called directly for state, stop, and resume:
+也可以直接调用 provider 来执行 state、stop 和 resume：
 
 ```sh
 adb shell content call --uri content://com.droiddeck.launcher.agent --method state
 adb shell content call --uri content://com.droiddeck.launcher.agent --method stop
 ```
 
-Start requests go through `tools/droiddeckctl`, which launches the protected debug Activity from the ADB shell. Calling the provider's `start` method directly returns an error because a background provider cannot reliably open the session screen.
+启动请求通过 `tools/droiddeckctl` 进行，它从 ADB shell 启动受保护的调试 Activity。直接调用 provider 的 `start` 方法会返回错误，因为后台 provider 无法可靠地打开会话屏幕。
 
-The host CLI resolves one authorized device using `ADB_SERIAL` or `ANDROID_SERIAL` when set. Otherwise it deduplicates transports that report the same device serial and asks for an explicit serial if multiple devices remain.
+当设置了 `ADB_SERIAL` 或 `ANDROID_SERIAL` 时，主机 CLI 使用它们解析出一个已授权设备。否则，它会去重报告相同设备序列号的传输，并且如果仍有多个设备，则要求显式指定序列号。
 
 ```sh
 tools/droiddeckctl state --json
@@ -32,10 +32,10 @@ tools/droiddeckctl logs latest ./session-artifacts
 tools/droiddeckctl screenshot ./screen.png
 ```
 
-Every command writes JSON to stdout and reports its resolved ADB serial to stderr. Exit codes are 0 for success, 2 for invalid or rejected commands, 3 for ADB/device errors, 4 for session failures, 5 for timeouts, and 6 for artifact or file errors. Set `ADB` to select an adb executable (or pass `--adb`); pass `--serial` before the command to select a device directly.
+每个命令将 JSON 写入 stdout，并将其解析出的 ADB 序列号报告到 stderr。退出码为：0 表示成功，2 表示无效或被拒绝的命令，3 表示 ADB/设备错误，4 表示会话失败，5 表示超时，6 表示 artifact 或文件错误。设置 `ADB` 以选择 adb 可执行文件（或传递 `--adb`）；在命令前传递 `--serial` 以直接选择设备。
 
-`start` accepts `steam` or `desktop`. Steam starts in Big Picture by default; `--ui desktop` selects the client's desktop UI, and `--url steam://...` passes a client URL. Use `--wait` to wait for `READY` as part of `start`. `run` accepts a program path and optional guest arguments.
+`start` 接受 `steam` 或 `desktop`。Steam 默认以 Big Picture 启动；`--ui desktop` 选择客户端的桌面 UI，`--url steam://...` 传递客户端 URL。使用 `--wait` 在 `start` 中等待 `READY`。`run` 接受程序路径和可选的 guest 参数。
 
-The `state` response uses schema 1 and includes the build label, runtime version, session ID and phase, mode, requested program, suspend and first-frame state, output size, guest PID, failure details, and artifact paths. Phases are `IDLE`, `PREPARING`, `INSTALLING_RUNTIME`, `STARTING_COMPOSITOR`, `STARTING_GUEST`, `STARTING_STEAM`, `READY`, `SUSPENDED`, `STOPPING`, and `FAILED`. Each session also writes `events.jsonl` alongside its existing artifacts.
+`state` 响应使用 schema 1，并包括构建标签、运行时版本、会话 ID 和阶段、模式、请求的程序、挂起和首帧状态、输出大小、guest PID、失败详情以及 artifact 路径。阶段为 `IDLE`、`PREPARING`、`INSTALLING_RUNTIME`、`STARTING_COMPOSITOR`、`STARTING_GUEST`、`STARTING_STEAM`、`READY`、`SUSPENDED`、`STOPPING` 和 `FAILED`。每个会话还会在其现有 artifacts 旁边写入 `events.jsonl`。
 
-`tools/deploy_local.sh` uses the same device resolver. If multiple distinct devices are connected, select one with `ADB_SERIAL` or `ANDROID_SERIAL`.
+`tools/deploy_local.sh` 使用相同的设备解析器。如果连接了多个不同设备，请使用 `ADB_SERIAL` 或 `ANDROID_SERIAL` 选择一个。

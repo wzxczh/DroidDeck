@@ -1,71 +1,57 @@
-# DroidDeck boot animation
+# DroidDeck 启动动画
 
-This source accompanies the single Steam startup movie bundled by the app:
-`app/src/main/assets/steam-startup/droiddeck-startup.webm` (1280×720 at 30 fps, pitch black background, VP8 video
-with Opus audio). `droiddeck-boot.html` is the editable animation; the scripts and WAV below
-render the animation at the bundled playback profile. No alternate MP4 or WebM exports are kept in the repository.
+此源文件伴随应用捆绑的单个 Steam 启动影片：
+`app/src/main/assets/steam-startup/droiddeck-startup.webm`（1280×720，30 fps，纯黑背景，VP8 视频
+带 Opus 音频）。`droiddeck-boot.html` 是可编辑动画；下面的脚本和 WAV 以捆绑的播放配置渲染动画。仓库中不保留其他 MP4 或 WebM 导出。
 
-From the repository root, render the movie with:
+从仓库根目录，用以下命令渲染影片：
 
     python3 artwork/boot-animation-source/render.py 1280 720 30 app/src/main/assets/steam-startup/droiddeck-startup.webm dark
 
-The bundled profile reduces decoded pixels per second by 78% compared with 1080p/60.
-VP8 also lowers software decode cost while Steam is starting. Keep the bundled movie at
-720p/30; higher-resolution exports are intended for sharing.
+捆绑配置与 1080p/60 相比，每秒解码像素减少 78%。VP8 还降低了 Steam 启动时的软件解码成本。将捆绑影片保持在 720p/30；更高分辨率导出用于分享。
 
-The app stages that file into Steam's `config/uioverrides/movies` folder before each session. If
-Steam still has its built-in startup movie selected, DroidDeck sets this movie as the device's
-startup default before Steam starts. A custom startup movie the user selected later is preserved.
+应用在每次会话前将该文件暂存到 Steam 的 `config/uioverrides/movies` 文件夹。如果 Steam 仍选择其内置启动影片，DroidDeck 会在 Steam 启动前将此影片设为设备的启动默认值。用户之后选择的自定义启动影片会被保留。
 
-To regenerate the soundtrack, run these commands from this directory:
+要重新生成音轨，请从本目录运行以下命令：
 
     python3 events.py
     python3 sound.py
 
-The animation and audio are both procedurally generated; the included WAV is the soundtrack used
-for the bundled render.
+动画和音频都是程序化生成的；包含的 WAV 是捆绑渲染所用的音轨。
 
-`droiddeck-boot.html` holds the whole animation. Every frame is a pure function of time, so the
-preview page and the video render draw exactly the same thing. Open it in a browser to scrub, slow
-it down or step frame by frame (arrow keys).
+`droiddeck-boot.html` 包含整个动画。每一帧都是时间的纯函数，因此预览页面和视频渲染绘制完全相同的内容。在浏览器中打开它即可拖动、放慢或逐帧步进（方向键）。
 
-## Re-render the video
+## 重新渲染视频
 
-    pip install playwright && playwright install chromium   # ffmpeg with libvpx also required
+    pip install playwright && playwright install chromium   # 还需要带 libvpx 的 ffmpeg
     python3 render.py 1280 720 30 droiddeck-boot-1280x720.webm
-    python3 render.py 1920 1080 60 droiddeck-boot-1920x1080.mp4    # .mp4 = H.264 for sharing
-    python3 render.py 1280 720 30 droiddeck-boot-dark-1280x720.webm dark   # dark version
+    python3 render.py 1920 1080 60 droiddeck-boot-1920x1080.mp4    # .mp4 = H.264 用于分享
+    python3 render.py 1280 720 30 droiddeck-boot-dark-1280x720.webm dark   # 深色版本
 
-Each frame gets real motion blur (180° shutter, adaptive sub-frames). Output is VP8 for .webm or H.264 for .mp4, both BT.709,
-so the orb stays #1A9FFF after compression.
+每一帧都获得真实运动模糊（180° 快门，自适应子帧）。输出为 .webm 的 VP8 或 .mp4 的 H.264，均为 BT.709，因此球体在压缩后保持 #1A9FFF。
 
-## Sound
+## 声音
 
-Every sound is synthesized in `sound.py` (no samples) and placed on the exact physics events the
-animation reports, so hits stay frame-accurate even after you change the timing. Key: D major.
+每个声音都在 `sound.py` 中合成（无采样），并放在动画报告的精确物理事件上，因此即使你更改时序，撞击仍保持帧精确。调性：D 大调。
 
-    python3 events.py         # export impact times, rocking, piece speeds from the animation
-    python3 sound.py          # -> droiddeck-boot-sound.wav (-18 LUFS, -1 dBFS peak)
-    python3 embed_sound.py    # put it in the preview page
-    python3 render.py ...     # muxes the wav in automatically (Opus in .webm, AAC in .mp4)
+    python3 events.py         # 从动画导出撞击时间、摇摆、碎片速度
+    python3 sound.py          # -> droiddeck-boot-sound.wav（-18 LUFS，-1 dBFS 峰值）
+    python3 embed_sound.py    # 将其放入预览页面
+    python3 render.py ...     # 自动混入 wav（.webm 中为 Opus，.mp4 中为 AAC）
 
-The soundtrack is built from the final chord. Each piece lands on one of its notes as a soft, muted
-tone (legs D, ball A with a quieter echo, bowl F#), the wobble and jump play in silence, and the
-lock lands with the same soft voice and plays all the notes together. Tweak the cue sheet in `sound.py`: the `tock(...)` calls under
-`# 1. the stack`, the chord list under `# 4. lock`, and the room reverb mix (`.14 * wet`).
+音轨由最终和弦构建。每个碎片落在其一个音符上，作为柔和、弱音的音调（腿 D，球 A 带更安静的回声，碗 F#），摇摆和跳跃在静默中播放，锁定以相同的柔和声音落下并一起播放所有音符。调整 `sound.py` 中的提示表：`# 1. the stack` 下的 `tock(...)` 调用，`# 4. lock` 下的和弦列表，以及房间混响混合（`.14 * wet`）。
 
-## Where to tweak
+## 在哪里调整
 
-- Timing of the drops: `archDrop`, `ballDrop`, `domeDrop` (start time, height, bounciness `e`).
-- The balancing act: `SWAY` keyframes (time, lean). Bigger values = bigger wobble. The bowl leads,
-  the ball chases it (`sway(t - .12)`), the legs follow (`sway(t - .10)`).
-- The catch-hop on the big wobble: `HOP` (start time, duration, sideways distance, height).
-- Crouch before the jump: `crouchA/B/D`.
-- Jump and lock-in: `FL` (rise time, apex height, lock time, how far pieces spread).
-- Colors for each version (pieces, background, shadows, lock glow): `THEMES` (light, dark).
-- Total length: `DUR`.
+- 下落时序：`archDrop`、`ballDrop`、`domeDrop`（开始时间、高度、弹性 `e`）。
+- 平衡动作：`SWAY` 关键帧（时间、倾斜）。值越大 = 摇摆越大。碗领先，球追赶它（`sway(t - .12)`），腿跟随（`sway(t - .10)`）。
+- 大摇摆时的接住跳：`HOP`（开始时间、持续时间、横向距离、高度）。
+- 跳跃前下蹲：`crouchA/B/D`。
+- 跳跃和锁定：`FL`（上升时间、顶点高度、锁定时间、碎片散开距离）。
+- 每个版本的颜色（碎片、背景、阴影、锁定光晕）：`THEMES`（light、dark）。
+- 总长度：`DUR`。
 
-## Install as the Steam startup movie
+## 安装为 Steam 启动影片
 
-Put the .webm in `~/.steam/root/config/uioverrides/movies/`, then pick it in
-Steam > Settings > Customization > Startup Movie.
+将 .webm 放入 `~/.steam/root/config/uioverrides/movies/`，然后在
+Steam > 设置 > 自定义 > 启动影片 中选择它。
