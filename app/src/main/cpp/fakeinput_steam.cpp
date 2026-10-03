@@ -50,7 +50,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#define EXPORT __attribute__((visibility("default"))) extern "C"
+#define EXPORT extern "C" __attribute__((visibility("default")))
 
 // glibc declares the request as unsigned long; bionic as int. The same source also serves the
 // Linux runtime's preload (tools/linuxfs), where Steam and SDL run against glibc.
