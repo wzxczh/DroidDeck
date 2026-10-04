@@ -311,7 +311,7 @@ jobs:
 
       - name: Steam import and game environment tests
         run: |
-          find /tmp -name "bannerlator-proton" -exec chmod +x {} \;
+          find /tmp -name "bannerlator-proton" -exec chmod +x {} \; 2>/dev/null
           python3 -m unittest discover -s tools/tests -p 'test_*.py'
 
       - name: Unit tests
