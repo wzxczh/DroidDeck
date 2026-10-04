@@ -310,7 +310,9 @@ jobs:
           ./gradlew assembleRelease --console=plain -PndkVersion="$NDK_VERSION" 2>&1 | tee /tmp/build.log
 
       - name: Steam import and game environment tests
-        run: python3 -m unittest discover -s tools/tests -p 'test_*.py'
+        run: |
+          find /tmp -name "bannerlator-proton" -exec chmod +x {} \;
+          python3 -m unittest discover -s tools/tests -p 'test_*.py'
 
       - name: Unit tests
         run: ./gradlew testReleaseUnitTest --console=plain -PndkVersion="$NDK_VERSION"
@@ -484,7 +486,7 @@ jobs:
             --jq '[.[] | select(.merged_at != null and .base.ref == "main")] | first // empty')
           if [ -n "$pr" ]; then
             number=$(jq -r .number <<<"$pr")
-            title=$(jq -r .title <<<"$pr")
+            title=$(jq -r '.title' <<<"$pr")
             merged=$(jq -r '.merged_at[:10]' <<<"$pr")
             summary=$(jq -r '.body // ""' <<<"$pr" | tr -d '\r' | { grep -v '^🤖' || true; } |
               awk '!p && /^#/ { next } NF { p = 1; print; next } p { exit }' | head -n 6 | cut -c1-400)
@@ -560,8 +562,6 @@ jobs:
           fi
           commit=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA")
           subject=$(jq -r '.commit.message | split("\n")[0]' <<<"$commit")
-          # A merge commit's subject is "Merge pull request #N from ..."; its body's first line is
-          # the PR's title, which says more.
           title=$(jq -r '.commit.message | split("\n") | map(select(length > 0)) | .[1] // ""' <<<"$commit")
           pr=$(sed -n 's/^Merge pull request #\([0-9]*\).*/\1/p' <<<"$subject")
           if [ -n "$pr" ]; then
