@@ -310,9 +310,7 @@ jobs:
           ./gradlew assembleRelease --console=plain -PndkVersion="$NDK_VERSION" 2>&1 | tee /tmp/build.log
 
       - name: Steam import and game environment tests
-        run: |
-          find /tmp -name "bannerlator-proton" -exec chmod +x {} \; 2>/dev/null
-          python3 -m unittest discover -s tools/tests -p 'test_*.py'
+        run: python3 -m unittest discover -s tools/tests -p 'test_*.py'
 
       - name: Unit tests
         run: ./gradlew testReleaseUnitTest --console=plain -PndkVersion="$NDK_VERSION"
