@@ -36,7 +36,7 @@ object AppImageState {
     fun import(context: Context, file: File) {
         if (importing != null) return
         val app = context.applicationContext
-        importing = file.name; stage = "Starting…"; lastError = null
+        importing = file.name; stage = "正在开始…"; lastError = null
         Thread({
             val problem = try {
                 AppImageManager.import(app, file) { s -> main.post { stage = s } }
@@ -47,7 +47,7 @@ object AppImageState {
             main.post {
                 importing = null; stage = null; items = list
                 lastError = problem?.let { "${file.name}: $it" }
-                if (problem == null) Toast.makeText(app, "${file.name} imported", Toast.LENGTH_SHORT).show()
+                if (problem == null) Toast.makeText(app, "${file.name} 已导入", Toast.LENGTH_SHORT).show()
             }
         }, "appimage-import").start()
     }

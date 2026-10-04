@@ -36,17 +36,17 @@ private fun Swatch(color: Int) {
 @Composable
 fun ColumnScope.ControllerRows(host: MenuHost, oscMode: String, c: ControllerPrefs.Settings, a: ControllerActions) {
     ChoiceRow(
-        host, "controller-osc", "On-screen controls", "When the touch pad appears in a session",
-        listOf(SessionPrefs.OSC_AUTO to "Auto", SessionPrefs.OSC_ALWAYS to "Always", SessionPrefs.OSC_STEAM_QAM to "Steam + QAM", SessionPrefs.OSC_NEVER to "Never"),
-        oscMode, note = "Auto shows all controls without a controller. Steam + QAM shows only those buttons.", onPick = a.onOsc,
+        host, "controller-osc", "屏幕控件", "会话中触控板何时出现",
+        listOf(SessionPrefs.OSC_AUTO to "自动", SessionPrefs.OSC_ALWAYS to "始终", SessionPrefs.OSC_STEAM_QAM to "Steam + QAM", SessionPrefs.OSC_NEVER to "从不"),
+        oscMode, note = "“自动”在没有手柄时显示全部控件。“Steam + QAM”仅显示这些按钮。", onPick = a.onOsc,
     )
     val tintOpen = host.open == "controller-tint"
-    SettingsRow("Color", "Tint of the on-screen buttons", highlighted = tintOpen) {
+    SettingsRow("颜色", "屏幕按钮的色调", highlighted = tintOpen) {
         Box {
-            ValueChip(ControllerPrefs.tints.firstOrNull { it.first == c.tint }?.second ?: "Custom", tintOpen) {
+            ValueChip(ControllerPrefs.tints.firstOrNull { it.first == c.tint }?.second ?: "自定义", tintOpen) {
                 host.open = if (tintOpen) null else "controller-tint"
             }
-            AnchoredMenu(tintOpen, onDismiss = { if (host.open == "controller-tint") host.open = null }, title = "Color") { firstItemFocus ->
+            AnchoredMenu(tintOpen, onDismiss = { if (host.open == "controller-tint") host.open = null }, title = "颜色") { firstItemFocus ->
                 ControllerPrefs.tints.forEachIndexed { index, (color, name) ->
                     MenuItem(name, checked = c.tint == color, leading = { Swatch(color) }, focusRequester = if (index == 0) firstItemFocus else null) {
                         a.onTint(color)
@@ -56,36 +56,36 @@ fun ColumnScope.ControllerRows(host: MenuHost, oscMode: String, c: ControllerPre
             }
         }
     }
-    ChoiceRow(host, "controller-opacity", "Opacity", null, ControllerPrefs.opacities.map { it to "$it%" }, c.opacity, onPick = a.onOpacity)
-    ChoiceRow(host, "controller-size", "Button size", "100% keeps the standard size", ControllerPrefs.sizes.map { it to "$it%" }, c.size, onPick = a.onSize)
-    ToggleRow(host, "controller-stick-click", "Stick click", "Double-tap a stick and hold for L3 or R3", c.stickClick, onChange = a.onStickClick)
-    ToggleRow(host, "controller-adaptive", "Adaptive sticks", "Sticks appear when touched near their saved positions and hide when released", c.adaptiveSticks, onChange = a.onAdaptiveSticks)
-    SettingsRow("Layout", if (c.customLayout) "Custom positions saved" else "Placed for this screen's size and your grip") {
+    ChoiceRow(host, "controller-opacity", "不透明度", null, ControllerPrefs.opacities.map { it to "$it%" }, c.opacity, onPick = a.onOpacity)
+    ChoiceRow(host, "controller-size", "按钮大小", "100% 为标准大小", ControllerPrefs.sizes.map { it to "$it%" }, c.size, onPick = a.onSize)
+    ToggleRow(host, "controller-stick-click", "摇杆点按", "双击摇杆并按住可触发 L3 或 R3", c.stickClick, onChange = a.onStickClick)
+    ToggleRow(host, "controller-adaptive", "自适应摇杆", "触碰已保存位置附近时显示摇杆，松开后隐藏", c.adaptiveSticks, onChange = a.onAdaptiveSticks)
+    SettingsRow("布局", if (c.customLayout) "已保存自定义位置" else "已按本屏幕尺寸与握持方式摆放") {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            SecondaryButton("Edit") { a.onEditLayout() }
-            SecondaryButton("Reset", enabled = c.customLayout) { a.onResetLayout() }
+            SecondaryButton("编辑") { a.onEditLayout() }
+            SecondaryButton("重置", enabled = c.customLayout) { a.onResetLayout() }
         }
     }
     val remapped = c.mapping.count { (id, target) -> id != target }
-    ActionRow("Button mapping", if (remapped == 0) "Every button sends its own input" else "$remapped of ${c.mapping.size} buttons remapped", "Configure", a.onMapping)
-    ActionRow("Reset controller", "Restore the default color, opacity, size, stick behavior, mapping and layout", "Reset", a.onResetAll)
+    ActionRow("按钮映射", if (remapped == 0) "每个按钮发送各自的输入" else "已重映射 ${c.mapping.size} 个按钮中的 $remapped 个", "配置", a.onMapping)
+    ActionRow("重置手柄", "恢复默认颜色、不透明度、大小、摇杆行为、映射与布局", "重置", a.onResetAll)
 }
 
 @Composable
 fun ControllerMappingPage(mapping: Map<String, String>, onPick: (String, String) -> Unit, onReset: () -> Unit, onBack: () -> Unit) {
     val host = rememberMenuHost()
     SettingsPage(
-        host, title = "Button mapping", eyebrow = "Controller",
-        lede = "Choose what each on-screen button sends to the game. Hidden removes the button.",
+        host, title = "按钮映射", eyebrow = "手柄",
+        lede = "选择每个屏幕按钮向游戏发送的内容。“隐藏”会移除该按钮。",
         onBack = onBack,
     ) {
-        SettingsGroup("On-screen buttons") {
+        SettingsGroup("屏幕按钮") {
             for ((id, name) in ControllerPrefs.mappable) {
                 ChoiceRow(host, "map-$id", name, null, ControllerPrefs.targets, mapping[id] ?: id) { onPick(id, it) }
             }
         }
-        SettingsGroup("Defaults") {
-            ActionRow("Reset mapping", "Every button sends its own input again", "Reset", onReset)
+        SettingsGroup("默认") {
+            ActionRow("重置映射", "每个按钮重新发送各自的输入", "重置", onReset)
         }
     }
 }

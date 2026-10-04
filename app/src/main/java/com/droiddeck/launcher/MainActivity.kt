@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
     private var stage by mutableStateOf("")
     private var percent by mutableIntStateOf(-1)
     private var failed by mutableStateOf(false)
-    private var frameGenLabel by mutableStateOf("Off")
+    private var frameGenLabel by mutableStateOf("关闭")
     private var showRemove by mutableStateOf(false)
     private var showNonAdreno by mutableStateOf<LinuxRuntimeInstaller.Release?>(null)
     private var glThread by mutableStateOf(true)
@@ -169,29 +169,29 @@ class MainActivity : ComponentActivity() {
     /** Import a save zip into [game]: pick it in the app's file picker, then back up and unzip off the main thread. */
     private fun importSaves(name: String, game: () -> GameSaves.Game) {
         if (SessionState.running) {
-            android.widget.Toast.makeText(this, "Close the Steam session first, so the game can't save over the import", android.widget.Toast.LENGTH_LONG).show()
+            android.widget.Toast.makeText(this, "请先关闭 Steam 会话，避免游戏在导入过程中覆盖存档", android.widget.Toast.LENGTH_LONG).show()
             return
         }
         onSavePicked = { zip ->
-            saveAction("Importing into $name") {
+            saveAction("正在导入到 $name") {
                 val (written, backup) = GameSaves.import(game(), zip)
                 val kind = GameSaves.layoutOf(zip)?.label ?: "zip"
-                "Imported $written files from the $kind into $name" + (backup?.let { ". Old saves backed up to Download/DroidDeck/Saves/backups" } ?: "")
+                "已从 $kind 导入 $written 个文件到 $name" + (backup?.let { "，旧存档已备份到 Download/DroidDeck/Saves/backups" } ?: "")
             }
         }
-        pickSaveZip.launch(InAppFilePicker.buildIntent(this, listOf("zip"), "Choose a save zip for $name", GameSaves.savesDir().parentFile?.parentFile?.path))
+        pickSaveZip.launch(InAppFilePicker.buildIntent(this, listOf("zip"), "为 $name 选择存档 zip", GameSaves.savesDir().parentFile?.parentFile?.path))
     }
 
     /** Export [game]'s saves in [layout] to a folder picked in the app's file picker. */
     private fun exportSaves(name: String, layout: GameSaves.Layout, game: () -> GameSaves.Game) {
         onSavePicked = { dir ->
-            saveAction("Exporting $name") {
+            saveAction("正在导出 $name") {
                 val (zip, count) = GameSaves.export(game(), layout, dir)
-                "Exported $count files as a ${layout.label}: ${zip.path.removePrefix("/storage/emulated/0/")}"
+                "已将 $count 个文件导出为 ${layout.label}：${zip.path.removePrefix("/storage/emulated/0/")}"
             }
         }
         GameSaves.savesDir().mkdirs()
-        pickSaveDir.launch(InAppFilePicker.buildDirIntent(this, "Choose where to save $name (${layout.label})", GameSaves.savesDir().path))
+        pickSaveDir.launch(InAppFilePicker.buildDirIntent(this, "选择保存 $name 的位置（${layout.label}）", GameSaves.savesDir().path))
     }
     private val pickAddedGamesDir = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
         if (r.resultCode == RESULT_OK) InAppFilePicker.pickedPath(r.data)?.let { path ->
@@ -273,11 +273,11 @@ class MainActivity : ComponentActivity() {
         if (intent?.component?.className == SessionActivity::class.java.name) {
             when {
                 protons.protonBusyId != null || ProtonExtras.installInProgress -> {
-                    android.widget.Toast.makeText(this, "Wait for the compatibility tool install to finish", android.widget.Toast.LENGTH_SHORT).show()
+                    android.widget.Toast.makeText(this, "请等待兼容性工具安装完成", android.widget.Toast.LENGTH_SHORT).show()
                     return
                 }
                 pkgStage != null -> {
-                    android.widget.Toast.makeText(this, "Wait for the desktop app install to finish", android.widget.Toast.LENGTH_SHORT).show()
+                    android.widget.Toast.makeText(this, "请等待桌面应用安装完成", android.widget.Toast.LENGTH_SHORT).show()
                     return
                 }
             }
@@ -379,7 +379,7 @@ class MainActivity : ComponentActivity() {
                         onEmulator = { e -> launchProgram(e.program) },
                         // A Flatpak app from the store, full screen under gamescope like an emulator.
                         onImportAppImage = {
-                            pickAppImage.launch(InAppFilePicker.buildIntent(this, listOf("appimage"), "Choose an AppImage"))
+                            pickAppImage.launch(InAppFilePicker.buildIntent(this, listOf("appimage"), "选择 AppImage"))
                         },
                         // An imported AppImage, full screen under gamescope like an emulator.
                         onAppImage = { dir, name ->
@@ -434,7 +434,7 @@ class MainActivity : ComponentActivity() {
                             Thread({
                                 val zip = runCatching { SessionLogShare.zipLatest(this) }.getOrNull()
                                 ui.post {
-                                    if (zip == null) android.widget.Toast.makeText(this, "No session logs yet: run a session first.", android.widget.Toast.LENGTH_LONG).show()
+                                    if (zip == null) android.widget.Toast.makeText(this, "暂无会话日志：请先运行一次会话。", android.widget.Toast.LENGTH_LONG).show()
                                     else startActivity(SessionLogShare.shareIntent(this, zip))
                                 }
                             }, "share-logs").start()
@@ -473,7 +473,7 @@ class MainActivity : ComponentActivity() {
                                 val result = runCatching {
                                     kotlinx.coroutines.runBlocking { WirelessAdbFix.pair(this@MainActivity, host, port, code) }
                                 }
-                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "Wireless debugging pairing failed" }
+                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "无线调试配对失败" }
                                 ui.post { complete(error) }
                             }, "wireless-adb-pair").start()
                         },
@@ -486,7 +486,7 @@ class MainActivity : ComponentActivity() {
                         onWirelessAdbApply = { host, port, enabled, complete ->
                             Thread({
                                 val result = runCatching { WirelessAdbFix.setChildProcessLimit(this@MainActivity, host, port, enabled) }
-                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "Wireless debugging command failed" }
+                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "无线调试命令执行失败" }
                                 ui.post {
                                     if (error == null) refreshPhantomStatus()
                                     complete(error)
@@ -496,7 +496,7 @@ class MainActivity : ComponentActivity() {
                         onSetPhantomProcessLimit = { enabled, complete ->
                             Thread({
                                 val result = runCatching { WirelessAdbFix.setUsingSavedPairing(this@MainActivity, enabled) }
-                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "Wireless debugging is unavailable" }
+                                val error = result.exceptionOrNull()?.let { it.localizedMessage ?: "无线调试不可用" }
                                 ui.post {
                                     if (error == null) refreshPhantomStatus()
                                     complete(error)
@@ -505,9 +505,9 @@ class MainActivity : ComponentActivity() {
                         },
                         onCopyPhantomCommand = { enabled ->
                             (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
-                                ClipData.newPlainText("DroidDeck child-process setting", PhantomProcessLimit.adbCommand(enabled)),
+                                ClipData.newPlainText("DroidDeck 子进程设置", PhantomProcessLimit.adbCommand(enabled)),
                             )
-                            android.widget.Toast.makeText(this, "ADB command copied", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(this, "已复制 ADB 命令", android.widget.Toast.LENGTH_SHORT).show()
                         },
                         onDismissPhantomGate = { showPhantomGate = false },
                         onStartWirelessAdbPairing = { WirelessAdbPairingService.start(this) },
@@ -536,24 +536,24 @@ class MainActivity : ComponentActivity() {
                     path = romsDir,
                     onChoose = {
                         showRoms = false
-                        pickRomsDir.launch(InAppFilePicker.buildDirIntent(this, "Choose the ROMs folder", romsDir))
+                        pickRomsDir.launch(InAppFilePicker.buildDirIntent(this, "选择 ROM 文件夹", romsDir))
                     },
                     onClear = { SessionPrefs.setRomsDir(this, ""); romsDir = null; showRoms = false },
                     onDismiss = { showRoms = false },
                 )
                 showNonAdreno?.let { release ->
                     ConfirmDialog(
-                        title = "Not an Adreno GPU",
-                        text = "Turnip supports Adreno GPUs. On ${com.droiddeck.launcher.core.DeviceSupport.gpuName()}, Steam may show a black screen. Download: ${"%.0f".format(release.size / 1e6)} MB.",
-                        confirm = "Install anyway",
+                        title = "非 Adreno GPU",
+                        text = "Turnip 支持 Adreno GPU。在 ${com.droiddeck.launcher.core.DeviceSupport.gpuName()} 上，Steam 可能显示黑屏。下载大小：${"%.0f".format(release.size / 1e6)} MB。",
+                        confirm = "仍要安装",
                         onConfirm = { showNonAdreno = null; install(release) },
                         onDismiss = { showNonAdreno = null },
                     )
                 }
                 if (showRemove) ConfirmDialog(
-                    title = "Remove Linux runtime",
-                    text = "This deletes the runtime, the Steam client inside it, and every game installed there.",
-                    confirm = "Remove",
+                    title = "移除 Linux 运行时",
+                    text = "这将删除运行时、其中的 Steam 客户端，以及安装在其中的所有游戏。",
+                    confirm = "移除",
                     onConfirm = { Thread({ LinuxRuntimeInstaller.uninstall(this); ui.post { refresh() } }, "uninstall").start() },
                     onDismiss = { showRemove = false },
                 )
@@ -653,7 +653,7 @@ class MainActivity : ComponentActivity() {
         if (!SessionState.running) Thread({
             val applied = runCatching { ComponentsManager.applyQueued(this) }.getOrDefault(emptyList())
             if (applied.isNotEmpty()) ui.post {
-                android.widget.Toast.makeText(this, "Applied: " + applied.joinToString(", "), android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(this, "已应用：" + applied.joinToString(", "), android.widget.Toast.LENGTH_LONG).show()
                 if (showComponents) components.refreshComponents()
             }
         }, "components-queue").start()
@@ -704,9 +704,9 @@ class MainActivity : ComponentActivity() {
         try {
             HomeApp.launch(this, app, displayId)
         } catch (_: Exception) {
-            val target = if (displayId == null || displayId == Display.DEFAULT_DISPLAY) "the primary screen"
-                else secondScreenDisplays.firstOrNull { it.id == displayId }?.label ?: "display $displayId"
-            android.widget.Toast.makeText(this, "Could not open ${app.label} on $target", android.widget.Toast.LENGTH_SHORT).show()
+            val target = if (displayId == null || displayId == Display.DEFAULT_DISPLAY) "主屏幕"
+                else secondScreenDisplays.firstOrNull { it.id == displayId }?.label ?: "显示器 $displayId"
+            android.widget.Toast.makeText(this, "无法在${target}打开 ${app.label}", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -737,7 +737,7 @@ class MainActivity : ComponentActivity() {
         if (saveBusy != null) return
         saveBusy = label
         Thread({
-            val message = runCatching(work).getOrElse { e -> "$label failed: ${e.message ?: e.javaClass.simpleName}" }
+            val message = runCatching(work).getOrElse { e -> "${label}失败：${e.message ?: e.javaClass.simpleName}" }
             ui.post {
                 saveBusy = null
                 android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show()
@@ -781,10 +781,10 @@ class MainActivity : ComponentActivity() {
 
     private fun importComponent(uri: Uri) {
         val name = displayNameOf(uri) ?: "imported.wcp"
-        components.componentAction("Importing") {
+        components.componentAction("正在导入") {
             val tmp = File(cacheDir, "component-import.wcp")
-            contentResolver.openInputStream(uri)?.use { input -> tmp.outputStream().use { input.copyTo(it) } } ?: error("cannot read the file")
-            try { "Imported ${ComponentsManager.importPackage(this, tmp, name).version}" } finally { tmp.delete() }
+            contentResolver.openInputStream(uri)?.use { input -> tmp.outputStream().use { input.copyTo(it) } } ?: error("无法读取该文件")
+            try { "已导入 ${ComponentsManager.importPackage(this, tmp, name).version}" } finally { tmp.delete() }
         }
     }
 
@@ -802,14 +802,14 @@ class MainActivity : ComponentActivity() {
             requestInitialFocus = focusComponentsContent,
             onProton = { components.compProton = it },
             onComp = { components.compComp = it },
-            onSwap = { file -> components.compProton?.let { pid -> components.componentAction("Swapping") { ComponentsManager.swap(this, pid, file) } } },
-            onRestore = { version -> components.compProton?.let { pid -> components.componentAction("Restoring") { ComponentsManager.restore(this, pid, components.compComp, version) } } },
-            onCancelQueued = { components.compProton?.let { pid -> components.componentAction("Cancelling") { ComponentsManager.cancelQueued(this, pid, components.compComp); "The waiting swap was cancelled." } } },
-            onDeletePackage = { file -> components.componentAction("Deleting") { ComponentsManager.deletePackage(this, file) } },
-            onDeleteOriginal = { version -> components.compProton?.let { pid -> components.componentAction("Deleting") { ComponentsManager.deleteOriginal(this, pid, components.compComp, version) } } },
+            onSwap = { file -> components.compProton?.let { pid -> components.componentAction("正在替换") { ComponentsManager.swap(this, pid, file) } } },
+            onRestore = { version -> components.compProton?.let { pid -> components.componentAction("正在还原") { ComponentsManager.restore(this, pid, components.compComp, version) } } },
+            onCancelQueued = { components.compProton?.let { pid -> components.componentAction("正在取消") { ComponentsManager.cancelQueued(this, pid, components.compComp); "已取消等待中的替换。" } } },
+            onDeletePackage = { file -> components.componentAction("正在删除") { ComponentsManager.deletePackage(this, file) } },
+            onDeleteOriginal = { version -> components.compProton?.let { pid -> components.componentAction("正在删除") { ComponentsManager.deleteOriginal(this, pid, components.compComp, version) } } },
             onDownload = { components.downloadComponent(it) },
             onRefresh = { components.refreshComponentCatalog() },
-            onImport = { pickComponent.launch(InAppFilePicker.buildIntent(this, WCP_EXT, "Choose a component package (-linux .wcp)")) },
+            onImport = { pickComponent.launch(InAppFilePicker.buildIntent(this, WCP_EXT, "选择组件包（-linux .wcp）")) },
             onBack = { showComponents = false },
         )
     }
@@ -844,14 +844,14 @@ class MainActivity : ComponentActivity() {
     private fun installPackage(id: String) {
         val entry = catalog?.firstOrNull { it.id == id } ?: return
         if (pkgStage != null || SessionState.running) return
-        pkgId = id; pkgStage = "Starting…"; pkgPercent = -1
+        pkgId = id; pkgStage = "启动中…"; pkgPercent = -1
         Thread({
             val problem = DesktopCatalog.install(this, entry) { stage, percent ->
                 ui.post { pkgStage = stage; pkgPercent = percent }
             }
             ui.post {
                 pkgStage = null; pkgId = null
-                if (problem != null) android.widget.Toast.makeText(this, "${entry.name}: $problem", android.widget.Toast.LENGTH_LONG).show()
+                if (problem != null) android.widget.Toast.makeText(this, "${entry.name}：$problem", android.widget.Toast.LENGTH_LONG).show()
                 refreshPackages()
                 refresh()
             }
@@ -861,7 +861,7 @@ class MainActivity : ComponentActivity() {
     private fun removePackage(id: String) {
         val entry = catalog?.firstOrNull { it.id == id } ?: return
         if (pkgStage != null || SessionState.running) return
-        pkgId = id; pkgStage = if (entry.kind == "appimage") "Removing ${entry.name}…" else "Forgetting ${entry.name}…"; pkgPercent = -1
+        pkgId = id; pkgStage = if (entry.kind == "appimage") "正在移除 ${entry.name}…" else "正在隐藏 ${entry.name}…"; pkgPercent = -1
         Thread({
             DesktopCatalog.remove(this, entry)
             ui.post {
@@ -913,13 +913,13 @@ class MainActivity : ComponentActivity() {
                 onShape = { shape -> SessionPrefs.setShapeMode(this, shape); shapeMode = shape },
                 onHdr = { on -> SessionPrefs.setHdr(this, mode, on); hdrOn = on },
                 onSelectLinux = { id -> SessionPrefs.setLinuxDriver(this, mode, id); drivers.refreshDrivers() },
-                onImportLinux = { pickLinuxDriver.launch(InAppFilePicker.buildIntent(this, ZIP_EXT, "Choose a Linux runtime driver (-Linux zip)")) },
+                onImportLinux = { pickLinuxDriver.launch(InAppFilePicker.buildIntent(this, ZIP_EXT, "选择 Linux 运行时驱动（-Linux zip）")) },
                 onRemoveLinux = { id -> drivers.deleteDriver(id, linux = true) },
                 onRefreshReleases = { drivers.checkLatestTurnip() },
                 onDownloadDriver = { name -> drivers.downloadReleaseDriver(name) },
                 onRestoreBundled = { TurnipDriver(this).restoreBundled(); drivers.refreshDrivers() },
                 onSelectAndroid = { id -> SessionPrefs.setAndroidDriver(this, id); drivers.refreshDrivers() },
-                onImportAndroid = { pickAndroidDriver.launch(InAppFilePicker.buildIntent(this, ZIP_EXT, "Choose a display driver (AdrenoTools zip)")) },
+                onImportAndroid = { pickAndroidDriver.launch(InAppFilePicker.buildIntent(this, ZIP_EXT, "选择显示驱动（AdrenoTools zip）")) },
                 onRemoveAndroid = { id -> drivers.deleteDriver(id, linux = false) },
                 onTouch = { t -> SessionPrefs.setTouchMode(this, t); touchMode = t },
                 onSuspendPolicy = { policy -> SessionPrefs.setSuspendPolicy(this, mode, policy); suspendPolicy = policy },
@@ -943,7 +943,7 @@ class MainActivity : ComponentActivity() {
                 onRenderer = { r -> SessionPrefs.setDesktopRenderer(this, r); renderer = r },
                 onGameStorage = { path, label -> setGameStorage(path, label) },
                 onPickGameStorageFolder = {
-                    pickGameStorage.launch(InAppFilePicker.buildDirIntent(this, "Choose the game storage folder", gameStorage.ifEmpty { null }))
+                    pickGameStorage.launch(InAppFilePicker.buildDirIntent(this, "选择游戏存储文件夹", gameStorage.ifEmpty { null }))
                 },
                 onFexPreset = { id -> SessionPrefs.setFexPreset(this, id); fexPreset = id },
                 onSteamChannel = { id -> SessionPrefs.setSteamChannel(this, id); steamChannel = id },
@@ -957,13 +957,13 @@ class MainActivity : ComponentActivity() {
                     SessionPrefs.setRunSteamAtStartup(this, on)
                     runSteamAtStartup = on
                 },
-                onPickAddedGamesDir = { pickAddedGamesDir.launch(InAppFilePicker.buildDirIntent(this, "Choose a folder of your own games", addedGamesDirs.lastOrNull())) },
+                onPickAddedGamesDir = { pickAddedGamesDir.launch(InAppFilePicker.buildDirIntent(this, "选择自有游戏文件夹", addedGamesDirs.lastOrNull())) },
                 onAddedGamesArt = { on -> SessionPrefs.setAddedGamesArt(this, on); addedGamesArt = on; if (on) refreshAddedGames() },
                 onForgetAddedGamesDir = { dir -> SessionPrefs.setAddedGamesDirs(this, addedGamesDirs - dir); addedGamesDirs = SessionPrefs.addedGamesDirs(this); refreshAddedGames(); refresh() },
                 onAddedGameExe = { folder, path -> SessionPrefs.setAddedGameExe(this, folder, path); refreshAddedGames(); refresh() },
                 onPickAddedGameExe = { folder ->
                     pendingAddedGame = folder
-                    pickAddedGameExe.launch(InAppFilePicker.buildIntent(this, listOf("exe"), "Choose the game's .exe", folder))
+                    pickAddedGameExe.launch(InAppFilePicker.buildIntent(this, listOf("exe"), "选择游戏的 .exe 文件", folder))
                 },
                 onDeckyInstall = { release -> decky.installDecky(release) },
                 onDeckyCheck = { decky.refreshDecky() },
@@ -1069,7 +1069,7 @@ class MainActivity : ComponentActivity() {
         if (path.isNotEmpty() && path != SessionPrefs.GAME_STORAGE_OFF) {
             val problem = GameStorage.prepare(path)
             if (problem != null) {
-                android.widget.Toast.makeText(this, "Not usable: $problem", android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(this, "不可用：$problem", android.widget.Toast.LENGTH_LONG).show()
                 return
             }
         }
@@ -1105,9 +1105,9 @@ class MainActivity : ComponentActivity() {
         romsDir = SessionPrefs.romsDir(this).takeIf { it.isNotEmpty() }
         logsEnabled = SessionPrefs.logsEnabled(this)
         runningLabel = if (SessionState.running) when (SessionState.mode) {
-            SessionService.MODE_DESKTOP -> "Desktop"
+            SessionService.MODE_DESKTOP -> "桌面"
             SessionService.MODE_RUN -> Library.nameForProgram(SessionState.program)
-                ?: SessionState.program?.substringAfterLast('/')?.substringBefore('.') ?: "Program"
+                ?: SessionState.program?.substringAfterLast('/')?.substringBefore('.') ?: "程序"
             else -> "Steam"
         } else null
         // The libraries, off the main thread: manifests and a folder scan.
@@ -1182,10 +1182,10 @@ class MainActivity : ComponentActivity() {
         } catch (error: Exception) {
             if (displayId != null) {
                 runCatching { startActivity(intent) }
-                android.widget.Toast.makeText(this, "Could not open Settings on the bottom screen; opened it on the main screen.", android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(this, "无法在副屏打开“设置”，已在主屏幕打开。", android.widget.Toast.LENGTH_LONG).show()
             } else {
                 startActivity(Intent(android.provider.Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                android.widget.Toast.makeText(this, "Open Developer options in Settings", android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(this, "请在“设置”中打开开发者选项", android.widget.Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -1204,7 +1204,7 @@ class MainActivity : ComponentActivity() {
     private fun followInstall(run: (LinuxRuntimeInstaller.ProgressListener) -> Boolean?) {
         busy = true
         failed = false
-        stage = "Starting…"
+        stage = "启动中…"
         percent = -1
         Thread({
             val ok = run(LinuxRuntimeInstaller.ProgressListener { s, p ->

@@ -585,7 +585,7 @@ open_fake_input_ring(const char *event, int flags) {
   std::string ring_path = virtual_pad ? uinput_ring_path(slot) : get_ring_path_for_slot(slot);
   size_t mapping_size = virtual_pad ? UINPUT_FILE_SIZE : FAKE_INPUT_RING_SIZE;
   if (ring_path.empty()) {
-    Logger::log("No input ring is configured for %s (slot %d)\n", event, slot);
+    Logger::log("%s 没有配置输入环（槽位 %d）\n", event, slot);
     errno = ENODEV;
     return -1;
   }
@@ -614,7 +614,7 @@ open_fake_input_ring(const char *event, int flags) {
   if (!ring_header_is_valid(ring) ||
       (description && (description->magic != UINPUT_DESCRIPTION_MAGIC ||
                        !process_alive(description->owner_pid)))) {
-    Logger::log("Input ring %s has no valid header\n", ring_path.c_str());
+    Logger::log("输入环 %s 没有有效头部\n", ring_path.c_str());
     munmap(mapping, mapping_size);
     syscall(SYS_close, fd);
     errno = ENODEV;
@@ -638,7 +638,7 @@ open_fake_input_ring(const char *event, int flags) {
     controller_map()[fd] = controller;
   }
 
-  Logger::log("Adding ring-backed controller, fd %d event %s slot %d\n", fd,
+  Logger::log("正在添加基于环的控制器，fd %d，event %s，槽位 %d\n", fd,
               event, slot);
   return fd;
 }
@@ -824,7 +824,7 @@ __attribute__((visibility("hidden"))) static int open_uinput(int flags) {
   writer->owner = getpid();
   std::lock_guard<std::recursive_mutex> guard(controller_mutex());
   uinput_map()[fd] = writer;
-  Logger::log("uinput: opened as fd %d\n", fd);
+  Logger::log("uinput: 已作为 fd %d 打开\n", fd);
   return fd;
 }
 
@@ -845,7 +845,7 @@ __attribute__((visibility("hidden"))) static void unpublish_uinput(UinputWriter 
   unlink((uinput_ring_path(w.node) + ".uevent").c_str());
   unlink(uinput_ring_path(w.node).c_str());
   munmap(w.ring, UINPUT_FILE_SIZE);
-  Logger::log("uinput: removed event%d\n", w.node);
+  Logger::log("uinput: 已移除 event%d\n", w.node);
   w.ring = nullptr;
   w.shared = nullptr;
   w.published = false;
@@ -930,7 +930,7 @@ __attribute__((visibility("hidden"))) static int publish_uinput(UinputWriter &w)
   w.ring = ring;
   w.shared = shared;
   w.published = true;
-  Logger::log("uinput: \"%s\" %04x:%04x is /dev/input/event%d\n", shared->name, shared->id.vendor,
+  Logger::log("uinput: \"%s\" %04x:%04x 对应 /dev/input/event%d\n", shared->name, shared->id.vendor,
               shared->id.product, node);
   return 0;
 }
@@ -1075,12 +1075,12 @@ ioctl_uinput(UinputWriter &w, ioctl_request_t op, void *argp) {
   case _IOC_NR(UI_DEV_CREATE):
     w.created = true;
     if (!is_gamepad(d)) {
-      Logger::log("uinput: \"%s\" %04x:%04x is not a gamepad; its events are dropped\n", d.name,
+      Logger::log("uinput: \"%s\" %04x:%04x 不是游戏手柄；其事件被丢弃\n", d.name,
                   d.id.vendor, d.id.product);
       return 0;
     }
     if (publish_uinput(w) < 0) {
-      Logger::log("uinput: could not publish \"%s\": %s\n", d.name, strerror(errno));
+      Logger::log("uinput: 无法发布 \"%s\"：%s\n", d.name, strerror(errno));
       w.created = false;
       errno = ENOMEM;
       return -1;
@@ -1095,7 +1095,7 @@ ioctl_uinput(UinputWriter &w, ioctl_request_t op, void *argp) {
     errno = EINVAL;
     return -1;
   default:
-    Logger::log("uinput: unhandled ioctl %d\n", number);
+    Logger::log("uinput: 未处理的 ioctl %d\n", number);
     errno = EINVAL;
     return -1;
   }
@@ -1417,7 +1417,7 @@ __attribute__((visibility("hidden"))) static int open_deck_hidraw(int flags) {
     return -1;
   }
   pthread_detach(thread);
-  Logger::log("deck: %s opened as fd %d\n", DECK_HIDRAW_PATH, pair[0]);
+  Logger::log("deck: %s 已作为 fd %d 打开\n", DECK_HIDRAW_PATH, pair[0]);
   return pair[0];
 }
 
@@ -1484,7 +1484,7 @@ deck_feature(DeckHidraw &deck, ioctl_request_t op, uint8_t *buf, bool set) {
       int left = buf[6] | buf[7] << 8, right = buf[8] | buf[9] << 8;
       send_vibration(left, right, left || right ? 1000 : 0, 0);
     }
-    Logger::log("deck: feature 0x%02x set\n", buf[1]);
+    Logger::log("deck: 已设置 feature 0x%02x\n", buf[1]);
     return static_cast<int>(size);
   }
   uint8_t reply[DECK_REPORT_BYTES + 1] = {};
@@ -1514,7 +1514,7 @@ deck_feature(DeckHidraw &deck, ioctl_request_t op, uint8_t *buf, bool set) {
     reply[1] = deck.pending_feature;
     break;
   }
-  Logger::log("deck: feature 0x%02x read\n", deck.pending_feature);
+  Logger::log("deck: 已读取 feature 0x%02x\n", deck.pending_feature);
   size_t length = std::min(size, sizeof(reply));
   memcpy(buf, reply, length);
   return static_cast<int>(length);
@@ -1552,7 +1552,7 @@ ioctl_deck(DeckHidraw &deck, ioctl_request_t op, void *argp) {
   case 0x06: return deck_feature(deck, op, static_cast<uint8_t *>(argp), true);   // HIDIOCSFEATURE
   case 0x07: return deck_feature(deck, op, static_cast<uint8_t *>(argp), false);  // HIDIOCGFEATURE
   default:
-    Logger::log("deck: unhandled hidraw ioctl 0x%02x\n", _IOC_NR(op));
+    Logger::log("deck: 未处理的 hidraw ioctl 0x%02x\n", _IOC_NR(op));
     errno = EINVAL;
     return -1;
   }
@@ -1945,12 +1945,12 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
   const UinputDescription *made = controller->second->uinput;
 
   if (type == 0x45 && number == 0x1) {
-    Logger::log("Hooking ioctl EVIOCGVERSION for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGVERSION\n", event);
     int version = 65536;
     memcpy(argp, (void *)&version, sizeof(int));
     return 0;
   } else if (type == 0x45 && number == 0x2) {
-    Logger::log("Hooking ioctl EVIOCGID for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGID\n", event);
     struct input_id id;
     memset(&id, 0, sizeof(id));
     id.bustype = 0x03;
@@ -1970,7 +1970,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     memcpy(argp, (void *)&id, sizeof(id));
     return 0;
   } else if (type == 0x45 && number == 0x6) {
-    Logger::log("Hooking ioctl EVIOCGNAME for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGNAME\n", event);
     if (made) {
       if (argp && _IOC_SIZE(op)) snprintf(static_cast<char *>(argp), _IOC_SIZE(op), "%s", made->name);
       return 0;
@@ -1981,7 +1981,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
                            event_number);
     return 0;
   } else if (type == 0x45 && number == 0x7) {
-    Logger::log("Hooking ioctl EVIOCGPHYS for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGPHYS\n", event);
     if (made) {
       if (argp && _IOC_SIZE(op)) snprintf(static_cast<char *>(argp), _IOC_SIZE(op), "%s", made->phys);
       return 0;
@@ -1989,7 +1989,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     copy_slot_ioctl_string(op, argp, GAMEPAD_PHYS_TEMPLATE, event_number);
     return 0;
   } else if (type == 0x45 && number == 0x8) {
-    Logger::log("Hooking ioctl EVIOCGUNIQ for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGUNIQ\n", event);
     if (made) {
       if (argp && _IOC_SIZE(op)) static_cast<char *>(argp)[0] = '\0';
       return 0;
@@ -2009,7 +2009,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     }
     return copy_ioctl_bits(op, argp, bitmask);
   } else if (type == 0x45 && number == 0x20) {
-    Logger::log("Hooking ioctl EVIOCGBIT(0, len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGBIT(0, len)\n", event);
     if (made) return copy_ioctl_bits(op, argp, made->evbits);
     unsigned char bitmask[(EV_MAX + 8) / 8] = {};
     bitmask[EV_SYN / 8] |= (1 << (EV_SYN % 8));
@@ -2017,7 +2017,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     bitmask[EV_ABS / 8] |= (1 << (EV_ABS % 8));
     return copy_ioctl_bits(op, argp, bitmask);
   } else if (type == 0x45 && number == 0x21) {
-    Logger::log("Hooking ioctl EVIOCGBIT(EV_KEY, len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGBIT(EV_KEY, len)\n", event);
     if (made) return copy_ioctl_bits(op, argp, made->keybits);
     unsigned char bitmask[(KEY_MAX + 8) / 8] = {};
     const int xbox_buttons[] = {BTN_A,    BTN_B,      BTN_X,      BTN_Y,
@@ -2027,11 +2027,11 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
       bitmask[button / 8] |= (1 << (button % 8));
     return copy_ioctl_bits(op, argp, bitmask);
   } else if (type == 0x45 && number == 0x22) {
-    Logger::log("Hooking ioctl EVIOCGBIT(EV_REL, len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGBIT(EV_REL, len)\n", event);
     unsigned char bitmask[(REL_MAX + 8) / 8] = {};
     return copy_ioctl_bits(op, argp, bitmask);
   } else if (type == 0x45 && number == 0x23) {
-    Logger::log("Hooking ioctl EVIOCGBIT(EV_ABS, len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGBIT(EV_ABS, len)\n", event);
     if (made) return copy_ioctl_bits(op, argp, made->absbits);
     unsigned char bitmask[(ABS_MAX + 8) / 8] = {};
     bitmask[ABS_X / 8] |= (1 << (ABS_X % 8));
@@ -2046,7 +2046,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     bitmask[ABS_HAT0Y / 8] |= (1 << (ABS_HAT0Y % 8));
     return copy_ioctl_bits(op, argp, bitmask);
   } else if (type == 0x45 && number == 0x35) {
-    Logger::log("Hooking ioctl EVIOCGBIT(EV_FF, len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGBIT(EV_FF, len)\n", event);
     if (made) return copy_ioctl_bits(op, argp, made->ffbits);
     unsigned char bitmask[(FF_MAX + 8) / 8] = {};
     bitmask[FF_RUMBLE / 8] |= (1 << (FF_RUMBLE % 8));
@@ -2077,7 +2077,7 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     memcpy(argp, &max_effects, sizeof(int));
     return 0;
   } else if (type == 0x45 && number >= 0x40 && number <= 0x51) {
-    Logger::log("Hooking ioctl EVIOCGABS(ABS) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGABS(ABS)\n", event);
     struct input_absinfo abs_info;
     memset(&abs_info, 0, sizeof(abs_info));
     uint16_t code = ring_abs_code(*controller->second, number - 0x40);
@@ -2103,32 +2103,32 @@ EXPORT int ioctl(int fd, ioctl_request_t op, ...) {
     memcpy(argp, &abs_info, std::min<size_t>(_IOC_SIZE(op), sizeof(abs_info)));
     return 0;
   } else if (type == 0x45 && number == 0x90) {
-    Logger::log("Hooking ioctl EVIOCGRAB for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl EVIOCGRAB\n", event);
     return 0;
   } else if (type == 0x6A && number == 0x1) {
-    Logger::log("Hooking ioctl JSIOCGVERSION for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl JSIOCGVERSION\n", event);
     int version = JS_VERSION;
     memcpy(argp, (void *)&version, sizeof(version));
     return 0;
   } else if (type == 0x6A && number == 0x11) {
-    Logger::log("Hooking ioctl JSIOCGAXES for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl JSIOCGAXES\n", event);
     uint8_t axes = GAMEPAD_AXIS_COUNT;
     memcpy(argp, (void *)&axes, sizeof(axes));
     return 0;
   } else if (type == 0x6A && number == 0x12) {
-    Logger::log("Hooking ioctl JSIOCGBUTTONS for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl JSIOCGBUTTONS\n", event);
     uint8_t buttons = GAMEPAD_BUTTON_COUNT;
     memcpy(argp, (void *)&buttons, sizeof(buttons));
     return 0;
   } else if (type == 0x6A && number == 0x13) {
-    Logger::log("Hooking ioctl JSIOCGNAME(len) for event %s\n", event);
+    Logger::log("正在为 event %s 钩取 ioctl JSIOCGNAME(len)\n", event);
     copy_slot_ioctl_string(op, argp,
                            presents_steam_virtual() ? STEAM_VIRTUAL_NAME_TEMPLATE
                            : (fake_xbox360_identity() ? X360_NAME_TEMPLATE : GAMEPAD_NAME_TEMPLATE),
                            event_number);
     return 0;
   } else {
-    Logger::log("Unhandled evdev ioctl, type %d number %d\n", type, number);
+    Logger::log("未处理的 evdev ioctl，类型 %d 编号 %d\n", type, number);
     guard.unlock();
     return syscall(SYS_ioctl, fd, op, argp);
   }
@@ -2142,7 +2142,7 @@ EXPORT int close(int fd) {
   deck_map().erase(fd);
   auto controller = controller_map().find(fd);
   if (controller != controller_map().end()) {
-    Logger::log("Removing controller, fd %d event %s\n", controller->first,
+    Logger::log("正在移除控制器，fd %d，event %s\n", controller->first,
                 controller->second->event ? controller->second->event : "(unknown)");
     controller->second->closed = true;
     controller_map().erase(fd);

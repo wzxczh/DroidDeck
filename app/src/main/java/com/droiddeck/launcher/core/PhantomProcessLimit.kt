@@ -99,17 +99,17 @@ object PhantomProcessLimit {
         status != PhantomProcessStatus.NOT_APPLICABLE && status != PhantomProcessStatus.DISABLED
 
     fun title(status: PhantomProcessStatus): String = when (status) {
-        PhantomProcessStatus.ENABLED -> "Child-process limit is on"
-        PhantomProcessStatus.UNSET -> "Child-process limit is unset"
-        PhantomProcessStatus.UNREADABLE -> "Child-process limit could not be checked"
-        PhantomProcessStatus.DISABLED -> "Child-process limit is off"
-        PhantomProcessStatus.NOT_APPLICABLE -> "Child-process limit not required"
+        PhantomProcessStatus.ENABLED -> "子进程限制已开启"
+        PhantomProcessStatus.UNSET -> "子进程限制未设置"
+        PhantomProcessStatus.UNREADABLE -> "子进程限制无法检查"
+        PhantomProcessStatus.DISABLED -> "子进程限制已关闭"
+        PhantomProcessStatus.NOT_APPLICABLE -> "无需子进程限制设置"
     }
 
     fun instructions(status: PhantomProcessStatus): String = when (status) {
-        PhantomProcessStatus.ENABLED, PhantomProcessStatus.UNSET, PhantomProcessStatus.UNREADABLE -> fixSentence() + " If that is not possible, connect this device to a computer with ADB and run the command below. Return here and check again."
-        PhantomProcessStatus.DISABLED -> "Steam sessions can start."
-        PhantomProcessStatus.NOT_APPLICABLE -> "This Android version does not use this limit."
+        PhantomProcessStatus.ENABLED, PhantomProcessStatus.UNSET, PhantomProcessStatus.UNREADABLE -> fixSentence() + "如果无法操作，请将本设备连接到装有 ADB 的电脑并运行下面的命令，然后回到这里重新检查。"
+        PhantomProcessStatus.DISABLED -> "Steam 会话可以启动了。"
+        PhantomProcessStatus.NOT_APPLICABLE -> "此 Android 版本不使用该限制。"
     }
 
     fun gateInstructions(status: PhantomProcessStatus): String = when (status) {
@@ -118,14 +118,14 @@ object PhantomProcessLimit {
     }
 
     fun fixSentence(sdk: Int = Build.VERSION.SDK_INT): String =
-        if (hasDeveloperToggle(sdk)) "Turn on “Disable child process restrictions” in Developer options, and keep Developer options on afterwards."
-        else "This Android version has no switch for it. Use Wireless debugging to change it from this device."
+        if (hasDeveloperToggle(sdk)) "在开发者选项中开启“停用子进程限制”，之后请保持开发者选项开启。"
+        else "此 Android 版本没有该开关，请使用无线调试在本设备上修改。"
 
     fun reportValue(status: PhantomProcessStatus): String = when (status) {
-        PhantomProcessStatus.DISABLED -> "disabled (good - the OS will not kill the session's children)"
-        PhantomProcessStatus.ENABLED -> "ENABLED (the OS may kill the session with no log; turn off Restrict child processes)"
-        PhantomProcessStatus.UNSET -> "not set (ROM default applies; DroidDeck requires an explicit disabled value)"
-        PhantomProcessStatus.UNREADABLE -> "unreadable (DroidDeck could not verify the setting)"
-        PhantomProcessStatus.NOT_APPLICABLE -> "not applicable before Android 12"
+        PhantomProcessStatus.DISABLED -> "已关闭（正常：系统不会结束会话的子进程）"
+        PhantomProcessStatus.ENABLED -> "已启用（系统可能在无日志的情况下结束会话；请关闭“限制子进程”）"
+        PhantomProcessStatus.UNSET -> "未设置（沿用 ROM 默认值；DroidDeck 需要明确的已关闭值）"
+        PhantomProcessStatus.UNREADABLE -> "无法读取（DroidDeck 未能验证该设置）"
+        PhantomProcessStatus.NOT_APPLICABLE -> "不适用（Android 12 之前没有此限制）"
     }
 }

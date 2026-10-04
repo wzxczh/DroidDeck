@@ -108,7 +108,7 @@ bl_components() {
     f="$base/$rel"
     if [ -f "$f" ] && [ "$(sha256sum "$f" | cut -d' ' -f1)" = "$sum" ]; then continue; fi
     if [ ! -f "$src" ]; then
-      echo "bannerlator-proton: components: $comp source missing ($src), left as it is" >&2
+      echo "bannerlator-proton: components: 缺少 $comp 源文件（$src），保持原样" >&2
       continue
     fi
     mkdir -p "$(dirname "$f")"
@@ -116,9 +116,9 @@ bl_components() {
     case "$rel" in *.so) chmod 755 "$f" ;; *) chmod 644 "$f" ;; esac
     cm_fixed=$((cm_fixed + 1))
   done < "$cm_list"
-  [ "$cm_checked" -gt 0 ] && echo "bannerlator-proton: components: checked $cm_checked file(s) in $cm_tool for app $cm_app" >&2
+  [ "$cm_checked" -gt 0 ] && echo "bannerlator-proton: components: 已检查 $cm_tool 中 $cm_checked 个文件（应用 $cm_app）" >&2
   if [ "$cm_fixed" -gt 0 ]; then
-    echo "bannerlator-proton: components: re-applied $cm_fixed of $cm_checked file(s) in $cm_tool before this launch" >&2
+    echo "bannerlator-proton: components: 本次启动前已重新应用 $cm_tool 中 $cm_checked 个文件里的 $cm_fixed 个" >&2
     printf '%s\\t%s\\t%s\\n' "$(date +%s)" "$cm_tool" "$cm_fixed" >> "$cm_dir/reapplied.log"
   fi
 }
@@ -137,7 +137,7 @@ bl_game_cpus() {
   # exec'd through taskset rather than set afterwards: a mask applied to a pid races the process
   # into spawning its own threads, and this way every thread inherits it from the first instruction.
   BL_TASKSET="taskset -c $BL_GAME_CPUS"
-  echo "bannerlator-proton: game cores $BL_GAME_CPUS" >&2
+  echo "bannerlator-proton: 游戏核心 $BL_GAME_CPUS" >&2
 }
 """
 
@@ -176,13 +176,13 @@ bl_idtech3() {
   esac
   case " $* " in
     *r_fullscreen*|*r_mode*|*r_customwidth*|*r_customheight*)
-      echo "bannerlator-proton: Quake-engine title; its launch options set the video mode, left as they are" >&2
+      echo "bannerlator-proton: Quake 引擎游戏；其启动选项已设定视频模式，保持不变" >&2
       return 0 ;;
   esac
   w=${BL_WIDTH:-1280}
   h=${BL_HEIGHT:-720}
   BL_EXTRA_ARGS=(+set r_fullscreen 0 +set r_mode -1 +set r_customwidth "$w" +set r_customheight "$h")
-  echo "bannerlator-proton: Quake-engine title: windowed at ${w}x${h}" >&2
+  echo "bannerlator-proton: Quake 引擎游戏：窗口化 ${w}x${h}" >&2
 }
 """
 
@@ -195,7 +195,7 @@ bl_directaudio() {
   major=${version#wine-}
   major=${major%%.*}
   if [ "$major" != "11" ]; then
-    echo "bannerlator-proton: DirectAudio left off - it is built for Wine 11 and this Proton is '${version:-unknown}'. Pairing them would be silent rather than broken, so it is not worth guessing." >&2
+    echo "bannerlator-proton: DirectAudio 已停用 —— 它为 Wine 11 构建，而此 Proton 是 '${version:-unknown}'。强行搭配只会表现为无声而非报错，不值得猜测。" >&2
     return 0
   fi
   # Wine appends the per-architecture subdirectory to each entry, so the directory holding
@@ -209,15 +209,15 @@ bl_directaudio() {
   if [ -f "$reg" ]; then
     if ! grep -q '"Audio"="directaudio"' "$reg" 2>/dev/null; then
       printf '\n[Software\\\\Wine\\\\Drivers] %s\n"Audio"="directaudio"\n' "$(date +%s)" >> "$reg"
-      echo "bannerlator-proton: DirectAudio selected in the prefix" >&2
+      echo "bannerlator-proton: 已在 prefix 中选择 DirectAudio" >&2
     fi
   else
     # A prefix that does not exist yet is created by Proton moments from now, after this runs, so
     # the key lands on the NEXT launch of that game. Said out loud because silent audio on a first
     # launch would otherwise look like a fault.
-    echo "bannerlator-proton: no prefix yet - DirectAudio takes effect the next time this game starts" >&2
+    echo "bannerlator-proton: 尚无 prefix —— DirectAudio 将在下次启动此游戏时生效" >&2
   fi
-  echo "bannerlator-proton: DirectAudio ready (Wine $major)" >&2
+  echo "bannerlator-proton: DirectAudio 就绪（Wine $major）" >&2
 }
 """
 
@@ -257,7 +257,7 @@ for name in %s; do
     exec ${BL_TASKSET:-} /usr/local/bin/bannerlator-game-env "$depot/proton" "$verb" "$@" "${BL_EXTRA_ARGS[@]}"
   fi
 done
-echo "bannerlator-proton: no ARM64 Proton depot yet - the client downloads one as this tool's dependency; retry the launch once it has" >&2
+echo "bannerlator-proton: 尚无 ARM64 Proton depot —— 客户端会将其作为本工具的依赖下载；下载完成后请重试启动" >&2
 exit 1
 """ % " ".join('"%s"' % n for n in SOURCES)
 # Spliced in after the formatting above, never through it: the function body contains ${major%%.*}
@@ -475,7 +475,7 @@ def adopt_extras(tools):
         if not entry_point or entry_point == EXTRA_WRAPPER:
             entry_point = "proton"
         if not os.path.exists(os.path.join(tool_dir, entry_point)):
-            print("bannerlator-steam-compat: %s has no %s; left alone" % (entry, entry_point))
+            print("bannerlator-steam-compat: %s 没有 %s；保持原样" % (entry, entry_point))
             continue
         compat_vdf = os.path.join(tool_dir, "compatibilitytool.vdf")
         name = first_key(compat_vdf, ["compatibilitytools", "compat_tools"]) or entry
@@ -491,7 +491,7 @@ def adopt_extras(tools):
             write_changed(manifest, EXTRA_MANIFEST_VDF)
             write_changed(compat_vdf, EXTRA_COMPAT_TOOL_VDF % (name, entry))
         except OSError as e:
-            print("bannerlator-steam-compat: could not adopt %s (%s)" % (entry, e))
+            print("bannerlator-steam-compat: 无法收编 %s（%s）" % (entry, e))
             continue
         adopted[name] = entry
     return adopted
@@ -600,16 +600,16 @@ def main():
     build_tool(os.path.join(tools, TOOL))
     extras = adopt_extras(tools)
     for name, directory in sorted(extras.items()):
-        print("bannerlator-steam-compat: adopted %s as %s" % (directory, name))
+        print("bannerlator-steam-compat: 已将 %s 收编为 %s" % (directory, name))
     depot = find_source(steam_root)
-    print("bannerlator-steam-compat: registered %s (%s)" % (
-        TOOL, "depot %s present" % os.path.basename(depot) if depot else
-        "no ARM64 Proton depot yet; the session asks the client to fetch it"))
+    print("bannerlator-steam-compat: 已注册 %s（%s）" % (
+        TOOL, "depot %s 已就位" % os.path.basename(depot) if depot else
+        "尚无 ARM64 Proton depot；会话会请求客户端下载"))
     config = os.path.join(steam_root, "config", "config.vdf")
     if os.path.isfile(config):
         apps = installed_apps(steam_root)
         register_default(config, apps, protect=extras)
-        print("bannerlator-steam-compat: default and %d installed title(s) set to %s" % (len(apps), TOOL))
+        print("bannerlator-steam-compat: 已将默认与 %d 个已安装游戏设为 %s" % (len(apps), TOOL))
 
 
 if __name__ == "__main__":

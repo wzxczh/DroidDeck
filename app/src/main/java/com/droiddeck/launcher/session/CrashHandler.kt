@@ -23,12 +23,12 @@ object CrashHandler {
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             try {
-                Log.e(TAG, "uncaught on ${thread.name}", error)
+                Log.e(TAG, "未捕获异常：${thread.name}", error)
                 val dir = SessionPaths.current()
                 if (dir != null && dir.isDirectory) {
                     val trace = StringWriter().also { error.printStackTrace(PrintWriter(it)) }.toString()
                     File(dir, "crash-app.txt").writeText(
-                        "The app itself crashed on thread \"${thread.name}\":\n\n$trace"
+                        "应用自身在线程 “${thread.name}” 上崩溃：\n\n$trace"
                     )
                     val worker = Thread({ SessionArtifacts.collect(context, dir, "app crash") }, "crash-collect")
                     worker.start()

@@ -81,7 +81,7 @@ import com.droiddeck.launcher.core.PhantomProcessLimit
 
 /** What the pad's face buttons do here, along the bottom edge as on a console. */
 @Composable
-internal fun ControllerHints(select: String = "Select", tabs: Boolean = false) {
+internal fun ControllerHints(select: String = "选择", tabs: Boolean = false) {
     val colors = MaterialTheme.colorScheme
     val pal = LocalPalette.current
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -91,9 +91,9 @@ internal fun ControllerHints(select: String = "Select", tabs: Boolean = false) {
             horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.End),
             modifier = Modifier.fillMaxWidth().height(34.dp).background(colors.surface).padding(horizontal = 20.dp),
         ) {
-            if (tabs) HintGlyph("LB RB", "Tabs")
+            if (tabs) HintGlyph("LB RB", "页签")
             HintGlyph("A", select)
-            HintGlyph("B", "Back")
+            HintGlyph("B", "返回")
         }
     }
 }
@@ -144,20 +144,20 @@ internal fun SideRail(
         ) {
             RailItem("Steam", Icons.Outlined.SportsEsports, "steam", selected == "steam", compact, iconOnly, onFocus = { onFocusSelect("steam") }) { onSelect("steam") }
             // Always there, so the items below it never move; an empty library says how to fill it.
-            RailItem("Games", Icons.Outlined.VideoLibrary, "games", selected == "games", compact, iconOnly, onFocus = { onFocusSelect("games") }) { onSelect("games") }
-            RailItem("Desktop", Icons.Outlined.DesktopWindows, "desktop", selected == "desktop", compact, iconOnly, onFocus = { onFocusSelect("desktop") }) { onSelect("desktop") }
-            if (s.storeEnabled) RailItem("Store", Icons.Outlined.Storefront, "store", selected == "store", compact, iconOnly, onFocus = { onFocusSelect("store") }) { onSelect("store") }
-            RailItem("Components", Icons.Outlined.Layers, "components", selected == "components", compact, iconOnly, onFocus = { onFocusSelect("components") }) { onSelect("components") }
+            RailItem("游戏", Icons.Outlined.VideoLibrary, "games", selected == "games", compact, iconOnly, onFocus = { onFocusSelect("games") }) { onSelect("games") }
+            RailItem("桌面", Icons.Outlined.DesktopWindows, "desktop", selected == "desktop", compact, iconOnly, onFocus = { onFocusSelect("desktop") }) { onSelect("desktop") }
+            if (s.storeEnabled) RailItem("商店", Icons.Outlined.Storefront, "store", selected == "store", compact, iconOnly, onFocus = { onFocusSelect("store") }) { onSelect("store") }
+            RailItem("组件", Icons.Outlined.Layers, "components", selected == "components", compact, iconOnly, onFocus = { onFocusSelect("components") }) { onSelect("components") }
             // Home mode's extra section goes last, so it shifts nothing above it.
-            if (s.isHomeApp) RailItem("Apps", Icons.Outlined.Apps, "android-apps", selected == "android-apps", compact, iconOnly, onFocus = { onFocusSelect("android-apps") }) { onSelect("android-apps") }
-            RailItem("Setup", Icons.Outlined.Tune, "setup", selected == "setup", compact, iconOnly, badge = setupNeedsAttention, onFocus = { onFocusSelect("setup") }) { onSelect("setup") }
+            if (s.isHomeApp) RailItem("应用", Icons.Outlined.Apps, "android-apps", selected == "android-apps", compact, iconOnly, onFocus = { onFocusSelect("android-apps") }) { onSelect("android-apps") }
+            RailItem("设置", Icons.Outlined.Tune, "setup", selected == "setup", compact, iconOnly, badge = setupNeedsAttention, onFocus = { onFocusSelect("setup") }) { onSelect("setup") }
         }
         AnimatedVisibility(s.busy, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 8.dp)) {
                 val barWidth = if (iconOnly) 44.dp else 60.dp
                 if (s.percent >= 0) LinearProgressIndicator(progress = { s.percent / 100f }, modifier = Modifier.width(barWidth))
                 else LinearProgressIndicator(modifier = Modifier.width(barWidth))
-                Text(if (s.percent >= 0) "${s.percent}%" else if (iconOnly) "…" else "Working", fontSize = 12.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+                Text(if (s.percent >= 0) "${s.percent}%" else if (iconOnly) "…" else "处理中", fontSize = 12.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
             }
         }
         var lastRunning by remember { mutableStateOf("") }
@@ -247,7 +247,7 @@ private fun ResumeRailItem(name: String, compact: Boolean, iconOnly: Boolean, on
             .border(2.dp, if (focused) pal.signal else Color.Transparent, Shape14)
             .hoverable(src)
             .clickable(interactionSource = src, indication = LocalIndication.current, role = Role.Button, onClick = onResume)
-            .semantics { contentDescription = "Resume $name" }
+            .semantics { contentDescription = "继续 $name" }
             .padding(vertical = if (iconOnly) 15.dp else if (compact) 6.dp else 9.dp, horizontal = 4.dp),
     ) {
         Box(modifier = Modifier.size(14.dp), contentAlignment = Alignment.Center) {
@@ -256,7 +256,7 @@ private fun ResumeRailItem(name: String, compact: Boolean, iconOnly: Boolean, on
         }
         // Icons only: the live dot alone says something is running; its description says what.
         if (!iconOnly) {
-            Text("Resume", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1, softWrap = false)
+            Text("继续", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1, softWrap = false)
             Text(name, fontSize = 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }

@@ -52,7 +52,7 @@ class LinuxNetworkLinkComponent(
         try {
             connectivity.unregisterNetworkCallback(registered)
         } catch (e: IllegalArgumentException) {
-            Log.w(TAG, "Network callback was already gone", e)
+            Log.w(TAG, "网络回调已不存在", e)
         }
     }
 
@@ -63,9 +63,9 @@ class LinuxNetworkLinkComponent(
                 file.parentFile?.mkdirs()
                 val staged = File(file.path + ".staged")
                 staged.writeText(describe(properties))
-                if (!staged.renameTo(file)) throw IOException("Could not replace $file")
+                if (!staged.renameTo(file)) throw IOException("无法替换 $file")
             } catch (e: IOException) {
-                Log.w(TAG, "Could not publish the network link", e)
+                Log.w(TAG, "无法发布网络链路", e)
             }
             writeResolver(properties)
         }
@@ -95,14 +95,14 @@ class LinuxNetworkLinkComponent(
             val etc = File(rootDir, "etc")
             val staged = File(etc, "resolv.conf.staged")
             staged.writeText(text)
-            if (!staged.renameTo(File(etc, "resolv.conf"))) throw IOException("Could not replace resolv.conf")
+            if (!staged.renameTo(File(etc, "resolv.conf"))) throw IOException("无法替换 resolv.conf")
             val hosts = File(etc, "hosts")
             if (!hosts.isFile || !hosts.readText().contains("localhost")) {
                 hosts.writeText("127.0.0.1 localhost\n::1 localhost\n")
             }
-            Log.i(TAG, "resolver: " + servers.joinToString(" "))
+            Log.i(TAG, "解析器：" + servers.joinToString(" "))
         } catch (e: IOException) {
-            Log.w(TAG, "Could not write the resolver", e)
+            Log.w(TAG, "无法写入解析器", e)
         }
     }
 

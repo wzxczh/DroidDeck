@@ -45,9 +45,9 @@ object SessionPaths {
         var made = File(parent, baseName)
         var suffix = 2
         while (made.exists()) made = File(parent, "$baseName-${suffix++}")
-        if (!made.isDirectory && !made.mkdirs()) Log.e(TAG, "could not create $made")
+        if (!made.isDirectory && !made.mkdirs()) Log.e(TAG, "无法创建 $made")
         dir = made
-        Log.i(TAG, "session logs: $made" + if (SessionPrefs.logsEnabled(context)) "" else " (logs off: discarded at the end)")
+        Log.i(TAG, "会话日志：$made" + if (SessionPrefs.logsEnabled(context)) "" else "（日志已关闭：结束时丢弃）")
         return made
     }
 

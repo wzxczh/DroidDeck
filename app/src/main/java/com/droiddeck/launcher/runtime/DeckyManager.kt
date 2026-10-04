@@ -23,7 +23,7 @@ object DeckyManager {
     fun installed(context: Context): String? {
         val loader = loader(context)
         if (!loader.isFile || !loader.canExecute()) return null
-        return File(LinuxRuntime.rootDir(context), VERSION).takeIf { it.isFile }?.readText()?.trim()?.takeIf { it.isNotEmpty() } ?: "Installed"
+        return File(LinuxRuntime.rootDir(context), VERSION).takeIf { it.isFile }?.readText()?.trim()?.takeIf { it.isNotEmpty() } ?: "已安装"
     }
 
     fun loader(context: Context) = File(LinuxRuntime.rootDir(context), PATH)
@@ -91,44 +91,44 @@ object DeckyManager {
                 (if (isPrerelease) prerelease else stable).add(row)
             }
             ReleaseChannels(stable, prerelease)
-        } catch (e: Exception) { Log.w(TAG, "release metadata", e); ReleaseChannels(emptyList(), emptyList()) }
+        } catch (e: Exception) { Log.w(TAG, "发布元数据", e); ReleaseChannels(emptyList(), emptyList()) }
     }
 
     /** Downloads to a sibling temp file and atomically renames only after size, digest and ELF checks. */
     fun install(context: Context, release: Release, progress: (String, Int) -> Unit): String? {
-        if (SessionState.running) return "Stop the active session before installing Decky Loader"
+        if (SessionState.running) return "请先停止当前会话，再安装 Decky Loader"
         val target = loader(context)
         target.parentFile?.mkdirs()
         val temp = File(target.parentFile, "PluginLoader.download")
-        val ok = Downloader.downloadFile(release.url, temp, false) { f -> progress("Downloading ${release.tag}", if (f < 0) -1 else (f * 100).toInt().coerceIn(0, 100)) }
-        if (!ok) { temp.delete(); return "Decky Loader download failed" }
-        if (temp.length() != release.size) { temp.delete(); return "Decky Loader size did not match the release metadata" }
+        val ok = Downloader.downloadFile(release.url, temp, false) { f -> progress("正在下载 ${release.tag}", if (f < 0) -1 else (f * 100).toInt().coerceIn(0, 100)) }
+        if (!ok) { temp.delete(); return "Decky Loader 下载失败" }
+        if (temp.length() != release.size) { temp.delete(); return "Decky Loader 大小与发布元数据不符" }
         val expected = release.digest?.substringAfter(':') ?: release.shaUrl?.let { checksumUrl ->
-            val checksumBody = Downloader.downloadString(checksumUrl) ?: run { temp.delete(); return "Could not download the release checksum" }
+            val checksumBody = Downloader.downloadString(checksumUrl) ?: run { temp.delete(); return "无法下载发布校验和" }
             Regex("(?i)\\b[0-9a-f]{64}\\b").find(checksumBody)?.value
-        } ?: run { temp.delete(); return "Release checksum is missing" }
-        if (!expected.matches(Regex("(?i)[0-9a-f]{64}"))) { temp.delete(); return "Release checksum is invalid" }
-        if (!expected.equals(Hashes.sha256(temp), true)) { temp.delete(); return "Decky Loader checksum mismatch" }
-        if (!validElf(temp, release.machine)) { temp.delete(); return "Release asset is not a compatible 64-bit Linux executable" }
-        if (SessionState.running) { temp.delete(); return "A session started during the download; stop it before installing Decky Loader" }
-        if (!temp.setExecutable(true, false)) { temp.delete(); return "Could not mark PluginLoader executable" }
+        } ?: run { temp.delete(); return "缺少发布校验和" }
+        if (!expected.matches(Regex("(?i)[0-9a-f]{64}"))) { temp.delete(); return "发布校验和无效" }
+        if (!expected.equals(Hashes.sha256(temp), true)) { temp.delete(); return "Decky Loader 校验和不匹配" }
+        if (!validElf(temp, release.machine)) { temp.delete(); return "发布资源不是兼容的 64 位 Linux 可执行文件" }
+        if (SessionState.running) { temp.delete(); return "下载期间会话已启动；请先停止会话再安装 Decky Loader" }
+        if (!temp.setExecutable(true, false)) { temp.delete(); return "无法将 PluginLoader 设为可执行" }
         // Decky needs Steam's local CEF debugger only when its session supervisor is enabled.
         val cefMarker = File(LinuxRuntime.rootDir(context), CEF_REMOTE_DEBUG_MARKER)
         val cefReady = !supervisorEnabled(context) || cefMarker.isFile || runCatching {
             cefMarker.parentFile?.mkdirs()
             cefMarker.createNewFile() || cefMarker.isFile
         }.getOrDefault(false)
-        if (!cefReady) { temp.delete(); return "Could not enable Steam CEF remote debugging" }
+        if (!cefReady) { temp.delete(); return "无法启用 Steam CEF 远程调试" }
         val staged = File(target.parentFile, "PluginLoader.new")
         staged.delete()
-        if (!temp.renameTo(staged)) { temp.delete(); return "Could not stage PluginLoader" }
+        if (!temp.renameTo(staged)) { temp.delete(); return "无法暂存 PluginLoader" }
         val old = File(target.parentFile, "PluginLoader.old")
         old.delete()
-        if (target.exists() && !target.renameTo(old)) { staged.delete(); return "Could not preserve the existing PluginLoader" }
+        if (target.exists() && !target.renameTo(old)) { staged.delete(); return "无法保留现有的 PluginLoader" }
         if (!staged.renameTo(target)) {
             if (old.exists()) old.renameTo(target)
             staged.delete()
-            return "Could not activate the new PluginLoader"
+            return "无法激活新的 PluginLoader"
         }
         old.delete()
         File(target.parentFile, ".droiddeck-decky-version").writeText(release.tag + "\n")

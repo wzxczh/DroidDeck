@@ -34,55 +34,55 @@ object NetworkReport {
                 .replace(Regex("(?m)^(\\s*mac )\\S+"), "$1<masked>")
             target.writeText(text)
         } catch (e: Exception) {
-            Log.w(TAG, "could not write $target", e)
+            Log.w(TAG, "无法写入 $target", e)
         }
     }
 
     private fun build(context: Context): String = buildString {
-        append("Network as the session starts\n")
+        append("会话启动时的网络状况\n")
         append("=============================\n")
-        append("The SSID is deliberately not recorded, and addresses appear as their kind, not their numbers.\n\n")
+        append("SSID 不会被记录，地址只显示类别而不显示具体数值。\n\n")
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val network = cm?.activeNetwork
         if (cm == null || network == null) {
-            append("Active network        none - the phone reports no connection\n")
+            append("活动网络            无 — 手机报告没有连接\n")
         } else {
             val caps = cm.getNetworkCapabilities(network)
             val transport = when {
-                caps == null -> "unknown"
+                caps == null -> "未知"
                 caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "WiFi"
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "cellular"
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "ethernet"
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "蜂窝网络"
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "以太网"
                 caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> "VPN"
-                else -> "other"
+                else -> "其它"
             }
-            append("Transport             ").append(transport).append('\n')
-            append("Validated             ")
-                .append(caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) ?: "unknown")
-                .append("   (false with a working link usually means a captive portal)\n")
-            append("Metered               ")
-                .append(caps?.let { !it.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) } ?: "unknown")
+            append("传输类型            ").append(transport).append('\n')
+            append("已验证              ")
+                .append(caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) ?: "未知")
+                .append("   （链路正常却是 false，通常是强制门户）\n")
+            append("计费网络            ")
+                .append(caps?.let { !it.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) } ?: "未知")
                 .append('\n')
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && caps != null) {
-                append("Link speed            down ").append(caps.linkDownstreamBandwidthKbps)
-                    .append(" kbps / up ").append(caps.linkUpstreamBandwidthKbps).append(" kbps\n")
+                append("链路速度            下行 ").append(caps.linkDownstreamBandwidthKbps)
+                    .append(" kbps / 上行 ").append(caps.linkUpstreamBandwidthKbps).append(" kbps\n")
             }
             val link = cm.getLinkProperties(network)
-            append("Interface             ").append(link?.interfaceName ?: "unknown").append('\n')
+            append("接口                ").append(link?.interfaceName ?: "未知").append('\n')
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                append("MTU                   ").append(link?.mtu ?: 0).append('\n')
+                append("MTU                 ").append(link?.mtu ?: 0).append('\n')
             }
             val v4 = link?.linkAddresses.orEmpty().count { it.address is Inet4Address }
             val v6 = link?.linkAddresses.orEmpty().count { it.address is Inet6Address }
-            append("Addresses             ").append(v4).append(" IPv4, ").append(v6).append(" IPv6")
-                .append(if (v4 == 0) "   (no IPv4 - Steam's content servers need it)" else "").append('\n')
-            append("DNS from the system   ")
-                .append(link?.dnsServers.orEmpty().joinToString(", ") { it.hostAddress ?: "?" }.ifEmpty { "none" })
+            append("地址                ").append(v4).append(" 个 IPv4，").append(v6).append(" 个 IPv6")
+                .append(if (v4 == 0) "   （没有 IPv4 — Steam 的内容服务器需要它）" else "").append('\n')
+            append("系统提供的 DNS      ")
+                .append(link?.dnsServers.orEmpty().joinToString(", ") { it.hostAddress ?: "?" }.ifEmpty { "无" })
                 .append('\n')
-            append("Search domains        ").append(link?.domains ?: "none").append('\n')
+            append("搜索域              ").append(link?.domains ?: "无").append('\n')
         }
 
-        append("\nWhat the runtime was given\n")
+        append("\n运行时拿到的配置\n")
         append("--------------------------\n")
         // The app writes this file from the live link at every change; it is what everything inside
         // the session resolves with, so a mismatch with the system's list above is the bug itself.
@@ -91,16 +91,16 @@ object NetworkReport {
             append("etc/resolv.conf:\n")
             FileUtils.readString(resolv)?.lines()?.forEach { append("    ").append(it).append('\n') }
         } else {
-            append("etc/resolv.conf does not exist yet - written when the session's link is published.\n")
+            append("etc/resolv.conf 尚不存在 — 会话链路发布时才会写入。\n")
         }
         val netdev = File(LinuxRuntime.rootDir(context), "etc/bannerlator-net")
         if (netdev.isFile) {
-            append("\netc/bannerlator-net (the link as the session sees it):\n")
+            append("\netc/bannerlator-net（会话视角下的链路）：\n")
             FileUtils.readString(netdev)?.lines()?.forEach { append("    ").append(it).append('\n') }
         }
-        append("\nproot makes no network namespace, so the session uses the phone's connection\n")
-        append("directly: IPv4 and IPv6 both pass through, and there is nothing to forward.\n")
-        append("The Steam client's own network panel drives NetworkManager over D-Bus, which this\n")
-        append("runtime does not have - \"wifi is off\" there is cosmetic and not evidence.\n")
+        append("\nproot 不创建网络命名空间，会话直接使用手机的连接：\n")
+        append("IPv4 与 IPv6 都直接通行，没有任何转发。\n")
+        append("Steam 客户端自己的网络面板通过 D-Bus 驱动 NetworkManager，而本运行时\n")
+        append("没有 NetworkManager —— 那里显示的 “wifi 已关闭” 只是外观，并非证据。\n")
     }
 }

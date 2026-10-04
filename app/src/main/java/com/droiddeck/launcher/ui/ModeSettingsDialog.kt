@@ -30,9 +30,9 @@ import com.droiddeck.launcher.session.SessionService
 /** [tag] is shown beside the name: [BUNDLED], [DOWNLOADED], [IMPORTED], or "" for Auto / Runtime default. */
 class DriverRow(val id: String, val name: String, val detail: String, val removable: Boolean, val tag: String = "") {
     companion object {
-        const val BUNDLED = "BUNDLED"
-        const val DOWNLOADED = "DOWNLOADED"
-        const val IMPORTED = "IMPORTED"
+        const val BUNDLED = "内置"
+        const val DOWNLOADED = "已下载"
+        const val IMPORTED = "已导入"
     }
 }
 
@@ -81,7 +81,7 @@ class ModeSettings(
     /** Latest Banners-Turnip release: what each driver menu offers to download, and the refresh line. */
     val linuxDownloads: List<DownloadRow> = emptyList(),
     val androidDownloads: List<DownloadRow> = emptyList(),
-    val releaseStatus: String = "Not checked yet - tap refresh to look for new drivers",
+    val releaseStatus: String = "尚未检查 - 点按刷新查找新驱动",
     val releaseChecking: Boolean = false,
     /** A bundled display driver was deleted: the page offers to restore it. */
     val canRestoreBundled: Boolean = false,
@@ -170,10 +170,10 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
     when (driverPage) {
         "rt" -> {
             DriverPage(
-                title = "Runtime driver",
-                hint = (if (steam) "Used by Steam and games." else "Used by desktop apps.") + " Applies next session.",
+                title = "运行时驱动",
+                hint = (if (steam) "Steam 和游戏使用。" else "桌面应用使用。") + "下次会话生效。",
                 rows = s.linuxRows, selected = s.linuxSelected, downloads = s.linuxDownloads,
-                status = s.releaseStatus, checking = s.releaseChecking, importLabel = "Import Turnip zip…", canRestore = false,
+                status = s.releaseStatus, checking = s.releaseChecking, importLabel = "导入 Turnip 压缩包…", canRestore = false,
                 onSelect = a.onSelectLinux, onDelete = a.onRemoveLinux, onRefresh = a.onRefreshReleases,
                 onDownload = a.onDownloadDriver, onImport = a.onImportLinux, onRestore = {}, onBack = { driverPage = null },
             )
@@ -181,10 +181,10 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
         }
         "panel" -> {
             DriverPage(
-                title = "Display driver",
-                hint = "Used by the compositor in both modes. Restart the app to apply.",
+                title = "显示驱动",
+                hint = "两种模式下合成都使用。重启应用后生效。",
                 rows = s.androidRows, selected = s.androidSelected, downloads = s.androidDownloads,
-                status = s.releaseStatus, checking = s.releaseChecking, importLabel = "Import an AdrenoTools zip…",
+                status = s.releaseStatus, checking = s.releaseChecking, importLabel = "导入 AdrenoTools 压缩包…",
                 canRestore = s.canRestoreBundled,
                 onSelect = a.onSelectAndroid, onDelete = a.onRemoveAndroid, onRefresh = a.onRefreshReleases,
                 onDownload = a.onDownloadDriver, onImport = a.onImportAndroid, onRestore = a.onRestoreBundled,
@@ -195,26 +195,26 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
     }
     SettingsPage(
         host,
-        title = if (steam) "Steam session" else "Desktop session",
+        title = if (steam) "Steam 会话" else "桌面会话",
         onBack = a.onDismiss,
         scroll = pageScroll,
     ) {
-        SettingsGroup("Display") {
+        SettingsGroup("显示") {
             val default = SessionPrefs.defaultResolutionCap(s.mode)
             var editCustom by remember { mutableStateOf(false) }
             val custom = s.customResolution
             ChoiceRow(
-                host, "res", "Resolution", "Applies next session.",
-                listOf(720 to "Up to 720p", 900 to "Up to 900p", 1080 to "Up to 1080p", 0 to "The panel's own")
-                    .map { (cap, label) -> cap to (if (cap == default) "$label - the default" else label) } +
-                    (CUSTOM to (custom?.let { "Custom · ${it.first}×${it.second}" } ?: "Custom…")),
-                if (custom != null) CUSTOM else s.resolutionCap, note = "720p can improve menu responsiveness.",
+                host, "res", "分辨率", "下次会话生效。",
+                listOf(720 to "最高 720p", 900 to "最高 900p", 1080 to "最高 1080p", 0 to "屏幕原生")
+                    .map { (cap, label) -> cap to (if (cap == default) "$label - 默认" else label) } +
+                    (CUSTOM to (custom?.let { "自定义 · ${it.first}×${it.second}" } ?: "自定义…")),
+                if (custom != null) CUSTOM else s.resolutionCap, note = "720p 可提升菜单响应速度。",
                 chipModifier = androidx.compose.ui.Modifier.focusRequester(firstChip),
                 onPick = { v -> if (v == CUSTOM) editCustom = true else { a.onCustomResolution(null); a.onResolution(v) } },
             )
             ChoiceRow(
-                host, "shape", "Screen ratio",
-                if (custom != null) "Set by the custom resolution." else "Auto uses at least 16:9.",
+                host, "shape", "屏幕比例",
+                if (custom != null) "由自定义分辨率决定。" else "自动时至少为 16:9。",
                 com.droiddeck.launcher.session.SessionPrefs.shapeChoices, s.shapeMode, enabled = custom == null, onPick = a.onShape,
             )
             if (editCustom) CustomResolutionDialog(
@@ -225,79 +225,79 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
         }
         SettingsGroup("HDR") {
             ToggleRow(
-                host, "hdr", "HDR10 output",
-                s.hdrReason?.let { "Not available: $it." }
-                    ?: "Restart the app to apply.",
+                host, "hdr", "HDR10 输出",
+                s.hdrReason?.let { "不可用：$it。" }
+                    ?: "重启应用后生效。",
                 checked = s.hdr && s.hdrReason == null, enabled = s.hdrReason == null, onChange = a.onHdr,
             )
         }
-        SettingsGroup("Drivers") {
-            SettingsRow("Runtime driver", (if (steam) "Used by Steam and games." else "Used by desktop apps.") + " Applies next session.") {
+        SettingsGroup("驱动") {
+            SettingsRow("运行时驱动", (if (steam) "Steam 和游戏使用。" else "桌面应用使用。") + "下次会话生效。") {
                 ValueChip(
-                    s.linuxRows.firstOrNull { it.id == s.linuxSelected }?.name ?: "Runtime default", open = false,
+                    s.linuxRows.firstOrNull { it.id == s.linuxSelected }?.name ?: "运行时默认", open = false,
                     modifier = androidx.compose.ui.Modifier.focusRequester(runtimeChip),
                 ) { openDriverPage("rt") }
             }
-            SettingsRow("Display driver", "Used by the compositor in both modes. Restart the app to apply.") {
+            SettingsRow("显示驱动", "两种模式下合成都使用。重启应用后生效。") {
                 ValueChip(
-                    s.androidRows.firstOrNull { it.id == s.androidSelected }?.name ?: "Auto - picked by GPU", open = false,
+                    s.androidRows.firstOrNull { it.id == s.androidSelected }?.name ?: "自动 - 按 GPU 选择", open = false,
                     modifier = androidx.compose.ui.Modifier.focusRequester(displayChip),
                 ) { openDriverPage("panel") }
             }
         }
-        SettingsGroup(if (steam) "Touch & controls" else "Touch") {
+        SettingsGroup(if (steam) "触摸与控件" else "触摸") {
             ChoiceRow(
-                host, "touch", "Touch", null,
-                listOf("auto" to "Auto", "touchpad" to "Touchpad", "direct" to "Direct"), s.touchMode,
-                note = "Auto uses touchpad on desktop and direct input in Steam. Touchpad: drag to move, tap to click.",
+                host, "touch", "触摸", null,
+                listOf("auto" to "自动", "touchpad" to "触摸板", "direct" to "直接"), s.touchMode,
+                note = "自动：桌面用触摸板，Steam 内用直接输入。触摸板：拖动移动，轻点单击。",
                 onPick = a.onTouch,
             )
             if (steam && s.oscMode != null) ChoiceRow(
-                host, "osc", "On-screen controls", null,
+                host, "osc", "屏幕控件", null,
                 listOf(
-                    SessionPrefs.OSC_AUTO to "Auto",
-                    SessionPrefs.OSC_ALWAYS to "Always",
+                    SessionPrefs.OSC_AUTO to "自动",
+                    SessionPrefs.OSC_ALWAYS to "始终",
                     SessionPrefs.OSC_STEAM_QAM to "Steam + QAM",
-                    SessionPrefs.OSC_NEVER to "Never",
+                    SessionPrefs.OSC_NEVER to "从不",
                 ), s.oscMode,
-                note = "Auto shows all controls without a controller. Steam + QAM shows only those buttons.", onPick = a.onOsc,
+                note = "无手柄时自动显示全部控件。Steam + QAM 仅显示这些按钮。", onPick = a.onOsc,
             )
             if (steam && s.steamController != null) ChoiceRow(
-                host, "controller", "Controller", "What your controller is to Steam. Applies next session.",
+                host, "controller", "手柄", "手柄对 Steam 的呈现方式。下次会话生效。",
                 listOf(
-                    SessionPrefs.CONTROLLER_DECK to "Steam Deck controller",
-                    SessionPrefs.CONTROLLER_XBOX360 to "Xbox 360 controller",
+                    SessionPrefs.CONTROLLER_DECK to "Steam Deck 手柄",
+                    SessionPrefs.CONTROLLER_XBOX360 to "Xbox 360 手柄",
                 ), s.steamController,
-                note = "Steam Deck controller: Steam reads it as a Deck's own, with its Quick Access button and the device's gyro. " +
-                    "Xbox 360 controller: the plain pad of earlier versions; Quick Access opens with Guide+A.",
+                note = "Steam Deck 手柄：Steam 将其识别为 Deck 原装手柄，带快速访问按键与设备陀螺仪。" +
+                    "Xbox 360 手柄：旧版本的普通手柄；快速访问通过 Guide+A 打开。",
                 onPick = a.onSteamController,
             )
             if (steam) ChoiceRow(
-                host, "back-actions", "Back", SessionPrefs.backActionsOrder(s.backActionsInverted),
+                host, "back-actions", "返回", SessionPrefs.backActionsOrder(s.backActionsInverted),
                 listOf(
                     false to SessionPrefs.BACK_MENU_THEN_QAM,
                     true to SessionPrefs.BACK_QAM_THEN_MENU,
                 ), s.backActionsInverted, onPick = a.onBackActionsInverted,
             )
         }
-        SettingsGroup("Session") {
+        SettingsGroup("会话") {
             ChoiceRow(
-                host, "suspend", "Background behavior",
-                "How this session behaves when the app leaves the screen or the display turns off.",
+                host, "suspend", "后台行为",
+                "应用离开屏幕或屏幕关闭时本会话的行为。",
                 listOf(
-                    SessionPrefs.SUSPEND_AUTO to "Auto",
-                    SessionPrefs.SUSPEND_MANUAL to "Manual",
-                    SessionPrefs.SUSPEND_NEVER to "Never",
+                    SessionPrefs.SUSPEND_AUTO to "自动",
+                    SessionPrefs.SUSPEND_MANUAL to "手动",
+                    SessionPrefs.SUSPEND_NEVER to "从不",
                 ),
                 s.suspendPolicy,
-                note = "Auto pauses in the background and resumes when visible. Manual pauses there and waits for Resume. Never keeps the session running.",
+                note = "自动：在后台暂停，回到前台时继续。手动：在后台暂停并等待继续。从不：保持会话继续运行。",
                 onPick = a.onSuspendPolicy,
             )
         }
-        if (steam) SettingsGroup("Startup") {
+        if (steam) SettingsGroup("启动") {
             ToggleRow(
-                host, "steam-startup", "Run Steam when DroidDeck starts",
-                "Open the Steam session when you launch DroidDeck.",
+                host, "steam-startup", "DroidDeck 启动时运行 Steam",
+                "启动 DroidDeck 时打开 Steam 会话。",
                 s.runSteamAtStartup, onChange = a.onRunSteamAtStartup,
             )
         }
@@ -306,20 +306,20 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
                 s.deckyInstalled != s.deckyLatestRelease.tag
             val status = when {
                 s.deckyStage != null -> s.deckyStage
-                s.deckyChecking -> "Checking compatible releases…"
-                s.deckyInstalled == null && s.deckyLatestRelease != null -> "Ready to install ${s.deckyLatestRelease.tag}."
-                s.deckyInstalled == null -> "No compatible build found. Check again later."
-                s.deckyLatestRelease == null -> "Installed · ${s.deckyInstalled}"
-                updateAvailable -> "Update available · ${s.deckyLatestRelease.tag}"
-                else -> "Up to date · ${s.deckyInstalled}"
+                s.deckyChecking -> "正在检查兼容版本…"
+                s.deckyInstalled == null && s.deckyLatestRelease != null -> "已可安装 ${s.deckyLatestRelease.tag}。"
+                s.deckyInstalled == null -> "未找到兼容版本，请稍后再检查。"
+                s.deckyLatestRelease == null -> "已安装 · ${s.deckyInstalled}"
+                updateAvailable -> "有可用更新 · ${s.deckyLatestRelease.tag}"
+                else -> "已是最新 · ${s.deckyInstalled}"
             }
-            SettingsRow("Loader", status) {
+            SettingsRow("加载器", status) {
                 val action = when {
-                    s.deckyStage != null -> "Working…"
-                    s.deckyChecking -> "Checking…"
-                    s.deckyInstalled == null && s.deckyLatestRelease != null -> "Install latest"
-                    s.deckyInstalled != null && updateAvailable -> "Update"
-                    else -> "Check"
+                    s.deckyStage != null -> "处理中…"
+                    s.deckyChecking -> "检查中…"
+                    s.deckyInstalled == null && s.deckyLatestRelease != null -> "安装最新版"
+                    s.deckyInstalled != null && updateAvailable -> "更新"
+                    else -> "检查"
                 }
                 Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp)) {
                     SecondaryButton(
@@ -330,15 +330,15 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
                         else s.deckyLatestRelease?.let(a.onDeckyInstall)
                     }
                     if (s.deckyInstalled != null) SecondaryButton(
-                        "Uninstall",
+                        "卸载",
                         enabled = s.deckyStage == null && !s.deckySessionRunning,
                     ) { confirmDeckyRemoval = true }
                 }
             }
             if (s.deckyInstalled != null) SettingsRow(
                 "Decky",
-                if (s.deckyEnabled) "Starts with Steam. Other apps on this device may be able to control Steam while enabled."
-                else "Off. Decky stays off and Steam's remote debugging port stays closed.",
+                if (s.deckyEnabled) "随 Steam 启动。开启期间，本设备上的其他应用可能可以控制 Steam。"
+                else "已关闭。Decky 保持禁用，Steam 的远程调试端口保持关闭。",
             ) {
                 Switch(
                     checked = s.deckyEnabled,
@@ -353,41 +353,41 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
                 )
             }
         }
-        if (steam && s.steamChannel != null) SettingsGroup("Client") {
+        if (steam && s.steamChannel != null) SettingsGroup("客户端") {
             ToggleRow(
-                host, "steamdeck", "Steam Deck mode",
-                "Enables Steam's Deck interface and Quick Access performance overlay controls. Applies next session.",
+                host, "steamdeck", "Steam Deck 模式",
+                "启用 Steam 的 Deck 界面与快速访问性能悬浮控件。下次会话生效。",
                 s.steamDeckMode, onChange = a.onSteamDeckMode,
             )
             ChoiceRow(
-                host, "channel", "Client branch", "The Steam client build the session forces. Applies at the next session start; the client may update itself once.",
-                listOf("publicbeta" to "Public beta", "steamdeck_publicbeta" to "Steam Deck public beta"), s.steamChannel,
-                note = "Public beta is what every session ran on before. Steam Deck public beta is the channel Deck mode needs (on public beta it reinstalls the same client at every start) and the one Armada bootstraps from; Deck mode picks it unless you choose here.",
+                host, "channel", "客户端分支", "会话强制使用的 Steam 客户端版本。下次会话启动时生效；客户端可能会自行更新一次。",
+                listOf("publicbeta" to "公开测试版", "steamdeck_publicbeta" to "Steam Deck 公开测试版"), s.steamChannel,
+                note = "公开测试版是此前所有会话使用的分支。Steam Deck 公开测试版是 Deck 模式所需的频道（在公开测试版上它每次启动都会重装同一客户端），也是 Armada 引导所用的频道；除非你在此选择，Deck 模式会自动选用它。",
                 onPick = a.onSteamChannel,
             )
         }
-        if (steam && s.addedGamesDirs != null) SettingsGroup("Added games") {
+        if (steam && s.addedGamesDirs != null) SettingsGroup("已添加游戏") {
             for (dir in s.addedGamesDirs) {
                 val n = s.addedGames.count { it.folderPath.startsWith("$dir/") }
                 ActionRow(
-                    dir.substringAfterLast('/').ifEmpty { dir }, dir + " · " + (if (n == 0) "no game folders with a .exe found" else "$n game${if (n == 1) "" else "s"}") + ". " + stringResource(R.string.added_games_forget_hint),
-                    "Forget", onClick = { a.onForgetAddedGamesDir(dir) },
+                    dir.substringAfterLast('/').ifEmpty { dir }, dir + " · " + (if (n == 0) "未找到含 .exe 的游戏文件夹" else "$n 个游戏${if (n == 1) "" else ""}") + "。" + stringResource(R.string.added_games_forget_hint),
+                    "忘记", onClick = { a.onForgetAddedGamesDir(dir) },
                 )
             }
             ActionRow(
-                if (s.addedGamesDirs.isEmpty()) "Games folder" else "Another games folder",
+                if (s.addedGamesDirs.isEmpty()) "游戏文件夹" else "另一个游戏文件夹",
                 stringResource(R.string.added_games_import_hint),
-                "Add…", onClick = a.onPickAddedGamesDir,
+                "添加…", onClick = a.onPickAddedGamesDir,
             )
             ToggleRow(
-                host, "addedArt", "Artwork from Steam",
-                "A game with no art of its own gets the store's capsule, header, hero and logo for the same title, looked up by folder name. Your own art wins: drop cover.jpg (or poster, boxart, folder, the folder's name), header.jpg, hero.jpg, logo.png or icon.png into the game's folder or its art subfolder.",
+                host, "addedArt", "Steam 封面素材",
+                "没有自己封面图的游戏会按文件夹名从商店获取同名游戏的胶囊图、页头图、主视觉和 Logo。你自己的素材优先：把 cover.jpg（或 poster、boxart、文件夹名）、header.jpg、hero.jpg、logo.png 或 icon.png 放进游戏文件夹或其 art 子文件夹。",
                 s.addedGamesArt, onChange = a.onAddedGamesArt,
             )
             for (g in s.addedGames) ChoiceRow(
-                host, "added:" + g.folderPath, g.folderName, "Launches ${g.exeName}" + (if (s.addedGamesDirs.size > 1) " · in " + g.folderPath.substringBeforeLast('/').substringAfterLast('/') else ""),
-                g.candidates + ("__pick__" to "Choose another file…"), g.exePath,
-                note = "The .exe files found in the game's folder; the one named after the folder, else the largest, is picked unless you choose.",
+                host, "added:" + g.folderPath, g.folderName, "启动 ${g.exeName}" + (if (s.addedGamesDirs.size > 1) " · 位于 " + g.folderPath.substringBeforeLast('/').substringAfterLast('/') else ""),
+                g.candidates + ("__pick__" to "选择其他文件…"), g.exePath,
+                note = "游戏文件夹中找到的 .exe 文件；除非你另行选择，默认选中与文件夹同名的文件，否则选最大的。",
                 onPick = { path -> if (path == "__pick__") a.onPickAddedGameExe(g.folderPath) else a.onAddedGameExe(g.folderPath, path) },
             )
         }
@@ -399,39 +399,39 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
             )
             GameEnvironmentRow()
             if (s.forceFullscreen != null) ToggleRow(
-                host, "fill", "Stretch games to fill the screen",
-                "Keeps games that resize their own window (FlatOut) full screen. Turn it off if a game shows up small in a corner (Quake 3). Applies next session.",
+                host, "fill", "拉伸填满屏幕",
+                "让会自行调整窗口大小的游戏（FlatOut）保持全屏。若游戏在角落里显得很小（Quake 3），请关闭。下次会话生效。",
                 s.forceFullscreen, onChange = a.onForceFullscreen,
             )
         }
-        if (steam && s.directAudio != null && s.mic != null) SettingsGroup("Audio") {
-            ToggleRow(host, "da", "DirectAudio for games", "Bypasses PulseAudio for lower latency in games.", s.directAudio, onChange = a.onDirectAudio)
+        if (steam && s.directAudio != null && s.mic != null) SettingsGroup("音频") {
+            ToggleRow(host, "da", "游戏的 DirectAudio", "绕过 PulseAudio，降低游戏音频延迟。", s.directAudio, onChange = a.onDirectAudio)
             ChoiceRow(
-                host, "clientAudio", "Steam client audio", "Classic is the AAudio sink from 0.1.5. DirectAudio goes through the relay. Applies next session.",
-                listOf("classic" to "Classic", "directaudio" to "DirectAudio"), if (s.clientDirectAudio) "directaudio" else "classic",
+                host, "clientAudio", "Steam 客户端音频", "经典为 0.1.5 使用的 AAudio 输出；DirectAudio 走中继。下次会话生效。",
+                listOf("classic" to "经典", "directaudio" to "DirectAudio"), if (s.clientDirectAudio) "directaudio" else "classic",
                 onPick = { id -> a.onClientDirectAudio(id == "directaudio") },
             )
-            ToggleRow(host, "mic", "Microphone", "Uses the device microphone for voice chat.", s.mic, onChange = a.onMic)
+            ToggleRow(host, "mic", "麦克风", "使用设备麦克风进行语音聊天。", s.mic, onChange = a.onMic)
         }
-        if (steam && s.gameStorage != null) SettingsGroup("Game storage") {
+        if (steam && s.gameStorage != null) SettingsGroup("游戏存储") {
             val custom = s.gameStorage.isNotEmpty() && s.gameStorage != "off" && s.storageOptions.none { it.second == s.gameStorage }
             val options = buildList {
-                add("" to ("Automatic - the SD card when one is in" + (if (s.storageOptions.isEmpty()) " (none right now)" else "")))
-                add("off" to "Internal only")
+                add("" to ("自动 - 插卡时使用 SD 卡" + (if (s.storageOptions.isEmpty()) "（当前没有）" else "")))
+                add("off" to "仅内部存储")
                 for ((label, path) in s.storageOptions) add(path to label)
-                if (custom) add(s.gameStorage to "Folder: ${s.gameStorage}")
+                if (custom) add(s.gameStorage to "文件夹：${s.gameStorage}")
             }
             val open = host.open == "storage"
             SettingsRow(
-                "Second library",
+                "第二 Steam 库",
                 stringResource(R.string.second_library_import_hint),
                 highlighted = open,
             ) {
                 androidx.compose.foundation.layout.Box {
                     ValueChip(options.firstOrNull { it.first == s.gameStorage }?.second?.substringBefore(" -") ?: "-", open) { host.open = if (open) null else "storage" }
                     AnchoredMenu(
-                        open, onDismiss = { if (host.open == "storage") host.open = null }, title = "Second library",
-                        note = "Games that stream assets from SD or shared storage may stutter. Keep them internal.",
+                        open, onDismiss = { if (host.open == "storage") host.open = null }, title = "第二 Steam 库",
+                        note = "从 SD 卡或共享存储流式读取素材的游戏可能卡顿，建议放在内部存储。",
                     ) { firstItemFocus ->
                         options.forEachIndexed { index, (path, label) ->
                             MenuItem(label, checked = path == s.gameStorage, focusRequester = if (index == 0) firstItemFocus else null) {
@@ -439,30 +439,30 @@ fun ModeSettingsPage(s: ModeSettings, a: ModeSettingsActions) {
                                 host.open = null
                             }
                         }
-                        MenuItem("Choose a folder…", checked = false) { host.open = null; a.onPickGameStorageFolder() }
+                        MenuItem("选择文件夹…", checked = false) { host.open = null; a.onPickGameStorageFolder() }
                     }
                 }
             }
         }
-        if (!steam && s.renderer != null) SettingsGroup("Renderer") {
+        if (!steam && s.renderer != null) SettingsGroup("渲染器") {
             ChoiceRow(
-                host, "renderer", "Desktop renderer", "Composites the desktop.",
-                listOf("vulkan" to "vulkan - GPU", "gles2" to "gles2 - GPU (experimental)", "pixman" to "pixman - software"), s.renderer,
-                note = "On Vulkan, programs on the desktop draw with the GPU in their own windows; if it cannot start, " +
-                    "the desktop comes up on pixman. On pixman, games and emulators from the menu open full screen " +
-                    "on the GPU instead (right-click one for a desktop window).",
+                host, "renderer", "桌面渲染器", "负责合成桌面。",
+                listOf("vulkan" to "vulkan - GPU", "gles2" to "gles2 - GPU（实验性）", "pixman" to "pixman - 软件渲染"), s.renderer,
+                note = "使用 Vulkan 时，桌面上的程序在自己的窗口内用 GPU 绘制；若无法启动，" +
+                    "桌面会改用 pixman。使用 pixman 时，从菜单打开的游戏和模拟器会改为在 GPU 上全屏运行" +
+                    "（右键可打开桌面窗口）。",
                 onPick = a.onRenderer,
             )
         }
     }
     if (confirmDeckyRemoval) AlertDialog(
         onDismissRequest = { confirmDeckyRemoval = false },
-        title = { Text("Uninstall Decky Loader?") },
-        text = { Text("Remove the loader and keep your plugins and settings.") },
+        title = { Text("卸载 Decky Loader？") },
+        text = { Text("移除加载器，保留你的插件与设置。") },
         confirmButton = {
-            TextButton(onClick = { confirmDeckyRemoval = false; a.onDeckyUninstall() }) { Text("Uninstall") }
+            TextButton(onClick = { confirmDeckyRemoval = false; a.onDeckyUninstall() }) { Text("卸载") }
         },
-        dismissButton = { TextButton(onClick = { confirmDeckyRemoval = false }) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = { confirmDeckyRemoval = false }) { Text("取消") } },
     )
 }
 
@@ -478,11 +478,11 @@ private fun CustomResolutionDialog(initial: Pair<Int, Int>?, onSave: (Pair<Int, 
     val parsed = SessionPrefs.parseResolution("${w}x$h")
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Custom resolution") },
+        title = { Text("自定义分辨率") },
         text = {
             androidx.compose.foundation.layout.Column {
                 Text(
-                    "The session's display size. It replaces the cap and the shape; a size that does not match the panel's shape gets bars.",
+                    "会话的显示尺寸。它会取代分辨率上限与屏幕比例；与屏幕比例不符时会出现黑边。",
                     fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 androidx.compose.foundation.layout.Row(
@@ -491,12 +491,12 @@ private fun CustomResolutionDialog(initial: Pair<Int, Int>?, onSave: (Pair<Int, 
                 ) {
                     val numbers = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
                     androidx.compose.material3.OutlinedTextField(
-                        w, { v -> w = v.filter(Char::isDigit).take(4) }, label = { Text("Width") },
+                        w, { v -> w = v.filter(Char::isDigit).take(4) }, label = { Text("宽度") },
                         singleLine = true, keyboardOptions = numbers, modifier = Modifier.weight(1f),
                     )
                     Text("×", fontSize = 18.sp, modifier = Modifier.padding(horizontal = 10.dp))
                     androidx.compose.material3.OutlinedTextField(
-                        h, { v -> h = v.filter(Char::isDigit).take(4) }, label = { Text("Height") },
+                        h, { v -> h = v.filter(Char::isDigit).take(4) }, label = { Text("高度") },
                         singleLine = true, keyboardOptions = numbers, modifier = Modifier.weight(1f),
                     )
                 }
@@ -512,12 +512,12 @@ private fun CustomResolutionDialog(initial: Pair<Int, Int>?, onSave: (Pair<Int, 
                     }
                 }
                 if (parsed == null && (w.isNotEmpty() || h.isNotEmpty())) Text(
-                    "Between 320×240 and 3840×2160.", fontSize = 12.sp, color = MaterialTheme.colorScheme.error,
+                    "范围为 320×240 到 3840×2160。", fontSize = 12.sp, color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
         },
-        confirmButton = { androidx.compose.material3.TextButton(enabled = parsed != null, onClick = { parsed?.let(onSave) }) { Text("Use") } },
-        dismissButton = { androidx.compose.material3.TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { androidx.compose.material3.TextButton(enabled = parsed != null, onClick = { parsed?.let(onSave) }) { Text("使用") } },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }

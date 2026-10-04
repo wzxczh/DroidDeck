@@ -35,10 +35,10 @@ object FlathubApi {
     class Category(val id: String, val label: String)
 
     val categories = listOf(
-        Category("Game", "Games"), Category("AudioVideo", "Audio & Video"), Category("Graphics", "Graphics"),
-        Category("Network", "Internet"), Category("Office", "Office"), Category("Development", "Developer"),
-        Category("Education", "Education"), Category("Science", "Science"), Category("System", "System"),
-        Category("Utility", "Utilities"),
+        Category("Game", "游戏"), Category("AudioVideo", "音频与视频"), Category("Graphics", "图形"),
+        Category("Network", "网络"), Category("Office", "办公"), Category("Development", "开发"),
+        Category("Education", "教育"), Category("Science", "科学"), Category("System", "系统"),
+        Category("Utility", "实用工具"),
     )
 
     /** Front-page collections: popular, trending, recently-updated, recently-added. */
@@ -115,7 +115,7 @@ object FlathubApi {
             )
         }.filter { it.id.isNotEmpty() }
     } catch (e: Exception) {
-        Log.w(TAG, "hits: $e"); null
+        Log.w(TAG, "读取搜索结果失败：$e"); null
     }
 
     /** AppStream descriptions are a small HTML subset: paragraphs and lists become lines. */

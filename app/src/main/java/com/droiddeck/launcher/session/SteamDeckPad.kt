@@ -95,10 +95,10 @@ object SteamDeckPad {
             val udevData = File(LinuxRuntime.rootDir(context), "run/udev/data").apply { mkdirs() }
             File(udevData, "c$MAJOR:$MINOR").writeText("I:1\nE:ID_INPUT=1\nE:ID_INPUT_JOYSTICK=1\n")
 
-            Log.i(TAG, "deck pad: /dev/$NODE described as a Steam Deck controller (28de:1205)")
+            Log.i(TAG, "手柄：/dev/$NODE 已描述为 Steam Deck 控制器（28de:1205）")
             listOf(devices.path + ":" + GUEST_DEVICES, hidrawClass.path + ":/sys/class/hidraw")
         } catch (e: Exception) {
-            Log.w(TAG, "deck pad: could not describe the pad as a Deck controller: $e")
+            Log.w(TAG, "手柄：无法把手柄描述为 Deck 控制器：$e")
             emptyList()
         }
     }

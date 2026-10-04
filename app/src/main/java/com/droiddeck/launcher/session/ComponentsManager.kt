@@ -123,7 +123,7 @@ object ComponentsManager {
         tmp.writeText(state.toString(2))
         tmp.renameTo(f)
         // Every change of choice reaches the launch wrappers at once.
-        runCatching { syncLaunchState(context, state) }.onFailure { Log.w(TAG, "launch state", it) }
+        runCatching { syncLaunchState(context, state) }.onFailure { Log.w(TAG, "启动状态", it) }
     }
 
     private fun JSONObject.sub(key: String): JSONObject = optJSONObject(key) ?: JSONObject().also { put(key, it) }
@@ -145,8 +145,8 @@ object ComponentsManager {
                 if (originals.isDirectory) originals.copyRecursively(originalsDir(context), overwrite = false)
                 val ps = File(plugin, "state.json")
                 if (ps.isFile && !stateFile(context).isFile) ps.copyTo(stateFile(context))
-                Log.i(TAG, "took over the Decky plugin's data from $plugin")
-            }.onFailure { Log.w(TAG, "plugin data import", it) }
+                Log.i(TAG, "已接管 Decky 插件 $plugin 的数据")
+            }.onFailure { Log.w(TAG, "插件数据导入", it) }
         }
         marker.writeText("1\n")
     }
@@ -196,7 +196,7 @@ object ComponentsManager {
     }
 
     private fun proton(context: Context, id: String) = protons(context).firstOrNull { it.id == id }
-        ?: throw IllegalStateException("No Proton with id $id")
+        ?: throw IllegalStateException("没有 id 为 $id 的 Proton")
 
     /**
      * Is anything running on this Proton right now - a game, or the client's own start-up runs,
@@ -234,7 +234,7 @@ object ComponentsManager {
         if (!dll.isFile) return ""
         val text = runCatching { String(dll.readBytes(), Charsets.ISO_8859_1) }.getOrDefault("")
         return Regex("FEX-\\d{4}(?:\\.\\d+)?(?:-\\d+-g[0-9a-f]{6,})?").findAll(text).map { it.value }.maxByOrNull { it.length }
-            ?: "FEX (build without a version name)"
+            ?: "FEX（构建无版本名）"
     }
 
     private fun compFiles(dir: File, comp: String): List<String> {
@@ -260,12 +260,12 @@ object ComponentsManager {
             val e = tar.nextTarEntry ?: break
             if (!e.isDirectory && normalize(e.name) == "profile.json") return@readWcp JSONObject(tar.readBytes().decodeToString())
         }
-        throw IllegalArgumentException("no profile.json in ${f.name}")
+        throw IllegalArgumentException("${f.name} 中没有 profile.json")
     }
 
     private fun packageInfo(f: File): Package {
         val prof = readProfile(f)
-        val comp = TYPES[prof.optString("type")] ?: throw IllegalArgumentException("${f.name} is not a Linux component package (type ${prof.optString("type")})")
+        val comp = TYPES[prof.optString("type")] ?: throw IllegalArgumentException("${f.name} 不是 Linux 组件包（type ${prof.optString("type")}）")
         return Package(f.name, comp, prof.optString("versionName", f.nameWithoutExtension), prof.optString("description"), f.length())
     }
 
@@ -283,13 +283,13 @@ object ComponentsManager {
                     val e = tar.nextTarEntry ?: break
                     val rel = normalize(e.name)
                     if (e.isDirectory || !rel.startsWith("files/")) continue
-                    require(rel.split('/').none { it == ".." }) { "unsafe path $rel" }
+                    require(rel.split('/').none { it == ".." }) { "不安全的路径 $rel" }
                     val out = File(staged, rel)
                     out.parentFile?.mkdirs()
                     FileOutputStream(out).use { tar.copyTo(it) }
                 }
             }
-            require(File(staged, "files").isDirectory) { "${wcp.name} has no files/" }
+            require(File(staged, "files").isDirectory) { "${wcp.name} 中没有 files/" }
             COMP_DIR[comp]?.let { compDir ->
                 for (arch in PE_ARCHES) {
                     val target = File(dir, "$compDir/$arch")
@@ -306,7 +306,7 @@ object ComponentsManager {
                 src.copyTo(tmp, overwrite = true)
                 if (rel.endsWith(".so")) tmp.setExecutable(true, false)
                 tmp.setReadable(true, false)
-                if (!tmp.renameTo(dst)) { dst.delete(); check(tmp.renameTo(dst)) { "could not place $rel" } }
+                if (!tmp.renameTo(dst)) { dst.delete(); check(tmp.renameTo(dst)) { "无法写入 $rel" } }
                 hashes[rel] = Hashes.sha256(dst)
             }
             return hashes
@@ -367,7 +367,7 @@ object ComponentsManager {
             .put("description", "Original · ${p.name} · ${p.version} · ${LABEL.getValue(comp)} $current".trim())
             .put("files", JSONArray(rels.map { JSONObject().put("source", it).put("target", "\${proton}/$it") }))
         writeWcp(dest, profile, p.dir, rels)
-        Log.i(TAG, "saved original $comp of ${p.name} ${p.version}")
+        Log.i(TAG, "已保存 ${p.name} ${p.version} 的原始 $comp")
     }
 
     /** Saves the originals of every Proton build not seen yet (first open, and after a Steam update). */
@@ -375,9 +375,9 @@ object ComponentsManager {
         migratePlugin(context)
         val state = loadState(context)
         for (p in protons(context)) for (comp in COMPONENTS) {
-            runCatching { ensureOriginal(context, p, comp, state) }.onFailure { Log.w(TAG, "original $comp of ${p.name}", it) }
+            runCatching { ensureOriginal(context, p, comp, state) }.onFailure { Log.w(TAG, "${p.name} 的原始 $comp", it) }
         }
-        runCatching { syncLaunchState(context, state) }.onFailure { Log.w(TAG, "launch state", it) }
+        runCatching { syncLaunchState(context, state) }.onFailure { Log.w(TAG, "启动状态", it) }
     }
 
     // ------------------------------------------------------------------ view
@@ -395,21 +395,21 @@ object ComponentsManager {
         val views = protons(context).map { p ->
             val comps = COMPONENTS.associateWith { comp ->
                 val detected = if (comp == "fex") fexVersion(p.dir) else readVersionFile(File(p.dir, "${COMP_DIR.getValue(comp)}/version"))
-                val detail = if (comp == "fex") (if (File(p.dir, FEX_FILES[2]).isFile) "with Linux helpers" else "DLLs only") else ""
+                val detail = if (comp == "fex") (if (File(p.dir, FEX_FILES[2]).isFile) "含 Linux 辅助库" else "仅 DLL") else ""
                 val active = state.sub("active").optJSONObject(p.id)?.optJSONObject(comp)
                 val inUseLabel = when {
-                    active == null -> "Original"
-                    active.optString("protonVersion") != p.version -> "Original (Proton updated since the last swap)"
+                    active == null -> "原始"
+                    active.optString("protonVersion") != p.version -> "原始（上次交换后 Proton 已更新）"
                     else -> {
                         val want = active.optJSONObject("files") ?: JSONObject()
                         val fp = fingerprint(p.dir, comp)
                         if (want.keys().asSequence().all { fp[it] == want.optString(it) }) active.optString("label", active.optString("file"))
-                        else "Changed outside Components"
+                        else "在组件之外被更改"
                     }
                 }
                 val q = state.sub("queued").optJSONObject(p.id)?.optJSONObject(comp)
                 Component(
-                    detected.ifEmpty { "not present" }, detail, inUseLabel,
+                    detected.ifEmpty { "未检测到" }, detail, inUseLabel,
                     active?.optString("file")?.takeIf { active.optString("protonVersion") == p.version },
                     q?.optString("label"),
                 )
@@ -492,12 +492,12 @@ object ComponentsManager {
         if (inUse(p)) {
             state.sub("queued").sub(p.id).put(info.comp, JSONObject().put("kind", "package").put("file", wcp.name).put("label", info.version))
             saveState(context, state)
-            return "${LABEL[info.comp]} ${info.version} goes into ${p.name} when the game running on it closes."
+            return "${LABEL[info.comp]} ${info.version} 将在当前游戏退出后写入 ${p.name}。"
         }
         applyPackage(context, p, info, wcp, state)
         state.sub("queued").optJSONObject(p.id)?.remove(info.comp)
         saveState(context, state)
-        "${LABEL[info.comp]} ${info.version} is now in ${p.name}. It applies the next time a game starts."
+        "${LABEL[info.comp]} ${info.version} 已写入 ${p.name}，将在下次启动游戏时生效。"
     }
 
     private fun applyPackage(context: Context, p: Proton, info: Package, wcp: File, state: JSONObject) {
@@ -507,23 +507,23 @@ object ComponentsManager {
             .put("file", wcp.name).put("label", info.version).put("protonVersion", p.version)
             .put("files", JSONObject(hashes.filterKeys { owned(info.comp, it) } as Map<*, *>))
             .put("at", System.currentTimeMillis() / 1000))
-        Log.i(TAG, "swapped ${info.comp} ${info.version} into ${p.name} ${p.version}")
+        Log.i(TAG, "已将 ${info.comp} ${info.version} 替换进 ${p.name} ${p.version}")
     }
 
     fun restore(context: Context, protonId: String, comp: String, protonVersion: String): String = synchronized(lock) {
         val p = proton(context, protonId)
         val wcp = File(originalsDir(context), "$protonId/${safeName(protonVersion)}/$comp.wcp")
-        check(wcp.isFile) { "That original bundle is not stored" }
+        check(wcp.isFile) { "该原始文件包未保存" }
         val state = loadState(context)
         if (inUse(p)) {
-            state.sub("queued").sub(p.id).put(comp, JSONObject().put("kind", "original").put("protonVersion", protonVersion).put("label", "Original $protonVersion"))
+            state.sub("queued").sub(p.id).put(comp, JSONObject().put("kind", "original").put("protonVersion", protonVersion).put("label", "原始 $protonVersion"))
             saveState(context, state)
-            return "${LABEL[comp]} of ${p.name} goes back to its original when the game running on it closes."
+            return "${p.name} 的 ${LABEL[comp]} 将在当前游戏退出后恢复为原始版本。"
         }
         applyOriginal(context, p, comp, protonVersion, wcp, state)
         state.sub("queued").optJSONObject(p.id)?.remove(comp)
         saveState(context, state)
-        "${LABEL[comp]} of ${p.name} restored from its $protonVersion original."
+        "已用 $protonVersion 原始版本恢复 ${p.name} 的 ${LABEL[comp]}。"
     }
 
     private fun applyOriginal(context: Context, p: Proton, comp: String, protonVersion: String, wcp: File, state: JSONObject) {
@@ -532,7 +532,7 @@ object ComponentsManager {
         installFiles(context, p.dir, comp, wcp)
         val active = state.sub("active").sub(p.id)
         if (current) active.remove(comp)
-        else active.put(comp, JSONObject().put("file", "original $protonVersion").put("label", "Original from $protonVersion")
+        else active.put(comp, JSONObject().put("file", "original $protonVersion").put("label", "来自 $protonVersion 的原始版本")
             .put("protonVersion", p.version).put("files", JSONObject(fingerprint(p.dir, comp) as Map<*, *>)).put("at", System.currentTimeMillis() / 1000))
     }
 
@@ -558,7 +558,7 @@ object ComponentsManager {
                         applyPackage(context, p, packageInfo(wcp), wcp, state)
                     }
                     done += "${LABEL[comp]} ${q.optString("label")} → ${p.name}"
-                }.onFailure { Log.w(TAG, "queued $comp for ${p.name}", it) }
+                }.onFailure { Log.w(TAG, "已为 ${p.name} 排队 $comp", it) }
                 comps.remove(comp)
             }
             if (comps.length() == 0) queued.remove(pid)
@@ -579,22 +579,22 @@ object ComponentsManager {
         val active = state.sub("active")
         for (pid in active.keys()) {
             val comps = active.optJSONObject(pid) ?: continue
-            for (comp in comps.keys()) check(comps.optJSONObject(comp)?.optString("file") != name) { "$name is in use in $pid. Swap that Proton to something else first." }
+            for (comp in comps.keys()) check(comps.optJSONObject(comp)?.optString("file") != name) { "$name 正在 $pid 中使用。请先将该 Proton 切换到其他版本。" }
         }
         val f = File(packagesDir(context), name)
-        check(f.isFile) { "$name is not stored" }
+        check(f.isFile) { "$name 未保存" }
         f.delete()
-        "Deleted $name."
+        "已删除 $name。"
     }
 
     fun deleteOriginal(context: Context, protonId: String, comp: String, protonVersion: String): String = synchronized(lock) {
         val p = proton(context, protonId)
-        check(safeName(p.version) != protonVersion) { "The installed build's original is kept: it is the way back." }
+        check(safeName(p.version) != protonVersion) { "已安装版本的原始文件被保留：它是恢复的途径。" }
         val f = File(originalsDir(context), "$protonId/${safeName(protonVersion)}/$comp.wcp")
-        check(f.isFile) { "Not stored" }
+        check(f.isFile) { "未保存" }
         f.delete()
         f.parentFile?.takeIf { it.listFiles().isNullOrEmpty() }?.delete()
-        "Deleted the $protonVersion original of ${LABEL[comp]}."
+        "已删除 ${LABEL[comp]} 的 $protonVersion 原始版本。"
     }
 
     /** Imports a -linux .wcp from anywhere the app can read (the file picker hands over a copy). */
@@ -642,13 +642,13 @@ object ComponentsManager {
 
     /** Downloads a catalog item into storage, verifying the release's sha256 and the package type. */
     fun download(context: Context, item: CatalogItem, progress: (Int) -> Unit): Package {
-        require(item.url.startsWith("https://github.com/$NIGHTLIES/releases/download/")) { "Downloads come only from the Nightlies releases" }
-        require(Hashes.isGithubSha256(item.digest)) { "This package list predates checksums - refresh it and try again" }
+        require(item.url.startsWith("https://github.com/$NIGHTLIES/releases/download/")) { "下载仅允许来自 Nightlies 发布" }
+        require(Hashes.isGithubSha256(item.digest)) { "此包列表产生于校验和支持之前 - 请刷新后重试" }
         val dest = File(packagesDir(context), safeName(item.file))
         val part = File(dest.parentFile, dest.name + ".part")
         part.delete()
-        check(Downloader.downloadFile(item.url, part, false) { f -> progress(if (f < 0) -1 else (f * 100).toInt().coerceIn(0, 100)) }) { "Download failed" }
-        if (!Hashes.sha256(part).equals(item.digest.substringAfter(':'), true)) { part.delete(); error("Checksum mismatch") }
+        check(Downloader.downloadFile(item.url, part, false) { f -> progress(if (f < 0) -1 else (f * 100).toInt().coerceIn(0, 100)) }) { "下载失败" }
+        if (!Hashes.sha256(part).equals(item.digest.substringAfter(':'), true)) { part.delete(); error("校验和不匹配") }
         val info = runCatching { packageInfo(part) }.getOrElse { part.delete(); throw it }
         synchronized(lock) { part.renameTo(dest) }
         return info.copy(file = dest.name)

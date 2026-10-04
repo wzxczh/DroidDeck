@@ -39,7 +39,7 @@ python-gobject /usr/lib/python3*/site-packages/gi/__init__.py
 NEEDS
 WORK=/var/cache/droiddeck-flatpak
 CONF=$WORK/pacman.conf
-mkdir -p "$WORK/pkg" "$WORK/db" || fail "cannot create $WORK"
+mkdir -p "$WORK/pkg" "$WORK/db" || fail "无法创建 $WORK"
 
 # The image's pacman.conf names a download user this rootfs does not have (only root exists) and a
 # sandbox proot cannot set up. Its one mirror is plain HTTP; these serve the same repos over TLS.
@@ -50,37 +50,37 @@ mkdir -p "$WORK/pkg" "$WORK/db" || fail "cannot create $WORK"
 sed -e 's/^DownloadUser/#DownloadUser/' \
     -e 's/^\[options\]/[options]\nDisableSandbox/' \
     -e "s#^Include *= */etc/pacman.d/mirrorlist#Include = $WORK/mirrorlist#" \
-    /etc/pacman.conf > "$CONF" || fail "no /etc/pacman.conf"
+    /etc/pacman.conf > "$CONF" || fail "没有 /etc/pacman.conf"
 
 if [ ! -f /etc/pacman.d/gnupg/pubring.gpg ] && [ ! -f /etc/pacman.d/gnupg/pubring.kbx ]; then
-  step "Preparing the package keyring"
-  pacman-key --init >/dev/null 2>&1 || fail "pacman-key --init failed"
-  pacman-key --populate archlinuxarm >/dev/null 2>&1 || fail "pacman-key --populate failed"
+  step "正在准备软件包密钥环"
+  pacman-key --init >/dev/null 2>&1 || fail "pacman-key --init 失败"
+  pacman-key --populate archlinuxarm >/dev/null 2>&1 || fail "pacman-key --populate 失败"
 fi
 
 # A database of our own, so the image's stays exactly as it was built: -Sy on it would leave the
 # rest of the image a partial upgrade behind the repos.
-step "Reading the package lists"
+step "正在读取软件包列表"
 pacman --config "$CONF" --dbpath "$WORK/db" --noconfirm -Sy >/dev/null 2>&1 \
   || pacman --config "$CONF" --dbpath "$WORK/db" --noconfirm -Sy 2>&1 | tail -3 \
-  || fail "could not reach the Arch Linux ARM mirrors"
-[ -f "$WORK/db/sync/extra.db" ] || fail "could not reach the Arch Linux ARM mirrors"
+  || fail "无法连接 Arch Linux ARM 镜像"
+[ -f "$WORK/db/sync/extra.db" ] || fail "无法连接 Arch Linux ARM 镜像"
 
-step "Downloading Flatpak"
+step "正在下载 Flatpak"
 # -w only downloads; pacman still checks each package's signature against the keyring. -dd: the
 # dependencies are already in the image (and checked below by what the binaries actually link).
 out=$(pacman --config "$CONF" --dbpath "$WORK/db" --cachedir "$WORK/pkg" --noconfirm -Sw -dd $PACKAGES 2>&1)
 rc=$?
 echo "$out" | grep -vE '^\s*$' | tail -4
-[ $rc -eq 0 ] || fail "download failed"
+[ $rc -eq 0 ] || fail "下载失败"
 
-step "Installing Flatpak"
+step "正在安装 Flatpak"
 for name in $PACKAGES; do
   ver=$(pacman --config "$CONF" --dbpath "$WORK/db" -Sp --print-format '%v' -dd "$name" 2>/dev/null | tail -1)
   file=$(ls "$WORK/pkg/$name-$ver-"*.pkg.tar.* 2>/dev/null | grep -v '\.sig$' | head -1)
-  [ -n "$file" ] || fail "no package file for $name $ver"
+  [ -n "$file" ] || fail "找不到软件包文件：$name $ver"
   bsdtar -xpf "$file" -C / --exclude .PKGINFO --exclude .BUILDINFO --exclude .MTREE --exclude .INSTALL \
-    || fail "could not unpack $name"
+    || fail "无法解包 $name"
   echo "$name $ver" >> "$WORK/installed.new"
 done
 mv -f "$WORK/installed.new" "$WORK/installed"
@@ -91,12 +91,12 @@ find "$WORK/pkg" -type f -mtime +1 -delete 2>/dev/null
 missing=$(for f in /usr/bin/flatpak /usr/lib/libflatpak.so.0 /usr/lib/libostree-1.so.1 /usr/bin/xdg-dbus-proxy; do
   ldd "$f" 2>&1 | grep -E 'not found|version .* not found'
 done | sort -u)
-[ -z "$missing" ] || { echo "$missing"; fail "Flatpak is missing libraries"; }
-flatpak --version >/dev/null 2>&1 || fail "flatpak does not start"
+[ -z "$missing" ] || { echo "$missing"; fail "Flatpak 缺少依赖库"; }
+flatpak --version >/dev/null 2>&1 || fail "flatpak 无法启动"
 python3 -c 'import gi; gi.require_version("Flatpak", "1.0"); from gi.repository import Flatpak' 2>/dev/null \
-  || fail "the store helper cannot load libflatpak from Python"
+  || fail "商店助手无法从 Python 加载 libflatpak"
 
-step "Adding Flathub"
+step "正在添加 Flathub"
 export FLATPAK_BWRAP=/usr/local/bin/bannerlator-bwrap
 # Flathub's descriptor - its URL and the key its commits are signed with - is carried here rather
 # than fetched: adding the remote then needs no network, and a descriptor that did not arrive
@@ -116,6 +116,6 @@ if ! flatpak remote-list --user --columns=name 2>/dev/null | grep -qx flathub; t
   rc=$?
   echo "$out"
   # What Flatpak said goes up with the failure, so the app can show it rather than a guess.
-  [ $rc -eq 0 ] || fail "could not add the Flathub remote: $(echo "$out" | grep -v '^[[:space:]]*$' | tail -1)"
+  [ $rc -eq 0 ] || fail "无法添加 Flathub 远程仓库：$(echo "$out" | grep -v '^[[:space:]]*$' | tail -1)"
 fi
 echo "== DONE $(flatpak --version)"

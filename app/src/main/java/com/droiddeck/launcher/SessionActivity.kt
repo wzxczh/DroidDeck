@@ -227,7 +227,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
 
         // No runtime is not a reason to leave: the loading screen installs it (installThenStart,
         // below) and the session starts when it is in.
-        if (!LinuxRuntime.isInstalled(this)) Log.i(TAG, "the Linux runtime is not installed; the loading screen installs it")
+        if (!LinuxRuntime.isInstalled(this)) Log.i(TAG, "Linux 运行时未安装；加载屏幕会负责安装")
 
         val root = FrameLayout(this)
         surfaceView = SurfaceView(this)
@@ -339,7 +339,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                         padBridge?.releaseAll()
                         androidx.compose.runtime.withFrameNanos { }
                         val requested = sessionOverlay.requestFocus()
-                        Log.i(TAG, "drawer root focus requested=$requested focused=${sessionOverlay.hasFocus()}")
+                        Log.i(TAG, "抽屉根焦点 requested=$requested focused=${sessionOverlay.hasFocus()}")
                     } else {
                         releaseDrawerDirection()
                     }
@@ -354,7 +354,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                 SessionDrawer(drawerOpen, drawerPage, drawerControllerActive, onPageChange = { drawerPage = it }, a = DrawerActions(
                     steam = SessionState.mode == SessionService.MODE_STEAM,
                     title = if (SessionState.mode == SessionService.MODE_RUN)
-                        com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "Game" else null,
+                        com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "游戏" else null,
                     isHomeApp = isHomeApp,
                     androidApps = androidApps,
                     hudOn = hudOn,
@@ -362,7 +362,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                     frameGenEngine = frameGenEngine, frameGenMultiplier = frameGenMultiplier,
                     lsfgReady = LsfgNative.isInstalled(this@SessionActivity),
                     oscMode = oscMode, suspendPolicy = suspendPolicy, touchMode = touchMode,
-                    touchAuto = if (usingTouchpad()) "touchpad" else "direct",
+                    touchAuto = if (usingTouchpad()) "触摸板" else "直接",
                     shapeMode = shapeMode, fexPreset = fexPreset,
                     secondScreenMode = secondScreenMode,
                     secondScreenDisplays = secondScreenDisplays,
@@ -409,9 +409,9 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                         try {
                             HomeApp.launch(this@SessionActivity, app, displayId)
                         } catch (_: Exception) {
-                            val target = if (displayId == null || displayId == Display.DEFAULT_DISPLAY) "the primary screen"
-                                else secondScreenDisplays.firstOrNull { it.id == displayId }?.label ?: "display $displayId"
-                            Toast.makeText(this@SessionActivity, "Could not open ${app.label} on $target", Toast.LENGTH_SHORT).show()
+                            val target = if (displayId == null || displayId == Display.DEFAULT_DISPLAY) "主屏幕"
+                                else secondScreenDisplays.firstOrNull { it.id == displayId }?.label ?: "显示器 $displayId"
+                            Toast.makeText(this@SessionActivity, "无法在 $target 打开 ${app.label}", Toast.LENGTH_SHORT).show()
                         }
                     },
                     onBackground = { drawerOpen = false; moveTaskToBack(true) },
@@ -502,7 +502,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             val snap = runCatching { ComponentsManager.snapshot(this) }.getOrNull()
             uiHandler.post {
                 drawerComponents = snap
-                if (applied.isNotEmpty()) android.widget.Toast.makeText(this, "Applied: " + applied.joinToString(", "), android.widget.Toast.LENGTH_LONG).show()
+                if (applied.isNotEmpty()) android.widget.Toast.makeText(this, "已应用：" + applied.joinToString("、"), android.widget.Toast.LENGTH_LONG).show()
             }
         }, "drawer-components").start()
     }
@@ -517,10 +517,10 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                 val current = active ?: "orig:$build"
                 if (queued != null && value == current) {
                     // Picking what is already in place again cancels the swap waiting for the game.
-                    ComponentsManager.cancelQueued(this, protonId, comp); "The waiting swap was cancelled."
+                    ComponentsManager.cancelQueued(this, protonId, comp); "已取消等待中的替换。"
                 } else if (value.startsWith("orig:")) ComponentsManager.restore(this, protonId, comp, value.removePrefix("orig:"))
                 else ComponentsManager.swap(this, protonId, value)
-            }.getOrElse { e -> "Swap failed: ${e.message ?: e.javaClass.simpleName}" }
+            }.getOrElse { e -> "替换失败：${e.message ?: e.javaClass.simpleName}" }
             uiHandler.post {
                 android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show()
                 refreshDrawerComponents()
@@ -534,40 +534,40 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         else intent.getStringExtra(SessionService.EXTRA_MODE) ?: SessionService.MODE_STEAM
 
     private fun pausedTitle(): String = when (SessionState.mode) {
-        SessionService.MODE_DESKTOP -> "The desktop is paused"
-        SessionService.MODE_RUN -> (com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "The program") + " is paused"
-        else -> "Steam is paused"
+        SessionService.MODE_DESKTOP -> "桌面已暂停"
+        SessionService.MODE_RUN -> (com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "该程序") + " 已暂停"
+        else -> "Steam 已暂停"
     }
 
     private fun loadingTitle(): String = when (loadingMode()) {
         SessionService.MODE_DESKTOP ->
-            if (!SessionState.running && intent.getStringExtra(SessionService.EXTRA_STEAM_UI) != null) "Starting Steam on the desktop"
-            else "Starting the desktop"
+            if (!SessionState.running && intent.getStringExtra(SessionService.EXTRA_STEAM_UI) != null) "在桌面上启动 Steam"
+            else "正在启动桌面"
         SessionService.MODE_RUN -> {
             val program = if (SessionState.running) SessionState.program else intent.getStringExtra(SessionService.EXTRA_PROGRAM)
-            "Starting " + (com.droiddeck.launcher.frontend.Library.nameForProgram(program) ?: "the program")
+            "正在启动 " + (com.droiddeck.launcher.frontend.Library.nameForProgram(program) ?: "该程序")
         }
-        else -> "Starting Steam"
+        else -> "正在启动 Steam"
     }
 
     private fun shareCurrentSessionLogs() {
         val folder = SessionPaths.current()
         if (folder == null || !folder.isDirectory) {
-            Toast.makeText(this, "No logs for this session.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "本次会话没有日志。", Toast.LENGTH_LONG).show()
             return
         }
         Thread({
             val zip = runCatching { SessionLogShare.zipFolder(this, folder) }
-                .onFailure { Log.w(TAG, "could not package current session logs", it) }
+                .onFailure { Log.w(TAG, "无法打包当前会话日志", it) }
                 .getOrNull()
             uiHandler.post {
                 if (zip == null) {
-                    Toast.makeText(this, "Could not create the session log archive.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "无法创建会话日志压缩包。", Toast.LENGTH_LONG).show()
                 } else {
                     runCatching { startActivity(SessionLogShare.shareIntent(this, zip)) }
                         .onFailure {
-                            Log.w(TAG, "could not share current session logs", it)
-                            Toast.makeText(this, "Could not share the session logs.", Toast.LENGTH_LONG).show()
+                            Log.w(TAG, "无法分享当前会话日志", it)
+                            Toast.makeText(this, "无法共享会话日志。", Toast.LENGTH_LONG).show()
                         }
                 }
             }
@@ -612,8 +612,8 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             "${SessionState.installing}.installing",
             mapOf("component" to SessionState.installing),
         )
-        loading.step = if (runtime) "downloading the Linux runtime" else if (desktop) "downloading the desktop"
-                       else "downloading Proton Experimental (ARM64)"
+        loading.step = if (runtime) "正在下载 Linux 运行时" else if (desktop) "正在下载桌面"
+                       else "正在下载 Proton Experimental (ARM64)"
         loading.percent = -1
         Thread({
             var failedComponent: String? = null
@@ -654,7 +654,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                     return@post
                 }
                 loading.percent = -1
-                loading.step = "Starting the session…"
+                loading.step = "正在启动会话…"
                 // The surface may have come and gone while the download ran; start on the live one.
                 if (surfaceView.holder.surface?.isValid == true) surfaceCreated(surfaceView.holder)
             }
@@ -675,9 +675,9 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         uiHandler.post {
             loading.percent = p
             loading.step = when {
-                stage.startsWith("Downloading") -> if (p >= 0 && mb > 0) "downloading $what · ${p * mb / 100} of $mb MB" else "downloading $what"
-                stage.startsWith("Verifying") -> "checking $what"
-                else -> "unpacking $what"
+                stage.startsWith("Downloading") -> if (p >= 0 && mb > 0) "正在下载 $what · ${p * mb / 100} / $mb MB" else "正在下载 $what"
+                stage.startsWith("Verifying") -> "正在校验 $what"
+                else -> "正在解包 $what"
             }
         }
     }
@@ -685,25 +685,25 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
     /** Null when the runtime is in, else the loading screen's closing line. */
     private fun installRuntime(): String? {
         val release = com.droiddeck.launcher.runtime.LinuxRuntimeInstaller.fetchRelease()
-            ?: return "Could not reach the runtime catalog. Check the connection and press Play again."
+            ?: return "无法连接运行时目录。请检查网络后重试。"
         val ok = com.droiddeck.launcher.runtime.LinuxRuntimeInstaller.install(this, release,
-            progressFor("the Linux runtime", release.size / 1_000_000))
-        return if (ok) null else "The Linux runtime did not install. Check the connection and press Play again."
+            progressFor("Linux 运行时", release.size / 1_000_000))
+        return if (ok) null else "Linux 运行时安装失败。请检查网络后重试。"
     }
 
     /** Null when the desktop package is in, else the loading screen's closing line. */
     private fun installDesktop(): String? {
-        uiHandler.post { loading.percent = -1; loading.step = "downloading the desktop" }
+        uiHandler.post { loading.percent = -1; loading.step = "正在下载桌面" }
         val entry = com.droiddeck.launcher.runtime.DesktopCatalog.fetch()?.firstOrNull { it.id == "desktop" }
-            ?: return "Could not reach the desktop catalog. Check the connection and press Desktop again."
+            ?: return "无法连接桌面包目录。请检查网络后重试。"
         val problem = com.droiddeck.launcher.runtime.DesktopCatalog.install(this, entry,
-            progressFor("the desktop", entry.size / 1_000_000))
-        return problem?.let { "The desktop did not install ($it). Check the connection and press Desktop again." }
+            progressFor("桌面", entry.size / 1_000_000))
+        return problem?.let { "桌面包安装失败（$it）。请检查网络后重试。" }
     }
 
     /** Null when the ARM64 Proton is in, else why not; the session goes on either way. */
     private fun installProton(): String? {
-        uiHandler.post { loading.percent = -1; loading.step = "downloading Proton Experimental (ARM64)" }
+        uiHandler.post { loading.percent = -1; loading.step = "正在下载 Proton Experimental (ARM64)" }
         val catalog = com.droiddeck.launcher.runtime.DesktopCatalog
         val entry = catalog.fetch(catalog.STEAM_SEED_URL)?.firstOrNull { it.id == catalog.PROTON_SEED_ID }
             ?: return "catalog unreachable"
@@ -744,7 +744,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             try {
                 android.system.Os.setenv("BL_WAYLAND_LOG", waylandLog.path, true)
             } catch (e: Exception) {
-                Log.w(TAG, "could not point the compositor's log at $waylandLog", e)
+                Log.w(TAG, "无法将合成器日志指向 $waylandLog", e)
             }
         }
         // HDR10: the gate is decided once, when the compositor starts (it lives for the whole app
@@ -767,10 +767,10 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             }
             WaylandCompositor.nativeSetHdrRequest(
                 if (on) WaylandCompositor.HDR_MODE_ON else WaylandCompositor.HDR_MODE_OFF,
-                "$mode session settings" + (if (wanted && !on) " (refused: ${probe.reason})" else ""),
+                "$mode 会话设置" + (if (wanted && !on) "（被拒绝：${probe.reason}）" else ""),
                 on, on,
             )
-            Log.i(TAG, "hdr: " + (if (on) "on" else if (wanted) "wanted but ${probe.reason}" else "off") + " · display ${probe.formats.ifEmpty { "SDR" }}")
+            Log.i(TAG, "hdr: " + (if (on) "开启" else if (wanted) "请求开启但${probe.reason}" else "关闭") + " · 显示 ${probe.formats.ifEmpty { "SDR" }}")
         }
         CompositorHost.startOrAttach(
             holder.surface, runtimeDir.path,
@@ -804,7 +804,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         surfaceW = width
         surfaceH = height
         if (resized) {
-            Log.i(TAG, "surface resized to ${width}x$height - rebinding the compositor")
+            Log.i(TAG, "surface 尺寸变为 ${width}x$height — 重新绑定合成器")
             CompositorHost.resize(holder.surface) { applyFrameGen() }
         }
     }
@@ -950,13 +950,13 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         }
         // It stays until the user leaves: a failure read against a timer is a failure not read.
         val what = when (SessionState.mode) {
-            SessionService.MODE_RUN -> com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "The program"
-            SessionService.MODE_DESKTOP -> "The desktop"
+            SessionService.MODE_RUN -> com.droiddeck.launcher.frontend.Library.nameForProgram(SessionState.program) ?: "该程序"
+            SessionService.MODE_DESKTOP -> "桌面"
             else -> "Steam"
         }
         loading.showEnded(
-            hint ?: "$what stopped unexpectedly. Share the logs with a bug report, or try again.",
-            "Exit status $status · ${SessionState.logFile?.path ?: "no log"}",
+            hint ?: "$what 意外停止。请随问题反馈共享日志，或重试。",
+            "退出状态 $status · ${SessionState.logFile?.path ?: "无日志"}",
         )
         focusEndedScreen()
     }
@@ -998,8 +998,8 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
                 }
             }
             if (enosys >= 8) {
-                "The log shows $enosys \"Function not implemented\" errors: proot's seccomp acceleration is failing a helper on this device. " +
-                    "Try Performance \u2192 \"Run proot without seccomp\" (or \"Skip Steam's xalia helper\") and start again."
+                "日志中有 $enosys 处 \"Function not implemented\" 错误：proot 的 seccomp 加速在本设备上导致某个辅助进程失败。" +
+                    "请在“性能”设置中尝试“免 seccomp 运行 proot”（或“跳过 Steam 的 xalia 辅助进程”）后重新启动。"
             } else null
         } catch (e: Exception) {
             null
@@ -1046,7 +1046,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             }
             val handled = super.dispatchKeyEvent(event)
             if (event.action == KeyEvent.ACTION_DOWN) {
-                Log.i(TAG, "drawer key=${KeyEvent.keyCodeToString(event.keyCode)} handled=$handled viewFocused=${sessionOverlay.hasFocus()}")
+                Log.i(TAG, "抽屉按键=${KeyEvent.keyCodeToString(event.keyCode)} handled=$handled viewFocused=${sessionOverlay.hasFocus()}")
             }
             if (event.keyCode == KeyEvent.KEYCODE_BUTTON_B || event.keyCode == KeyEvent.KEYCODE_BACK) {
                 if (!handled && event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) drawerOpen = false
@@ -1159,7 +1159,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         val now = SystemClock.uptimeMillis()
         if (keyCode == drawerDirectionKey) return
 
-        Log.i(TAG, "drawer axis source=${event.source} x=$x y=$y direction=$keyCode")
+        Log.i(TAG, "抽屉轴 event.source=${event.source} x=$x y=$y direction=$keyCode")
         releaseDrawerDirection()
         if (keyCode == KeyEvent.KEYCODE_UNKNOWN) return
 
@@ -1198,7 +1198,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             repeatCount, 0, drawerDirectionDeviceId, 0, 0, InputDevice.SOURCE_DPAD,
         )
         if (action == KeyEvent.ACTION_DOWN && repeatCount == 0) {
-            Log.i(TAG, "drawer synthetic key=${KeyEvent.keyCodeToString(drawerDirectionKey)} viewFocused=${sessionOverlay.hasFocus()}")
+            Log.i(TAG, "抽屉合成按键=${KeyEvent.keyCodeToString(drawerDirectionKey)} viewFocused=${sessionOverlay.hasFocus()}")
         }
         super.dispatchKeyEvent(event)
     }
@@ -1269,7 +1269,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         val bitmap = try {
             android.graphics.Bitmap.createBitmap(cursorBuf, 6, w, w, h, android.graphics.Bitmap.Config.ARGB_8888)
         } catch (e: Exception) {
-            Log.w(TAG, "cursor bitmap failed", e)
+            Log.w(TAG, "光标位图生成失败", e)
             return false
         }
         cursorImage = bitmap.asImageBitmap()
@@ -1363,7 +1363,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
             SessionState.secondScreenMode = mode
             SessionState.secondScreenDisplay = selectedSecondScreenDisplay
         } catch (e: Exception) {
-            Log.w(TAG, "could not show second-screen controls on ${target.name}", e)
+            Log.w(TAG, "无法在 ${target.name} 上显示第二屏控件", e)
             closeSecondScreen(reset = true)
         }
     }
@@ -1486,10 +1486,10 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         if (show == (controls.visibility == View.VISIBLE)) return
         if (!show) controls.releaseAll()
         controls.visibility = if (show) View.VISIBLE else View.GONE
-        Log.i(TAG, "on-screen controls " + when {
-            !show -> "hidden"
+        Log.i(TAG, "屏幕控件 " + when {
+            !show -> "已隐藏"
             buttonsOnly -> "Steam + QAM"
-            else -> "full pad"
+            else -> "完整手柄"
         })
     }
 
@@ -1518,7 +1518,7 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         super.onNewIntent(intent)
         if (intent.action == SessionService.ACTION_AGENT_START) {
             if (SessionState.running || SessionState.phase !in setOf(SessionPhase.IDLE, SessionPhase.FAILED)) {
-                Log.w(TAG, "ignoring agent start while session phase is ${SessionState.phase}")
+                Log.w(TAG, "会话阶段为 ${SessionState.phase}，忽略 agent 启动请求")
                 return
             }
             setIntent(intent)

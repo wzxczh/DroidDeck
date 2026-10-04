@@ -55,7 +55,7 @@ static const char *primaries_name(uint32_t p) {
     case WP_COLOR_MANAGER_V1_PRIMARIES_DISPLAY_P3: return "Display P3";
     case WP_COLOR_MANAGER_V1_PRIMARIES_DCI_P3: return "DCI-P3";
     case WP_COLOR_MANAGER_V1_PRIMARIES_ADOBE_RGB: return "Adobe RGB";
-    default: return "other primaries";
+    default: return "其它原色";
     }
 }
 
@@ -64,10 +64,10 @@ static const char *tf_name(uint32_t tf) {
     case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_ST2084_PQ: return "ST 2084 (PQ)";
     case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_HLG: return "HLG";
     case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_SRGB: return "sRGB";
-    case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_EXT_LINEAR: return "extended linear";
+    case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_EXT_LINEAR: return "扩展线性";
     case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_GAMMA22: return "gamma 2.2";
     case WP_COLOR_MANAGER_V1_TRANSFER_FUNCTION_BT1886: return "BT.1886";
-    default: return "other transfer function";
+    default: return "其它传输函数";
     }
 }
 
@@ -76,7 +76,7 @@ static const char *dataspace_name(int32_t ds) {
     case BANNER_ADATASPACE_BT2020_PQ: return "BT2020_PQ";
     case BANNER_ADATASPACE_BT2020_HLG: return "BT2020_HLG";
     case BANNER_ADATASPACE_UNKNOWN: return "UNKNOWN (sRGB)";
-    default: return "other";
+    default: return "其它";
     }
 }
 
@@ -116,7 +116,7 @@ void banner_color_set_display(int id, const char *name, const char *formats, int
     g_req.display_known = 1;
     g_req.display_id = id;
     snprintf(g_req.display_name, sizeof(g_req.display_name), "%s", name ? name : "?");
-    snprintf(g_req.formats, sizeof(g_req.formats), "%s", formats ? formats : "unknown");
+    snprintf(g_req.formats, sizeof(g_req.formats), "%s", formats ? formats : "未知");
     g_req.hdr10 = hdr10 ? 1 : 0;
     g_req.max_lum = max_lum; g_req.max_avg = max_avg; g_req.min_lum = min_lum;
     g_req.ratio_available = ratio_available ? 1 : 0;
@@ -127,12 +127,12 @@ void banner_color_set_display(int id, const char *name, const char *formats, int
      * session is recorded, and what it means is said out loud. */
     if (was_known && atomic_load(&g_gate) >= 0 && (was_hdr10 != (hdr10 ? 1 : 0) || was_id != id)) {
         if (atomic_load(&g_gate) == 1 && !hdr10)
-            banner_log(TAG, "the game is now on \"%s\" (display %d), which reports no HDR10: HDR frames stay tagged "
-                       "BT2020_PQ and SurfaceFlinger tone-maps them for this display (the offer to games is fixed "
-                       "for the session)", name ? name : "?", id);
+            banner_log(TAG, "游戏现在位于 \"%s\"（显示器 %d），该显示器不报告 HDR10：HDR 帧仍标记为 "
+                       "BT2020_PQ，由 SurfaceFlinger 为该显示器做 tone-mapping（对游戏开放的 HDR 在本次会话"
+                       "内固定不变）", name ? name : "?", id);
         else if (atomic_load(&g_gate) == 0 && hdr10)
-            banner_log(TAG, "the game is now on \"%s\" (display %d), which reports HDR10 - HDR stays off for this "
-                       "session (the gate is decided when the compositor starts); relaunch to use it", name ? name : "?", id);
+            banner_log(TAG, "游戏现在位于 \"%s\"（显示器 %d），该显示器报告 HDR10——但本次会话 HDR 保持关闭"
+                       "（闸门在合成器启动时决定）；重新启动应用才能启用", name ? name : "?", id);
     }
 }
 
@@ -193,13 +193,13 @@ static const char *thermal_name(int t) {
 /* "thermal MODERATE (headroom 0.83), brightness 180/255 manual". Caller holds g_mu. */
 static void env_text_locked(char *out, size_t n) {
     char t[48], b[40];
-    if (g_env.thermal < 0) snprintf(t, sizeof(t), "thermal ?");
-    else if (g_env.headroom >= 0.0f) snprintf(t, sizeof(t), "thermal %s (headroom %.2f)", thermal_name(g_env.thermal),
+    if (g_env.thermal < 0) snprintf(t, sizeof(t), "温度 ?");
+    else if (g_env.headroom >= 0.0f) snprintf(t, sizeof(t), "温度 %s（余量 %.2f）", thermal_name(g_env.thermal),
                                               g_env.headroom);
-    else snprintf(t, sizeof(t), "thermal %s", thermal_name(g_env.thermal));
-    if (g_env.brightness < 0) snprintf(b, sizeof(b), "brightness ?");
-    else snprintf(b, sizeof(b), "brightness %d/255%s", g_env.brightness,
-                  g_env.bmode == 1 ? " auto" : g_env.bmode == 0 ? " manual" : "");
+    else snprintf(t, sizeof(t), "温度 %s", thermal_name(g_env.thermal));
+    if (g_env.brightness < 0) snprintf(b, sizeof(b), "亮度 ?");
+    else snprintf(b, sizeof(b), "亮度 %d/255%s", g_env.brightness,
+                  g_env.bmode == 1 ? " 自动" : g_env.bmode == 0 ? " 手动" : "");
     snprintf(out, n, "%s, %s", t, b);
 }
 
@@ -211,28 +211,28 @@ static void nohead_causes_locked(char *out, size_t n, int brief) {
     char hot[48];
     int np = 0;
     if (g_env.thermal >= 2) {
-        snprintf(hot, sizeof(hot), "the device is hot (thermal %s)", thermal_name(g_env.thermal));
+        snprintf(hot, sizeof(hot), "设备过热（温度 %s）", thermal_name(g_env.thermal));
         parts[np++] = hot;
     }
     /* Maximum brightness only counts when it is MANUAL: the Fold kept 3.00 of headroom at 255 auto. */
-    if (g_env.brightness >= 250 && g_env.bmode == 0) parts[np++] = "brightness at maximum (manual)";
-    if (np == 1) snprintf(out, n, "likely %s", parts[0]);
-    else if (np == 2) snprintf(out, n, "likely %s and %s", parts[0], parts[1]);
+    if (g_env.brightness >= 250 && g_env.bmode == 0) parts[np++] = "亮度调到最高（手动）";
+    if (np == 1) snprintf(out, n, "可能是 %s", parts[0]);
+    else if (np == 2) snprintf(out, n, "可能是 %s 和 %s", parts[0], parts[1]);
     else if (g_env.known) {
         char req[48], hi[48];
-        if (g_env.requested > 0.0f) snprintf(req, sizeof(req), "%.1fx", g_env.requested);
-        else snprintf(req, sizeof(req), "%s", g_env.requested < 0.0f ? "not possible below Android 15" : "none");
+        if (g_env.requested > 0.0f) snprintf(req, sizeof(req), "%.1f 倍", g_env.requested);
+        else snprintf(req, sizeof(req), "%s", g_env.requested < 0.0f ? "Android 15 以下无法请求" : "未请求");
         if (g_req.highest_ratio > 0.0f) snprintf(hi, sizeof(hi), "%.2f", g_req.highest_ratio);
-        else snprintf(hi, sizeof(hi), "not reported");
+        else snprintf(hi, sizeof(hi), "未报告");
         if (brief)
-            snprintf(out, n, "no visible cause (a screenshot or recording? no HDR boost for apps?) - asked %s, highest "
-                     "ratio %s", req, hi);
+            snprintf(out, n, "无可辨识的原因（截屏或录屏？应用没拿到 HDR 增强？）——已请求 %s，最高"
+                     "比值 %s", req, hi);
         else
-            snprintf(out, n, "no cause the app can see (not hot, brightness below maximum): a screenshot or screen "
-                     "recording, or this phone does not boost HDR from apps (the requested headroom was %s, the "
-                     "display's highest ratio is %s)", req, hi);
+            snprintf(out, n, "应用看不出原因（没有过热、亮度未到最高）：可能是截屏或录屏，"
+                     "也可能是这台手机不为应用提升 HDR（请求的余量为 %s，"
+                     "显示器的最高比值为 %s）", req, hi);
     } else
-        snprintf(out, n, "a screenshot or screen recording, heat, or manual brightness at maximum");
+        snprintf(out, n, "截屏或录屏、发热，或手动亮度调到最高");
 }
 
 /* ---- the explicit HDR headroom request (API 35; sc_layer.c for the game layer, the app for the screen
@@ -243,9 +243,9 @@ static char g_screen_hr_why[200];           /* under g_mu */
 
 static float peak_of(const struct banner_color *c, float disp_max, const char **src) {
     if (c->max_cll > 0.0f) { *src = "max CLL"; return c->max_cll; }
-    if (c->has_st2086 && c->max_lum > 0.0f) { *src = "mastering max"; return c->max_lum; }
-    if (disp_max > 0.0f) { *src = "the display's peak"; return disp_max; }
-    *src = "assumed"; return 1000.0f;
+    if (c->has_st2086 && c->max_lum > 0.0f) { *src = "母版峰值"; return c->max_lum; }
+    if (disp_max > 0.0f) { *src = "显示器峰值"; return disp_max; }
+    *src = "假定值"; return 1000.0f;
 }
 
 float banner_color_desired_headroom(const struct banner_color *c, char *why, size_t n) {
@@ -256,8 +256,8 @@ float banner_color_desired_headroom(const struct banner_color *c, char *why, siz
     const char *src;
     const float peak = peak_of(c, disp_max, &src), white = banner_color_sdr_white();
     if (highest > 0.0f && highest <= 1.01f) {
-        if (why && n) snprintf(why, n, "the display reports its highest HDR/SDR ratio as %.2f: no app can get a "
-                               "boost here, so nothing is asked", highest);
+        if (why && n) snprintf(why, n, "显示器报告的最高 HDR/SDR 比值为 %.2f：任何应用在这里都拿不到增强，"
+                               "因此不作任何请求", highest);
         return 0.0f;
     }
     float r = peak / (white > 0.0f ? white : 203.0f);
@@ -265,10 +265,10 @@ float banner_color_desired_headroom(const struct banner_color *c, char *why, siz
     if (capped) r = highest;
     if (r < 1.0f) r = 1.0f;
     if (why && n) {
-        if (capped) snprintf(why, n, "content peak %.0f nits (%s) / SDR %.0f, capped at the display's highest ratio %.2f",
+        if (capped) snprintf(why, n, "内容峰值 %.0f nits（%s）/ SDR %.0f，已按显示器最高比值 %.2f 封顶",
                              peak, src, white, highest);
-        else snprintf(why, n, "content peak %.0f nits (%s) / SDR %.0f%s", peak, src, white,
-                      highest > 0.0f ? "" : "; the display reports no highest ratio");
+        else snprintf(why, n, "内容峰值 %.0f nits（%s）/ SDR %.0f%s", peak, src, white,
+                      highest > 0.0f ? "" : "；显示器未报告最高比值");
     }
     return r;
 }
@@ -285,9 +285,9 @@ void banner_color_set_highest_ratio(float ratio) {
     g_req.highest_ratio = ratio > 0.0f ? ratio : -1.0f;
     pthread_mutex_unlock(&g_mu);
     if (ratio > 0.0f && (was < 0.0f || was != ratio) && atomic_load(&g_gate) == 1)
-        banner_log(TAG, "the display's highest HDR/SDR ratio is %.2f%s", ratio,
-                   ratio <= 1.01f ? " - it reports no HDR boost at all: no app can raise HDR highlights above SDR white here"
-                                  : " (the most HDR headroom it can give)");
+        banner_log(TAG, "显示器的最高 HDR/SDR 比值为 %.2f%s", ratio,
+                   ratio <= 1.01f ? "——它完全不报告 HDR 增强：任何应用都无法在此把 HDR 高光提到 SDR 白点之上"
+                                  : "（它能给出的最大 HDR 余量）");
 }
 
 float banner_color_screen_headroom(char *why, size_t n) {
@@ -311,10 +311,10 @@ int banner_color_last_frame_age_ms(void) {
 /* The one-line answer a tester quotes. Caller holds g_mu. */
 static void verdict_locked(char *out, size_t size) {
     int gate = atomic_load(&g_gate);
-    if (gate < 0) { snprintf(out, size, "not decided yet (the compositor has not started)"); return; }
-    if (gate == 0) { snprintf(out, size, "no, because %s", g_gate_why); return; }
+    if (gate < 0) { snprintf(out, size, "尚未决定（合成器还没启动）"); return; }
+    if (gate == 0) { snprintf(out, size, "否，因为 %s", g_gate_why); return; }
     if (g_hdr.layer_frames) {
-        const char *who = g_hdr.applied_who[0] ? g_hdr.applied_who : "the game";
+        const char *who = g_hdr.applied_who[0] ? g_hdr.applied_who : "游戏";
         /* Only the paths that carried frames, so the ratio, the share and the device evidence still fit
          * the log line. */
         char paths[200] = "";
@@ -322,17 +322,17 @@ static void verdict_locked(char *out, size_t size) {
         const uint64_t zc_other = g_hdr.layer_frames - g_hdr.layer_10bit - g_hdr.layer_copy8 - g_hdr.composed -
                                   g_hdr.swapchain;
         const struct { uint64_t n; const char *what; } path[] = {
-            {g_hdr.layer_10bit, "10-bit zero-copy"}, {zc_other, "zero-copy"}, {g_hdr.layer_copy8, "8-bit layer copy"},
-            {g_hdr.composed, "composed"}, {g_hdr.swapchain, "HDR10 swapchain"}};
+            {g_hdr.layer_10bit, "10-bit 零拷贝"}, {zc_other, "零拷贝"}, {g_hdr.layer_copy8, "8-bit layer 拷贝"},
+            {g_hdr.composed, "已合成"}, {g_hdr.swapchain, "HDR10 swapchain"}};
         for (unsigned i = 0; i < sizeof(path) / sizeof(path[0]); i++)
             if (path[i].n && path[i].n <= g_hdr.layer_frames && pp < sizeof(paths) - 40)
-                pp += (size_t)snprintf(paths + pp, sizeof(paths) - pp, "%s%llu %s", pp ? ", " : "",
+                pp += (size_t)snprintf(paths + pp, sizeof(paths) - pp, "%s%llu %s", pp ? "，" : "",
                                        (unsigned long long)path[i].n, path[i].what);
         if (g_hdr.tonemapped && pp < sizeof(paths) - 60)
-            pp += (size_t)snprintf(paths + pp, sizeof(paths) - pp, "; %llu more tone-mapped (%llu with HDR output off)",
+            pp += (size_t)snprintf(paths + pp, sizeof(paths) - pp, "；另有 %llu 帧 tone-mapped（其中 %llu 帧在 HDR 输出关闭时）",
                                    (unsigned long long)g_hdr.tonemapped, (unsigned long long)g_hdr.tm_off);
         char frames[340];
-        snprintf(frames, sizeof(frames), "%llu frames of %s shown as BT2020_PQ (%s)",
+        snprintf(frames, sizeof(frames), "%llu 帧 %s 以 BT2020_PQ 显示（%s）",
                  (unsigned long long)g_hdr.layer_frames, who, paths);
         char env[128] = "", causes[256] = "";
         if (g_env.known) env_text_locked(env, sizeof(env));
@@ -345,59 +345,59 @@ static void verdict_locked(char *out, size_t size) {
         char share[384] = "";
         const long long live_s = (long long)(g_hdr.live_ns / 1000000000LL);
         if (g_hdr.live_ns >= 1000000000LL)
-            snprintf(share, sizeof(share), "; headroom above 1.00 for %d%% of the HDR time (%lld of %lld s), now %.2f%s%s"
+            snprintf(share, sizeof(share), "；HDR 时间中有 %d%% 的时段余量高于 1.00（%lld / %lld 秒），当前 %.2f%s%s"
                      "%s%s%s",
                      (int)(100.0 * (double)g_hdr.headroom_ns / (double)g_hdr.live_ns + 0.5),
                      (long long)(g_hdr.headroom_ns / 1000000000LL), live_s, g_hdr.ratio_last,
-                     g_hdr.nohead_said ? " - no headroom now: " : "", g_hdr.nohead_said ? causes : "",
-                     env[0] ? " [" : "", env, env[0] ? "]" : "");
+                     g_hdr.nohead_said ? "——当前无余量：" : "", g_hdr.nohead_said ? causes : "",
+                     env[0] ? " 【" : "", env, env[0] ? "】" : "");
         /* The display's own ceiling (Android 16+) and what was asked for, where known. */
         char ceil[80] = "", req[48] = "";
-        if (g_req.highest_ratio > 0.0f) snprintf(ceil, sizeof(ceil), ", highest possible %.2f", g_req.highest_ratio);
-        if (g_env.requested > 0.0f) snprintf(req, sizeof(req), ", %.1fx requested", g_env.requested);
-        else if (g_env.requested < 0.0f) snprintf(req, sizeof(req), ", no request possible below Android 15");
+        if (g_req.highest_ratio > 0.0f) snprintf(ceil, sizeof(ceil), ", 最高可达 %.2f", g_req.highest_ratio);
+        if (g_env.requested > 0.0f) snprintf(req, sizeof(req), ", 已请求 %.1f 倍", g_env.requested);
+        else if (g_env.requested < 0.0f) snprintf(req, sizeof(req), ", Android 15 以下无法请求");
         if (g_hdr.ratio_live_n && g_hdr.ratio_live_max > 1.01f)
-            snprintf(out, size, "yes - %s; the display's HDR/SDR ratio rose to %.2f while they were on screen "
-                     "(1.00 = SDR only%s%s)%s", frames, g_hdr.ratio_live_max, g_hdr.nohead_said ? "" : ceil,
+            snprintf(out, size, "是——%s；在它们显示于屏幕期间，显示器的 HDR/SDR 比值升到 %.2f"
+                     "（1.00 即仅 SDR%s%s）%s", frames, g_hdr.ratio_live_max, g_hdr.nohead_said ? "" : ceil,
                      g_hdr.nohead_said ? "" : req, share);
         else if (g_hdr.ratio_live_n)
-            snprintf(out, size, "tagged but NOT confirmed - %s, but the display's HDR/SDR ratio stayed at %.2f while they "
-                     "were on screen (%s%s%s): Android gave them no HDR headroom - %s%s%s%s", frames,
-                     g_hdr.ratio_live_max, g_req.highest_ratio > 0.0f ? "" : "highest ratio not reported",
-                     ceil[0] ? ceil + 2 : "", g_hdr.nohead_said ? "" : req, g_hdr.nohead_said ? causes : "a screenshot or "
-                     "screen recording? heat? brightness at maximum (manual)? HDR off for this display?",
-                     env[0] ? " [" : "", env, env[0] ? "]" : "");
+            snprintf(out, size, "已标记但未确认——%s；然而在它们显示于屏幕期间，显示器的 HDR/SDR 比值停在 %.2f"
+                     "（%s%s%s）：Android 没有给它们 HDR 余量——%s%s%s%s", frames,
+                     g_hdr.ratio_live_max, g_req.highest_ratio > 0.0f ? "" : "未报告最高比值",
+                     ceil[0] ? ceil + 2 : "", g_hdr.nohead_said ? "" : req, g_hdr.nohead_said ? causes : "截屏或录屏？"
+                     "发热？手动亮度调到最高？该显示器的 HDR 关闭？",
+                     env[0] ? " 【" : "", env, env[0] ? "】" : "");
         else if (g_hdr.ratio_n)
-            snprintf(out, size, "tagged, not measured - %s, but no HDR/SDR ratio reading was taken while they were on "
-                     "screen (highest reading otherwise %.2f)", frames, g_hdr.ratio_max);
+            snprintf(out, size, "已标记，但未测量——%s；它们显示于屏幕期间没有取到 HDR/SDR 比值读数"
+                     "（其余时段最高读数 %.2f）", frames, g_hdr.ratio_max);
         else
-            snprintf(out, size, "yes by the tag only - %s (this display reports no HDR/SDR ratio to confirm it)", frames);
+            snprintf(out, size, "仅凭标记判定为是——%s（该显示器不报告 HDR/SDR 比值，无从确认）", frames);
         return;
     }
     if (g_hdr.applied || g_hdr.descs) {
         if (g_hdr.tonemapped && g_hdr.tm_off == g_hdr.tonemapped)
-            snprintf(out, size, "no - HDR output was switched off in the drawer whenever %s showed HDR: its %llu HDR "
-                     "frames were shown tone-mapped to SDR - correct colours, no HDR brightness (switch it on to see HDR)",
-                     g_hdr.applied_who[0] ? g_hdr.applied_who : "the game", (unsigned long long)g_hdr.tonemapped);
+            snprintf(out, size, "否——每当 %s 显示 HDR 时，抽屉里的 HDR 输出开关都是关的：它的 %llu 个 HDR "
+                     "帧被 tone-mapping 成 SDR 显示——颜色正确，但没有 HDR 亮度（打开开关才能看到 HDR）",
+                     g_hdr.applied_who[0] ? g_hdr.applied_who : "游戏", (unsigned long long)g_hdr.tonemapped);
         else if (g_hdr.tonemapped)
-            snprintf(out, size, "no - %s's HDR frames were shown tone-mapped to SDR (%llu frames: %llu with frame "
-                     "generation through a screen surface that offers no HDR10 swapchain, %llu with HDR output switched "
-                     "off in the drawer) - correct colours, no HDR brightness",
-                     g_hdr.applied_who[0] ? g_hdr.applied_who : "the game", (unsigned long long)g_hdr.tonemapped,
+            snprintf(out, size, "否——%s 的 HDR 帧被 tone-mapping 成 SDR 显示（%llu 帧：其中 %llu 帧是经由不提供 "
+                     "HDR10 swapchain 的 screen surface 生成帧，%llu 帧是 HDR 输出在抽屉里被关闭）——颜色正确，"
+                     "但没有 HDR 亮度",
+                     g_hdr.applied_who[0] ? g_hdr.applied_who : "游戏", (unsigned long long)g_hdr.tonemapped,
                      (unsigned long long)(g_hdr.tonemapped - g_hdr.tm_off), (unsigned long long)g_hdr.tm_off);
         else if (g_hdr.copy_frames)
-            snprintf(out, size, "no, because %s asked for HDR but all %llu of its HDR frames went through the "
-                     "compositor's 8-bit SDR copy (%s) and were shown without tone mapping",
-                     g_hdr.applied_who[0] ? g_hdr.applied_who : "the game", (unsigned long long)g_hdr.copy_frames,
-                     g_hdr.copy_reason[0] ? g_hdr.copy_reason : "no display layer");
+            snprintf(out, size, "否，因为 %s 请求了 HDR，但它全部 %llu 个 HDR 帧都走了合成器的 8-bit SDR 拷贝"
+                     "（%s），显示时未经 tone mapping",
+                     g_hdr.applied_who[0] ? g_hdr.applied_who : "游戏", (unsigned long long)g_hdr.copy_frames,
+                     g_hdr.copy_reason[0] ? g_hdr.copy_reason : "没有 display layer");
         else
-            snprintf(out, size, "no, because %s made an HDR image description but no frame of it was ever shown "
-                     "(the swapchain may have failed after that - see the DXVK log)",
-                     g_hdr.applied_who[0] ? g_hdr.applied_who : "a program");
+            snprintf(out, size, "否，因为 %s 创建了 HDR image description，却没有任何一帧被显示过"
+                     "（此后 swapchain 可能已失败——参见 DXVK 日志）",
+                     g_hdr.applied_who[0] ? g_hdr.applied_who : "某个程序");
         return;
     }
-    snprintf(out, size, "no, because no program asked for HDR: the colour manager was offered but nothing set an HDR "
-             "image description (is DXVK_HDR=1 set, and is HDR switched on in the game's own display options?)");
+    snprintf(out, size, "否，因为没有程序请求 HDR：colour manager 已经提供，但没有谁设置 HDR image "
+             "description（是否设置了 DXVK_HDR=1？游戏自身显示选项里的 HDR 是否打开？）");
 }
 
 /* Log the verdict when it changed (force = log it even if not). */
@@ -408,7 +408,7 @@ static void log_verdict(int force) {
     int changed = strcmp(v, g_hdr.verdict) != 0;
     if (changed) snprintf(g_hdr.verdict, sizeof(g_hdr.verdict), "%s", v);
     pthread_mutex_unlock(&g_mu);
-    if (changed || force) banner_log(TAG, "HDR on screen: %s", v);
+    if (changed || force) banner_log(TAG, "屏幕上的 HDR：%s", v);
 }
 
 void banner_color_frame_shown(const struct banner_color *c, int path, uint32_t ahb_format) {
@@ -424,11 +424,11 @@ void banner_color_frame_shown(const struct banner_color *c, int path, uint32_t a
     case BANNER_HDR_LAYER_COPY:
         if (!g_hdr.layer_copy8) first8 = 1;
         g_hdr.layer_copy8++; g_hdr.win_copy8++;
-        snprintf(g_hdr.layer_fmt, sizeof(g_hdr.layer_fmt), "RGBA8888 layer copy");
+        snprintf(g_hdr.layer_fmt, sizeof(g_hdr.layer_fmt), "RGBA8888 layer 拷贝");
         break;
     case BANNER_HDR_COMPOSED:
         g_hdr.composed++; g_hdr.win_composed++;
-        snprintf(g_hdr.layer_fmt, sizeof(g_hdr.layer_fmt), "composed %s", banner_ahb_format_name(ahb_format));
+        snprintf(g_hdr.layer_fmt, sizeof(g_hdr.layer_fmt), "已合成 %s", banner_ahb_format_name(ahb_format));
         break;
     case BANNER_HDR_SWAPCHAIN:
         g_hdr.swapchain++; g_hdr.win_swapchain++;
@@ -463,9 +463,9 @@ void banner_color_frame_shown(const struct banner_color *c, int path, uint32_t a
         }
     }
     if (first8)
-        banner_log(TAG, "HDR frames are reaching the display layer through the compositor's 8-bit layer copy (the game's "
-                   "buffer is not a gralloc buffer this frame): colours stay correct (the frame keeps its BT2020_PQ tag), "
-                   "precision drops to 8 bits (banding possible)");
+        banner_log(TAG, "HDR 帧正经由合成器的 8-bit layer 拷贝抵达 display layer（这一帧游戏的 buffer "
+                   "不是 gralloc buffer）：颜色保持正确（帧保留 BT2020_PQ 标记），精度降到 8 bit"
+                   "（可能出现色带）");
 }
 
 void banner_color_frame_copied(const char *who, const char *reason) {
@@ -479,8 +479,8 @@ void banner_color_frame_copied(const char *who, const char *reason) {
     }
     pthread_mutex_unlock(&g_mu);
     if (first)
-        banner_log(TAG, "HDR frames of %s go through the compositor's 8-bit SDR copy now, because %s: shown WITHOUT "
-                   "tone mapping (washed out) until that changes", who ? who : "a window", reason ? reason : "?");
+        banner_log(TAG, "%s 的 HDR 帧现在要走合成器的 8-bit SDR 拷贝了，原因是 %s：在情况改变之前都"
+                   "不做 tone mapping 显示（画面发白）", who ? who : "某个窗口", reason ? reason : "?");
 }
 
 void banner_color_ratio_sample(float ratio, int listener) {
@@ -536,25 +536,25 @@ void banner_color_ratio_sample(float ratio, int listener) {
     }
     pthread_mutex_unlock(&g_mu);
     if (nohead_now)
-        banner_log(TAG, "no HDR headroom for 5 s while HDR frames are on screen (display HDR/SDR ratio %.2f): %s - Android "
-                   "drops HDR headroom while the screen is recorded and when the device is hot, and some phones never "
-                   "boost HDR for apps; HDR highlights look no brighter until that ends [%s]", ratio, causes, env);
+        banner_log(TAG, "HDR 帧显示于屏幕期间，有 5 秒没有 HDR 余量（显示器 HDR/SDR 比值 %.2f）：%s——Android "
+                   "会在屏幕被录制以及设备过热时收回 HDR 余量，而有些手机从不为应用提升 HDR；"
+                   "在这种情况结束前 HDR 高光不会显得更亮 [%s]", ratio, causes, env);
     if (head_back)
-        banner_log(TAG, "HDR headroom is back: display HDR/SDR ratio %.2f with HDR frames on screen", ratio);
+        banner_log(TAG, "HDR 余量恢复：HDR 帧在屏时显示器 HDR/SDR 比值 %.2f", ratio);
     if (!log_it) return;
     char when[64];
-    if (age < 0) snprintf(when, sizeof(when), "none yet this session");
-    else snprintf(when, sizeof(when), "%s, last one %d ms ago", live ? "yes" : "no", age);
+    if (age < 0) snprintf(when, sizeof(when), "本次会话还没有过");
+    else snprintf(when, sizeof(when), "%s，最近一次在 %d 毫秒前", live ? "是" : "否", age);
     if (periodic)
-        banner_log(TAG, "display HDR/SDR ratio %.2f (steady; HDR frames on screen: %s)%s%s%s%s%s", ratio, when,
-                   live && ratio <= 1.01f ? " - no HDR headroom: " : "", live && ratio <= 1.01f ? causes : "",
-                   env[0] ? " [" : "", env, env[0] ? "]" : "");
+        banner_log(TAG, "显示器 HDR/SDR 比值 %.2f（稳定；HDR 帧在屏：%s）%s%s%s%s%s", ratio, when,
+                   live && ratio <= 1.01f ? "——无 HDR 余量：" : "", live && ratio <= 1.01f ? causes : "",
+                   env[0] ? " 【" : "", env, env[0] ? "】" : "");
     else if (was > 0.0f)
-        banner_log(TAG, "display HDR/SDR ratio %.2f (was %.2f; HDR frames on screen: %s) [%s]", ratio, was, when,
-                   listener ? "display listener" : "sampler");
+        banner_log(TAG, "显示器 HDR/SDR 比值 %.2f（此前 %.2f；HDR 帧在屏：%s）[%s]", ratio, was, when,
+                   listener ? "显示器监听器" : "采样器");
     else
-        banner_log(TAG, "display HDR/SDR ratio %.2f (first reading; HDR frames on screen: %s) [%s]", ratio, when,
-                   listener ? "display listener" : "sampler");
+        banner_log(TAG, "显示器 HDR/SDR 比值 %.2f（首次读数；HDR 帧在屏：%s）[%s]", ratio, when,
+                   listener ? "显示器监听器" : "采样器");
 }
 
 void banner_color_stats_tick(void) {
@@ -564,16 +564,16 @@ void banner_color_stats_tick(void) {
     pthread_mutex_lock(&g_mu);
     any = g_hdr.win_layer || g_hdr.win_copy || g_hdr.win_tonemapped; /* the ratio alone is logged when it moves */
     if (any) {
-        char ratio[256] = "no HDR/SDR ratio reading", env[128] = "", causes[256] = "";
+        char ratio[256] = "无 HDR/SDR 比值读数", env[128] = "", causes[256] = "";
         if (g_env.known) env_text_locked(env, sizeof(env));
         if (g_hdr.nohead_said) nohead_causes_locked(causes, sizeof(causes), 1);
         if (g_hdr.win_ratio_n)
-            snprintf(ratio, sizeof(ratio), "display HDR/SDR ratio %.2f-%.2f (now %.2f)%s%s", g_hdr.win_ratio_min,
-                     g_hdr.win_ratio_max, g_hdr.ratio_last, g_hdr.nohead_said ? " - NO headroom: " : "",
+            snprintf(ratio, sizeof(ratio), "显示器 HDR/SDR 比值 %.2f-%.2f（当前 %.2f）%s%s", g_hdr.win_ratio_min,
+                     g_hdr.win_ratio_max, g_hdr.ratio_last, g_hdr.nohead_said ? "——没有余量：" : "",
                      g_hdr.nohead_said ? causes : "");
-        snprintf(line, sizeof(line), "HDR last 10 s: %u frames shown as BT2020_PQ (zero-copy %u, 8-bit layer copy %u, "
-                 "composed picture %u, HDR10 swapchain %u; last buffer %s) | %u tone-mapped to SDR | %u washed-out "
-                 "copies | %s%s%s",
+        snprintf(line, sizeof(line), "HDR 最近 10 秒：%u 帧以 BT2020_PQ 显示（零拷贝 %u，8-bit layer 拷贝 %u，"
+                 "合成画面 %u，HDR10 swapchain %u；最近的 buffer %s） | %u 帧 tone-mapped 成 SDR | %u 帧发白"
+                 "拷贝 | %s%s%s",
                  g_hdr.win_layer, g_hdr.win_zc, g_hdr.win_copy8, g_hdr.win_composed, g_hdr.win_swapchain,
                  g_hdr.layer_fmt[0] ? g_hdr.layer_fmt : "-", g_hdr.win_tonemapped, g_hdr.win_copy, ratio,
                  env[0] ? " | " : "", env);
@@ -603,7 +603,7 @@ static _Atomic int g_sdr_white_x100 = 20300;
 void banner_color_set_sdr_white(float nits) {
     if (!(nits >= 10.0f && nits <= 2000.0f)) return;
     atomic_store(&g_sdr_white_x100, (int)(nits * 100.0f + 0.5f));
-    banner_log(TAG, "SDR content inside an HDR picture is placed at %.0f nits (BANNER_WAYLAND_HDR_SDR_NITS)", nits);
+    banner_log(TAG, "HDR 画面里的 SDR 内容被定位在 %.0f nits（BANNER_WAYLAND_HDR_SDR_NITS）", nits);
 }
 float banner_color_sdr_white(void) { return atomic_load(&g_sdr_white_x100) / 100.0f; }
 
@@ -624,14 +624,14 @@ void banner_color_env_sample(int thermal, float headroom, int brightness, int bm
     const int first = !g_env.known;
     if (!first && thermal != g_env.thermal) {
         char hr[32] = "";
-        if (headroom >= 0.0f) snprintf(hr, sizeof(hr), ", headroom %.2f", headroom);
-        snprintf(msg[nmsg++], sizeof(msg[0]), "thermal status now %s (was %s%s)%s", thermal_name(thermal),
-                 thermal_name(g_env.thermal), hr, thermal >= 2 ? " - Android lowers HDR headroom when the device is hot" : "");
+        if (headroom >= 0.0f) snprintf(hr, sizeof(hr), "，余量 %.2f", headroom);
+        snprintf(msg[nmsg++], sizeof(msg[0]), "温度状态现在为 %s（此前 %s%s）%s", thermal_name(thermal),
+                 thermal_name(g_env.thermal), hr, thermal >= 2 ? "——设备过热时 Android 会降低 HDR 余量" : "");
     }
     if (!first && (brightness != g_env.brightness || bmode != g_env.bmode))
-        snprintf(msg[nmsg++], sizeof(msg[0]), "screen brightness now %d/255 %s (was %d/255 %s)", brightness,
-                 bmode == 1 ? "auto" : bmode == 0 ? "manual" : "?", g_env.brightness,
-                 g_env.bmode == 1 ? "auto" : g_env.bmode == 0 ? "manual" : "?");
+        snprintf(msg[nmsg++], sizeof(msg[0]), "屏幕亮度现在为 %d/255 %s（此前 %d/255 %s）", brightness,
+                 bmode == 1 ? "自动" : bmode == 0 ? "手动" : "?", g_env.brightness,
+                 g_env.bmode == 1 ? "自动" : g_env.bmode == 0 ? "手动" : "?");
     g_env.thermal = thermal;
     g_env.headroom = headroom;
     g_env.brightness = brightness;
@@ -640,8 +640,8 @@ void banner_color_env_sample(int thermal, float headroom, int brightness, int bm
     if (first) {
         char e[128];
         env_text_locked(e, sizeof(e));
-        snprintf(msg[nmsg++], sizeof(msg[0]), "device evidence beside the HDR/SDR headroom: %s (thermal status and "
-                 "brightness changes are logged as they happen)", e);
+        snprintf(msg[nmsg++], sizeof(msg[0]), "HDR/SDR 余量旁的设备证据：%s（温度状态和亮度的变化"
+                 "会随时记录下来）", e);
     }
     pthread_mutex_unlock(&g_mu);
     for (int i = 0; i < nmsg; i++) banner_log(TAG, "%s", msg[i]);
@@ -657,7 +657,7 @@ void banner_color_set_output(int on) {
     on = on ? 1 : 0;
     if (atomic_load(&g_gate) != 1) {
         /* The drawer only shows the switch in sessions whose gate is open; say so if it ever gets here. */
-        banner_log(TAG, "HDR output switch (%s) ignored: HDR is not open in this session", on ? "on" : "off");
+        banner_log(TAG, "HDR 输出开关（%s）被忽略：本次会话 HDR 没有开启", on ? "开" : "关");
         return;
     }
     if (atomic_exchange(&g_output_on, on) == on) return;
@@ -665,15 +665,15 @@ void banner_color_set_output(int on) {
     int age = banner_color_last_frame_age_ms(), tm = banner_color_tonemapped_on_screen();
     pthread_mutex_lock(&g_mu);
     if (!on) g_hdr.output_offs++;
-    snprintf(who, sizeof(who), "%s", g_hdr.applied_who[0] ? g_hdr.applied_who : "no HDR program yet");
+    snprintf(who, sizeof(who), "%s", g_hdr.applied_who[0] ? g_hdr.applied_who : "还没有 HDR 程序");
     pthread_mutex_unlock(&g_mu);
     if (on)
-        banner_log(TAG, "HDR output switched ON in the drawer: HDR frames go to the display as HDR again from the next "
-                   "frame (%s; %s)", who, tm ? "they were being tone-mapped to SDR until now" : "none were on screen just now");
+        banner_log(TAG, "抽屉里的 HDR 输出已打开：从下一帧起 HDR 帧重新以 HDR 送达显示器"
+                   "（%s；%s）", who, tm ? "在此之前它们一直在被 tone-mapping 成 SDR" : "刚才没有帧在屏幕上");
     else
-        banner_log(TAG, "HDR output switched OFF in the drawer: HDR frames are tone-mapped to SDR from the next frame "
-                   "(%s; %s). The game is not told - it keeps rendering HDR; its own HDR setting and DXVK_HDR are "
-                   "untouched", who, age >= 0 && age < 1500 ? "HDR frames were on screen" : "no HDR frames on screen just now");
+        banner_log(TAG, "抽屉里的 HDR 输出已关闭：从下一帧起 HDR 帧会被 tone-mapping 成 SDR"
+                   "（%s；%s）。游戏不会被告知——它继续渲染 HDR；游戏自身的 HDR 设置和 DXVK_HDR "
+                   "都不受影响", who, age >= 0 && age < 1500 ? "HDR 帧刚才在屏幕上" : "刚才屏幕上没有 HDR 帧");
     banner_request_redraw(); /* a paused game commits nothing: show the change now */
 }
 
@@ -781,14 +781,14 @@ static void make_output_description(struct wl_client *c, struct wl_resource *par
     d->disp_min_lum = g_req.min_lum > 0.0f ? g_req.min_lum : 0.0f;
     d->disp_max_lum = g_req.max_lum > 0.0f ? g_req.max_lum : 1000.0f;
     pthread_mutex_unlock(&g_mu);
-    snprintf(col->text, sizeof(col->text), "BT.2020, ST 2084 PQ; target %.0f nits (the display)", d->disp_max_lum);
+    snprintf(col->text, sizeof(col->text), "BT.2020，ST 2084 PQ；目标 %.0f nits（显示器）", d->disp_max_lum);
 
     struct wl_resource *r = wl_resource_create(c, &wp_image_description_v1_interface, wl_resource_get_version(parent), id);
     if (!r) { free(d); wl_client_post_no_memory(c); return; }
     d->refs = 1;
     wl_resource_set_implementation(r, &image_description_impl, d, image_description_resource_destroy);
     wp_image_description_v1_send_ready(r, col->identity);
-    banner_log(TAG, "%s asked for %s: answered the display's HDR10 volume (%s), ready and open to get_information",
+    banner_log(TAG, "%s 请求了 %s：已应答该显示器的 HDR10 volume（%s），ready 并对 get_information 开放",
                banner_client_name(c), what, col->text);
 }
 
@@ -818,7 +818,7 @@ static void params_create(struct wl_client *client, struct wl_resource *r, uint3
     if (p->has_mlum) {
         float mn = p->mlum_min / 10000.0f, mx = (float)p->mlum_max;
         if (mx > mn && mx > 0.0f) { mlum_min = mn; mlum_max = mx; }
-        else snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " mastering luminance %.4f-%.0f (max <= min),", mn, mx);
+        else snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " 母版亮度 %.4f-%.0f（max <= min）,", mn, mx);
     }
     if (p->has_mprim || p->has_mlum) {
         c->has_st2086 = 1;
@@ -836,26 +836,26 @@ static void params_create(struct wl_client *client, struct wl_resource *r, uint3
     }
     float cll = p->has_cll ? (float)p->cll : 0.0f, fall = p->has_fall ? (float)p->fall : 0.0f;
     if (cll > 0.0f && (cll <= mlum_min || cll > mlum_max)) {
-        snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " max CLL %.0f (outside %.4f-%.0f),", cll, mlum_min, mlum_max);
+        snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " max CLL %.0f（超出 %.4f-%.0f 范围）,", cll, mlum_min, mlum_max);
         cll = 0.0f;
     }
     if (fall > 0.0f && (fall <= mlum_min || fall > mlum_max || (cll > 0.0f && fall > cll))) {
-        snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " max FALL %.0f (outside the range or above max CLL),", fall);
+        snprintf(dropped + strlen(dropped), sizeof(dropped) - strlen(dropped), " max FALL %.0f（超出范围或高于 max CLL）,", fall);
         fall = 0.0f;
     }
     if (cll > 0.0f || fall > 0.0f) { c->has_cta861 = 1; c->max_cll = cll; c->max_fall = fall; }
 
-    int n = snprintf(c->text, sizeof(c->text), "%s, %s", primaries_name(c->primaries), tf_name(c->tf));
+    int n = snprintf(c->text, sizeof(c->text), "%s，%s", primaries_name(c->primaries), tf_name(c->tf));
     if (c->has_st2086 && n < (int)sizeof(c->text))
         n += snprintf(c->text + n, sizeof(c->text) - (size_t)n,
-                      "; mastering R %.4f,%.4f G %.4f,%.4f B %.4f,%.4f W %.4f,%.4f, %.4f-%.0f nits%s",
+                      "；母版 R %.4f,%.4f G %.4f,%.4f B %.4f,%.4f W %.4f,%.4f，%.4f-%.0f nits%s",
                       c->red[0], c->red[1], c->green[0], c->green[1], c->blue[0], c->blue[1], c->white[0], c->white[1],
-                      c->min_lum, c->max_lum, p->has_mprim ? "" : " (container primaries)");
+                      c->min_lum, c->max_lum, p->has_mprim ? "" : "（容器基色）");
     if (n < (int)sizeof(c->text))
-        n += snprintf(c->text + n, sizeof(c->text) - (size_t)n, "; max CLL %s%.0f, max FALL %s%.0f",
-                      c->max_cll > 0.0f ? "" : "unknown ", c->max_cll, c->max_fall > 0.0f ? "" : "unknown ", c->max_fall);
+        n += snprintf(c->text + n, sizeof(c->text) - (size_t)n, "；max CLL %s%.0f，max FALL %s%.0f",
+                      c->max_cll > 0.0f ? "" : "未知 ", c->max_cll, c->max_fall > 0.0f ? "" : "未知 ", c->max_fall);
     if (!c->has_st2086 && !c->has_cta861 && n < (int)sizeof(c->text))
-        snprintf(c->text + n, sizeof(c->text) - (size_t)n, " (no HDR metadata: the game has not called vkSetHdrMetadataEXT)");
+        snprintf(c->text + n, sizeof(c->text) - (size_t)n, "（没有 HDR 元数据：游戏没有调用 vkSetHdrMetadataEXT）");
 
     struct wl_resource *out = wl_resource_create(client, &wp_image_description_v1_interface,
                                                  wl_resource_get_version(r), id);
@@ -870,13 +870,13 @@ static void params_create(struct wl_client *client, struct wl_resource *r, uint3
         g_hdr.descs++;
         pthread_mutex_unlock(&g_mu);
     }
-    banner_log(TAG, "image description #%u from %s: %s -> ready (on a display layer: dataspace %s)", c->identity,
+    banner_log(TAG, "image description #%u（来自 %s）：%s -> ready（在 display layer 上：dataspace %s）", c->identity,
                banner_client_name(client), c->text, dataspace_name(c->dataspace));
     if (dropped[0]) {
         size_t l = strlen(dropped);
         if (l && dropped[l - 1] == ',') dropped[l - 1] = 0;
-        banner_log(TAG, "image description #%u: dropped HDR metadata that breaks the protocol's rules:%s "
-                   "(Android gets the rest)", c->identity, dropped);
+        banner_log(TAG, "image description #%u：丢弃了违反协议规则的 HDR 元数据：%s"
+                   "（其余部分交给 Android）", c->identity, dropped);
     }
     wl_resource_destroy(r); /* create is the creator's destructor */
 }
@@ -983,7 +983,7 @@ static struct cm_surf *surf_of(struct wl_resource *surface) {
 static void describe_surface(struct wl_resource *surface, char *out, size_t size) {
     struct surface *s = surface ? wl_resource_get_user_data(surface) : NULL;
     if (s) banner_surface_describe(s, out, size);
-    else snprintf(out, size, "a closed window");
+    else snprintf(out, size, "一个已关闭的窗口");
 }
 
 static void cm_surface_destroyed(struct wl_listener *l, void *data) {
@@ -1002,7 +1002,7 @@ static void cm_surface_set_image_description(struct wl_client *c, struct wl_reso
     struct cm_surf *cs = wl_resource_get_user_data(r);
     struct cm_desc *d = desc_res ? wl_resource_get_user_data(desc_res) : NULL;
     if (!cs) {
-        banner_log(TAG, "%s set an image description on a colour-management object whose surface is gone: ignored",
+        banner_log(TAG, "%s 在 surface 已不复存在的 colour-management 对象上设置了 image description：已忽略",
                    banner_client_name(c));
         return;
     }
@@ -1056,7 +1056,7 @@ void banner_color_commit(struct wl_resource *surface) {
     char who[160];
     describe_surface(surface, who, sizeof(who));
     if (cs->current) {
-        banner_log(TAG, "%s: image description #%u now applies to its frames (%s; perceptual intent)", who,
+        banner_log(TAG, "%s：image description #%u 现在应用于它的帧（%s；perceptual intent）", who,
                    cs->current->c.identity, cs->current->c.text);
         if (cs->current->c.dataspace) {
             pthread_mutex_lock(&g_mu);
@@ -1064,11 +1064,11 @@ void banner_color_commit(struct wl_resource *surface) {
             snprintf(g_hdr.applied_who, sizeof(g_hdr.applied_who), "%s", who);
             pthread_mutex_unlock(&g_mu);
             if (!g_zero_copy)
-                banner_log(TAG, "%s: zero-copy presentation is OFF, so its HDR frames are composed into the HDR picture "
-                           "(one extra pass per frame) - switch Zero-copy presentation on for the direct path", who);
+                banner_log(TAG, "%s：zero-copy presentation 处于关闭状态，因此它的 HDR 帧会被合成进 HDR "
+                           "画面（每帧多一个 pass）——打开 Zero-copy presentation 才能走直接路径", who);
         }
     } else if (old) {
-        banner_log(TAG, "%s: image description #%u removed - its frames are sRGB again", who, old->c.identity);
+        banner_log(TAG, "%s：image description #%u 已移除——它的帧恢复为 sRGB", who, old->c.identity);
     }
     desc_unref(old);
 }
@@ -1083,7 +1083,7 @@ const struct banner_color *banner_color_of(struct wl_resource *surface) {
 
 static void cm_output_destroy_req(struct wl_client *c, struct wl_resource *r) { wl_resource_destroy(r); }
 static void cm_output_get_image_description(struct wl_client *c, struct wl_resource *r, uint32_t id) {
-    make_output_description(c, r, id, "the output's image description");
+    make_output_description(c, r, id, "该 output 的 image description");
 }
 static const struct wp_color_management_output_v1_interface cm_output_impl = {
     .destroy = cm_output_destroy_req,
@@ -1092,7 +1092,7 @@ static const struct wp_color_management_output_v1_interface cm_output_impl = {
 
 static void cm_feedback_destroy_req(struct wl_client *c, struct wl_resource *r) { wl_resource_destroy(r); }
 static void cm_feedback_get_preferred(struct wl_client *c, struct wl_resource *r, uint32_t id) {
-    make_output_description(c, r, id, "a surface's preferred image description");
+    make_output_description(c, r, id, "某 surface 的首选 image description");
 }
 static const struct wp_color_management_surface_feedback_v1_interface cm_feedback_impl = {
     .destroy = cm_feedback_destroy_req,
@@ -1125,14 +1125,14 @@ static void cm_get_surface(struct wl_client *c, struct wl_resource *r, uint32_t 
     describe_surface(surface, who, sizeof(who));
     if (cs->owner) {
         /* The protocol says surface_exists; a game would be disconnected for it. The newer object wins. */
-        banner_log(TAG, "%s: a second colour-management object for the same surface - the newer one takes over "
-                   "(protocol error surface_exists not raised)", who);
+        banner_log(TAG, "%s：同一 surface 的第二个 colour-management 对象——较新的那个接管"
+                   "（未抛出 surface_exists 协议错误）", who);
         wl_resource_set_user_data(cs->owner, NULL);
     }
     cs->owner = o;
     wl_resource_set_implementation(o, &cm_surface_impl, cs, cm_surface_resource_destroy);
-    banner_log(TAG, "%s: colour-management surface created by %s (its Vulkan swapchain asks for a colour space "
-               "other than sRGB)", who, banner_client_name(c));
+    banner_log(TAG, "%s：由 %s 创建了 colour-management surface（它的 Vulkan swapchain 请求了 sRGB "
+               "之外的 colour space）", who, banner_client_name(c));
 }
 
 static void cm_get_surface_feedback(struct wl_client *c, struct wl_resource *r, uint32_t id, struct wl_resource *surface) {
@@ -1186,8 +1186,8 @@ static void bind_cm(struct wl_client *c, void *data, uint32_t ver, uint32_t id) 
     /* One line per program: Mesa binds again for every surface-format query. */
     if (last_named != c) {
         last_named = c;
-        banner_log(TAG, "%s bound wp_color_manager_v1 version %u (offered: perceptual intent; parametric descriptions "
-                   "with mastering metadata; BT.2020 primaries; ST 2084 PQ) - its Vulkan driver can now list "
+        banner_log(TAG, "%s 绑定了 wp_color_manager_v1 版本 %u（提供：perceptual intent；带母版元数据的 "
+                   "parametric description；BT.2020 primaries；ST 2084 PQ）——它的 Vulkan 驱动现在可以列出 "
                    "VK_COLOR_SPACE_HDR10_ST2084_EXT", banner_client_name(c), ver > 1 ? 1u : ver);
     }
 }
@@ -1222,80 +1222,80 @@ void banner_color_init(struct wl_display *display) {
 
     char disp[256];
     if (known)
-        snprintf(disp, sizeof(disp), "\"%s\" (display %d, Android API %d) reports HDR types %s, peak %.0f nits, HDR/SDR "
-                 "ratio %s", name, id, api, formats, max_lum, ratio_avail ? "available" : "not available");
+        snprintf(disp, sizeof(disp), "\"%s\"（显示器 %d，Android API %d）报告的 HDR 类型为 %s，峰值 %.0f nits，"
+                 "HDR/SDR 比值 %s", name, id, api, formats, max_lum, ratio_avail ? "可用" : "不可用");
     else
-        snprintf(disp, sizeof(disp), "the app could not read the display's HDR capability");
+        snprintf(disp, sizeof(disp), "应用无法读取该显示器的 HDR 能力");
 
     /* What asked for HDR, in the words the user knows it by: the editors' setting, or the env override. */
     char asked[128];
-    if (mode == 2) snprintf(asked, sizeof(asked), "BANNER_WAYLAND_HDR=force (%s)", source);
-    else if (strstr(source, "env")) snprintf(asked, sizeof(asked), "BANNER_WAYLAND_HDR=1 (%s)", source);
-    else snprintf(asked, sizeof(asked), "HDR output is on (%s)", source);
+    if (mode == 2) snprintf(asked, sizeof(asked), "BANNER_WAYLAND_HDR=force（%s）", source);
+    else if (strstr(source, "env")) snprintf(asked, sizeof(asked), "BANNER_WAYLAND_HDR=1（%s）", source);
+    else snprintf(asked, sizeof(asked), "HDR 输出处于开启状态（%s）", source);
 
     int layer_ok = sc_layer_can_tag_hdr();
     int ahb_ok = ahb_swapchain_advertised();
     char off_why[128];
-    if (strstr(source, "env")) snprintf(off_why, sizeof(off_why), "BANNER_WAYLAND_HDR=0 in the %s overrides the setting", source);
-    else snprintf(off_why, sizeof(off_why), "the HDR output setting is off");
+    if (strstr(source, "env")) snprintf(off_why, sizeof(off_why), "%s 中的 BANNER_WAYLAND_HDR=0 覆盖了该设置", source);
+    else snprintf(off_why, sizeof(off_why), "HDR 输出设置是关闭的");
     if (mode == 0)
-        snprintf(why, sizeof(why), "HDR output is off (%s)", off_why);
+        snprintf(why, sizeof(why), "HDR 输出已关闭（%s）", off_why);
     else if (mode == 1 && !known)
-        snprintf(why, sizeof(why), "%s but %s", asked, disp);
+        snprintf(why, sizeof(why), "%s，但%s", asked, disp);
     else if (mode == 1 && !hdr10)
-        snprintf(why, sizeof(why), "%s but this display cannot show HDR10: %s", asked, disp);
+        snprintf(why, sizeof(why), "%s，但这台显示器无法显示 HDR10：%s", asked, disp);
     else if (!layer_ok)
-        snprintf(why, sizeof(why), "this Android has no display layers with dataspace control "
-                 "(ASurfaceControl + ASurfaceTransaction_setBufferDataSpace, Android 10+)");
+        snprintf(why, sizeof(why), "这个 Android 没有带 dataspace 控制的 display layer"
+                 "（ASurfaceControl + ASurfaceTransaction_setBufferDataSpace，Android 10+）");
     else if (!ahb_ok)
-        snprintf(why, sizeof(why), "zero-copy presentation is unavailable here (banner_ahb_v1 not advertised), and an "
-                 "HDR frame is only honest on the game's own display layer");
+        snprintf(why, sizeof(why), "这里无法使用 zero-copy presentation（未宣告 banner_ahb_v1），"
+                 "而 HDR 帧只有放在游戏自己的 display layer 上才名副其实");
 
     if (why[0]) {
         snprintf(g_gate_why, sizeof(g_gate_why), "%s", why);
         atomic_store(&g_gate, 0);
         if (mode) {
-            banner_log(TAG, "HDR gate CLOSED: %s. Nothing is advertised (no wp_color_manager_v1, no 10-bit dma-buf "
-                       "formats): games see an SDR display, exactly as without the switch", why);
+            banner_log(TAG, "HDR 闸门已关闭：%s。什么都没有宣告（没有 wp_color_manager_v1，没有 10-bit "
+                       "dma-buf 格式）：游戏看到的是一台 SDR 显示器，与不开这个开关时一模一样", why);
             if (dxvk_hdr)
-                banner_log(TAG, "DXVK_HDR=1 is set: DXGI will still claim an HDR display that no swapchain can get here "
-                           "(games that check fall back to SDR; some show washed-out colours) - remove it on this display");
+                banner_log(TAG, "已设置 DXVK_HDR=1：DXGI 仍会声称存在一台此处任何 swapchain 都拿不到的 "
+                           "HDR 显示器（会做检查的游戏回退到 SDR；有些会显示发白）——这台显示器上请移除它");
             log_verdict(1);
         } else if (dxvk_hdr || (known && hdr10)) {
             /* Off, and silent unless it is worth a line: a display that could show HDR10, or a DXVK
              * switch that promises games an HDR display they cannot get. */
-            banner_log(TAG, "HDR output off for this session (%s)%s%s", off_why,
-                       (known && hdr10) ? " - this display lists HDR10, so switching HDR output on for this game would "
-                                          "offer it to games" : "",
-                       dxvk_hdr ? " - but DXVK_HDR=1 is set, so DXGI claims an HDR display the game cannot get a "
-                                  "swapchain for" : "");
+            banner_log(TAG, "本次会话 HDR 输出关闭（%s）%s%s", off_why,
+                       (known && hdr10) ? "——这台显示器列出了 HDR10，因此为它打开 HDR 输出就能把 HDR "
+                                          "提供给游戏" : "",
+                       dxvk_hdr ? "——但已设置 DXVK_HDR=1，于是 DXGI 声称存在一台游戏拿不到 swapchain "
+                                  "的 HDR 显示器" : "");
         }
         return;
     }
 
     if (!wl_global_create(display, &wp_color_manager_v1_interface, 1, NULL, bind_cm)) {
-        snprintf(g_gate_why, sizeof(g_gate_why), "creating the wp_color_manager_v1 global failed");
+        snprintf(g_gate_why, sizeof(g_gate_why), "创建 wp_color_manager_v1 global 失败");
         atomic_store(&g_gate, 0);
-        banner_log("error", "color: wp_color_manager_v1 global creation failed - HDR gate closed");
+        banner_log("error", "color：wp_color_manager_v1 global 创建失败——HDR 闸门关闭");
         log_verdict(1);
         return;
     }
     atomic_store(&g_gate, 1);
     char syms[160];
     sc_layer_hdr_symbols(syms, sizeof(syms));
-    banner_log(TAG, "HDR gate %s: %s and %s. Offering games HDR10: wp_color_manager_v1 version 1 (BT.2020 primaries "
-               "+ ST 2084 PQ, parametric descriptions with mastering metadata) and 10-bit AB30/XB30 dma-buf formats; HDR "
-               "frames go on the game's own display layer as BT2020_PQ (%s)",
-               mode == 2 ? "FORCED OPEN (testing)" : "OPEN", asked, disp, syms);
+    banner_log(TAG, "HDR 闸门%s：%s，%s。向游戏提供 HDR10：wp_color_manager_v1 版本 1（BT.2020 primaries "
+               "+ ST 2084 PQ，带母版元数据的 parametric description）以及 10-bit AB30/XB30 dma-buf 格式；"
+               "HDR 帧以 BT2020_PQ 放到游戏自己的 display layer 上（%s）",
+               mode == 2 ? "强制开启（测试用）" : "已开启", asked, disp, syms);
     if (mode == 2 && !hdr10)
-        banner_log(TAG, "BANNER_WAYLAND_HDR=force on a display without HDR10 - testing only: SurfaceFlinger will tone-map "
-                   "the game layer for this panel (expect GPU/CLIENT composition for it), nothing looks HDR");
+        banner_log(TAG, "在不支持 HDR10 的显示器上使用 BANNER_WAYLAND_HDR=force——仅限测试：SurfaceFlinger "
+                   "会为这块面板 tone-map 游戏 layer（预期出现 GPU/CLIENT 合成），看上去不会像 HDR");
     if (zc_forced)
-        banner_log(TAG, "zero-copy presentation turned on for this session: the HDR game's own 10-bit frames go straight "
-                   "to its display layer (the best path; anything that needs the compositor gets the composed HDR picture)");
+        banner_log(TAG, "本次会话已打开 zero-copy presentation：HDR 游戏自己的 10-bit 帧直接送到它的 "
+                   "display layer（最佳路径；任何需要合成器的都会拿到合成后的 HDR 画面）");
     if (!dxvk_hdr)
-        banner_log(TAG, "DXVK_HDR=1 is not in the game's environment: DXVK games will not see an HDR display in DXGI "
-                   "(dxgi.enableHDR in a dxvk.conf does the same) - add DXVK_HDR=1 to the container's or shortcut's "
-                   "environment variables");
+        banner_log(TAG, "游戏环境里没有 DXVK_HDR=1：DXVK 游戏在 DXGI 中不会看到 HDR 显示器"
+                   "（dxvk.conf 里的 dxgi.enableHDR 效果相同）——把 DXVK_HDR=1 加到容器或快捷方式的"
+                   "环境变量里");
     (void)max_avg; (void)min_lum;
 }

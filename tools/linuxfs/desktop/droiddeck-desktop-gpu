@@ -80,7 +80,7 @@ def wrap(text):
         out_group.pop()
     out_group.append("Actions=" + ("droiddeck-window;" + actions if actions else "droiddeck-window;"))
     out_group.append(MARK)
-    window = ["", "[Desktop Action droiddeck-window]", "Name=Run in a desktop window", "Exec=" + exec_line]
+    window = ["", "[Desktop Action droiddeck-window]", "Name=在桌面窗口中运行", "Exec=" + exec_line]
     # The entry's own actions (new window, a different mode...) run on the GPU as well.
     wrapped_rest = []
     for l in rest:
@@ -130,7 +130,7 @@ def main():
         if name.endswith(".desktop") and name not in written and ours(path):
             os.remove(path)
             removed += 1
-    print(f"droiddeck-desktop-gpu: {'on' if on else 'off'}, {len(written)} entries on the GPU, {removed} removed")
+    print(f"droiddeck-desktop-gpu: {'开启' if on else '关闭'}, {len(written)} 个条目改走 GPU, 移除 {removed} 个")
 
 
 main()

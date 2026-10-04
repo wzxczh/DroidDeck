@@ -44,7 +44,7 @@ object WirelessAdbFix {
     private fun writeAtomically(destination: File, contents: ByteArray) {
         val temporary = File(destination.parentFile, "${destination.name}.tmp")
         temporary.writeBytes(contents)
-        check(temporary.renameTo(destination)) { "Could not save Wireless debugging identity" }
+        check(temporary.renameTo(destination)) { "无法保存无线调试身份密钥" }
     }
 
     suspend fun pair(context: Context, host: String, port: Int, pairingCode: String) {
@@ -171,11 +171,11 @@ object WirelessAdbFix {
         Kadb.create(host, port).use { adb ->
             PhantomProcessLimit.shellCommands(enabled).forEach { command ->
                 val change = adb.shell(command)
-                check(change.exitCode == 0) { change.allOutput.ifBlank { "ADB command failed (${change.exitCode})" } }
+                check(change.exitCode == 0) { change.allOutput.ifBlank { "ADB 命令执行失败（${change.exitCode}）" } }
             }
             val result = adb.shell(PhantomProcessLimit.verifyCommand())
             check(result.exitCode == 0 && PhantomProcessLimit.verified(result.output, enabled)) {
-                "Android did not confirm the child-process limit was changed: ${result.allOutput.trim()}"
+                "Android 未确认子进程限制已被修改：${result.allOutput.trim()}"
             }
         }
         if (PhantomProcessLimit.usesDeviceConfig()) PhantomProcessLimit.rememberAndroid12(context, !enabled)
@@ -186,7 +186,7 @@ object WirelessAdbFix {
     fun setUsingSavedPairing(context: Context, enabled: Boolean) {
         val appContext = context.applicationContext
         val saved = savedConnection(appContext)
-            ?: error("No Wireless debugging pairing is saved")
+            ?: error("尚未保存无线调试配对")
         val cachedPort = saved.port
         if (cachedPort != null) {
             val cachedResult = runCatching {
@@ -201,7 +201,7 @@ object WirelessAdbFix {
             }
         } else {
             val discoveredPort = findConnectPort(appContext, saved.host)
-                ?: error("Enter the current Wireless debugging IP address & Port")
+                ?: error("请填写无线调试当前的 IP 地址和端口")
             setChildProcessLimit(appContext, saved.host, discoveredPort, enabled)
         }
     }

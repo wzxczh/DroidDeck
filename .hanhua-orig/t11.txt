@@ -1,0 +1,345 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\vk_present.c
+#OLD
+    case VKP_MODE_OFF: return "off (letterbox)";
+    case VKP_MODE_FIT: return "fit";
+    case VKP_MODE_STRETCH: return "stretch";
+    case VKP_MODE_FILL: return "fill";
+    case VKP_MODE_INTEGER: return "integer";
+#NEW
+    case VKP_MODE_OFF: return "关闭（黑边）";
+    case VKP_MODE_FIT: return "适应";
+    case VKP_MODE_STRETCH: return "拉伸";
+    case VKP_MODE_FILL: return "填充";
+    case VKP_MODE_INTEGER: return "整数";
+#OLD
+    case VKP_ALIGN_TOP: return "top";
+    case VKP_ALIGN_BOTTOM: return "bottom";
+    default: return "center";
+#NEW
+    case VKP_ALIGN_TOP: return "顶部";
+    case VKP_ALIGN_BOTTOM: return "底部";
+    default: return "居中";
+#OLD
+"screen surface attached"
+#NEW
+"屏幕表面已附加"
+#OLD
+"screen surface gone: presenting paused"
+#NEW
+"屏幕表面已移除：呈现暂停"
+#OLD
+"%s, %s: %dx%d scene shown %dx%d at %d,%d on the %dx%d output"
+#NEW
+"%s，%s：%dx%d 场景以 %dx%d 显示在 %d,%d，位于 %dx%d 输出上"
+#OLD
+"present: vk_loader_open failed"
+#NEW
+"present: vk_loader_open 失败"
+#OLD
+        banner_log("color", "compositor instance %s VK_EXT_swapchain_colorspace (an HDR10 swapchain for frame "
+                   "generation %s)", g_colorspace_ext ? "enables" : "has no",
+                   g_colorspace_ext ? "is possible where the screen surface offers one" : "is not possible: tone-mapped instead");
+#NEW
+        banner_log("color", "合成器实例 %s VK_EXT_swapchain_colorspace（用于帧生成的 HDR10 交换链 "
+                   "%s）", g_colorspace_ext ? "启用" : "没有",
+                   g_colorspace_ext ? "在屏幕表面提供时可行" : "不可行：改为色调映射");
+#OLD
+"present: vkCreateInstance failed"
+#NEW
+"present: vkCreateInstance 失败"
+#OLD
+"present: no physical devices"
+#NEW
+"present: 没有物理设备"
+#OLD
+"present: no graphics queue"
+#NEW
+"present: 没有图形队列"
+#OLD
+"compositor renders on %s with %s"
+#NEW
+"合成器在 %s 上使用 %s 渲染"
+#OLD
+g_library_name ? g_library_name : "the system Vulkan driver"
+#NEW
+g_library_name ? g_library_name : "系统 Vulkan 驱动"
+#OLD
+"driver folder %s"
+#NEW
+"驱动目录 %s"
+#OLD
+"present: driver MISSING %s (dmabuf import will fail)"
+#NEW
+"present: 驱动缺少 %s（dmabuf 导入将失败）"
+#OLD
+"the driver refused the LSFG feature set (%s); device created without it"
+#NEW
+"驱动拒绝了 LSFG 特性集（%s）；已在没有它的情况下创建设备"
+#OLD
+"present: vkCreateDevice failed"
+#NEW
+"present: vkCreateDevice 失败"
+#OLD
+    banner_log("perf", "layer buffers: the display's release fences are waited for %s",
+               g_import_sem_fd ? "on the GPU (VK_KHR_external_semaphore_fd)"
+                               : "on the CPU (this driver has no VK_KHR_external_semaphore_fd)");
+#NEW
+    banner_log("perf", "图层缓冲：显示屏的释放围栏在%s等待",
+               g_import_sem_fd ? "GPU 上（VK_KHR_external_semaphore_fd）"
+                               : "CPU 上（该驱动没有 VK_KHR_external_semaphore_fd）");
+#OLD
+        banner_log("color", "compositor device %s VK_EXT_hdr_metadata (the HDR10 swapchain for frame generation %s)",
+                   g_set_hdr_metadata ? "enables" : "has no",
+                   g_set_hdr_metadata ? "carries the game's mastering metadata" : "goes without the game's metadata");
+#NEW
+        banner_log("color", "合成器设备 %s VK_EXT_hdr_metadata（用于帧生成的 HDR10 交换链 %s）",
+                   g_set_hdr_metadata ? "启用" : "没有",
+                   g_set_hdr_metadata ? "携带游戏的母版元数据" : "不带游戏的元数据");
+#OLD
+"present: no swapchain on the screen surface; retrying every 0.5 s"
+#NEW
+"present: 屏幕表面上没有交换链；每 0.5 秒重试"
+#OLD
+    banner_log("color", "screen surface lists %u format/colour-space pairs (%s); HDR-capable: %s%s", n, per,
+               hdr_n ? hdr : "none", hdr_cut ? " (+more)" : "");
+#NEW
+    banner_log("color", "屏幕表面列出 %u 组格式/色彩空间（%s）；支持 HDR：%s%s", n, per,
+               hdr_n ? hdr : "无", hdr_cut ? "（还有更多）" : "");
+#OLD
+"present: create android surface failed"
+#NEW
+"present: 创建 Android surface 失败"
+#OLD
+"present: queue can't present to the window"
+#NEW
+"present: 队列无法呈现到该窗口"
+#OLD
+"present: the surface lists no formats"
+#NEW
+"present: 表面未列出任何格式"
+#OLD
+"present: vkGetPhysicalDeviceSurfaceFormatsKHR failed"
+#NEW
+"present: vkGetPhysicalDeviceSurfaceFormatsKHR 失败"
+#OLD
+            banner_log("color", "screen swapchain built as HDR10 (format %d %s, HDR10_ST2084): frame-generated HDR "
+                       "frames reach the display as PQ BT.2020%s", (int)chosen.format, fname,
+                       vk_format_bits(chosen.format) <= 8 ? " - an 8-bit swapchain: banding possible in smooth gradients"
+                                                          : "");
+#NEW
+            banner_log("color", "屏幕交换链按 HDR10 构建（格式 %d %s，HDR10_ST2084）：帧生成的 HDR "
+                       "帧以 PQ BT.2020 到达显示屏%s", (int)chosen.format, fname,
+                       vk_format_bits(chosen.format) <= 8 ? " - 8 位交换链：平滑渐变可能出现色带"
+                                                          : "");
+#OLD
+            banner_log("color", "the screen surface lists no HDR10 swapchain format among its %u format/colour-space "
+                       "pairs (see the line above): frames with frame generation are tone-mapped to SDR instead",
+                       nfmt);
+#NEW
+            banner_log("color", "屏幕表面的 %u 组格式/色彩空间 "
+                       "（见上一行）中没有 HDR10 交换链格式：带帧生成的帧改为色调映射为 SDR",
+                       nfmt);
+#OLD
+        banner_log("color", "the driver refused the HDR10 swapchain (%s): frames with frame generation are "
+                   "tone-mapped to SDR instead", vk_result_name(cr));
+#NEW
+        banner_log("color", "驱动拒绝了 HDR10 交换链（%s）：带帧生成的帧 "
+                   "改为色调映射为 SDR", vk_result_name(cr));
+#OLD
+"present: vkCreateSwapchainKHR failed (%d)"
+#NEW
+"present: vkCreateSwapchainKHR 失败（%d）"
+#OLD
+    banner_log("gpu", "screen output %ux%u, %u buffers, vsync%s", g_extent.width, g_extent.height, g_nimg,
+               g_swap_extra ? " (frame generation: several presents per frame)" : "");
+#NEW
+    banner_log("gpu", "屏幕输出 %ux%u，%u 个缓冲，垂直同步%s", g_extent.width, g_extent.height, g_nimg,
+               g_swap_extra ? "（帧生成：每帧多次呈现）" : "");
+#OLD
+"letterbox black image unavailable: the whole output is cleared every copy-path frame"
+#NEW
+"黑边黑色图像不可用：走拷贝路径的每一帧都会清空整个输出"
+#OLD
+why = "unknown layout";
+#NEW
+why = "未知布局";
+#OLD
+why = "not single-plane";
+#NEW
+why = "非单平面";
+#OLD
+why = "no blit source";
+#NEW
+why = "不能作为 blit 源";
+#OLD
+why = "not importable as a dma-buf";
+#NEW
+why = "无法作为 dma-buf 导入";
+#OLD
+"dmabuf: %c%c%c%c %s reported by the driver but not advertised: %s"
+#NEW
+"dmabuf: 驱动报告了 %c%c%c%c %s 却未公布：%s"
+#OLD
+? ": the game's UBWC layout was refused; BANNER_WAYLAND_UBWC=0 forces linear buffers" : "");
+#NEW
+? "：游戏的 UBWC 布局被拒绝；BANNER_WAYLAND_UBWC=0 强制线性缓冲" : "");
+#OLD
+"%s: no memory type can import the %s dma-buf (image types %#x, fd types %#x)"
+#NEW
+"%s：没有内存类型能导入 %s dma-buf（图像类型 %#x，fd 类型 %#x）"
+#OLD
+"%s: importing the %s dma-buf (%dx%d, %llu bytes) -> %s"
+#NEW
+"%s：导入 %s dma-buf（%dx%d，%llu 字节）-> %s"
+#OLD
+"%s: vkBindImageMemory(%s dma-buf) -> %s"
+#NEW
+"%s：vkBindImageMemory(%s dma-buf) -> %s"
+#OLD
+"effects: scene image %dx%d: vkCreateImage %s"
+#NEW
+"effects: 场景图像 %dx%d：vkCreateImage %s"
+#OLD
+"effects: scene image %dx%d: vkAllocateMemory %s"
+#NEW
+"effects: 场景图像 %dx%d：vkAllocateMemory %s"
+#OLD
+"scene image %dx%d for the effect chain"
+#NEW
+"效果链的场景图像 %dx%d"
+#OLD
+"color: %s image %dx%d: vkCreateImage %s"
+#NEW
+"color: %s 图像 %dx%d：vkCreateImage %s"
+#OLD
+"color: %s image %dx%d: vkAllocateMemory %s"
+#NEW
+"color: %s 图像 %dx%d：vkAllocateMemory %s"
+#OLD
+"%s image %dx%d (%s)"
+#NEW
+"%s 图像 %dx%d（%s）"
+#OLD
+"HDR composition (mixed)"
+#NEW
+"HDR 合成（混合）"
+#OLD
+"HDR frame generation (scene)"
+#NEW
+"HDR 帧生成（场景）"
+#OLD
+"HDR composition (picture)"
+#NEW
+"HDR 合成（画面）"
+#OLD
+            banner_log("color", "HDR composition: more than %d windows are stacked over the HDR game - the lowest "
+                       "ones are treated as SDR", HDRC_MAX_RECTS);
+#NEW
+            banner_log("color", "HDR 合成：叠在 HDR 游戏之上的窗口超过 %d 个 - 最底层的 "
+                       "被视为 SDR", HDRC_MAX_RECTS);
+#OLD
+    banner_log("error", "GPU device lost (VK_ERROR_DEVICE_LOST in %s): the compositor has stopped presenting; "
+               "restart the session", where);
+#NEW
+    banner_log("error", "GPU 设备丢失（%s 处发生 VK_ERROR_DEVICE_LOST）：合成器已停止呈现； "
+               "请重启会话", where);
+#OLD
+"screen surface %s on acquire: rebuilding the swapchain"
+#NEW
+"获取时屏幕表面 %s：重建交换链"
+#OLD
+"present: acquire %d failed (%s %d)"
+#NEW
+"present: 获取 %d 失败（%s %d）"
+#OLD
+    banner_log("gpu", "screen surface changed (%ux%u -> %ux%u, transform %d -> %d): rebuilding the swapchain",
+#NEW
+    banner_log("gpu", "屏幕表面已改变（%ux%u -> %ux%u，变换 %d -> %d）：重建交换链",
+#OLD
+"layer buffers: importing a release fence as a GPU wait failed; waiting for it on the CPU"
+#NEW
+"图层缓冲：把释放围栏导入为 GPU 等待失败；改为在 CPU 上等待"
+#OLD
+"HDR10 swapchain without the game's metadata: this device "
+#NEW
+"HDR10 交换链没有游戏的元数据：本设备 "
+#OLD
+"has no VK_EXT_hdr_metadata (the display uses its defaults)"
+#NEW
+"没有 VK_EXT_hdr_metadata（显示屏使用其默认值）"
+#OLD
+            banner_log("color", "HDR10 swapchain: image description #%u carries no HDR metadata (the game sent none), "
+                       "so none is set - the display uses its defaults", c->identity);
+#NEW
+            banner_log("color", "HDR10 交换链：图像描述 #%u 不带 HDR 元数据（游戏未发送）， "
+                       "因此不设置 - 显示屏使用其默认值", c->identity);
+#OLD
+"HDR10 swapchain: the game's metadata set via VK_EXT_hdr_metadata (image description #%u: %s)"
+#NEW
+"HDR10 交换链：已通过 VK_EXT_hdr_metadata 设置游戏的元数据（图像描述 #%u：%s）"
+#OLD
+        banner_log("gpu", "frame generation now wants %d present%s per frame: rebuilding the swapchain",
+                   1 + vkp_framegen_extra_images(), vkp_framegen_extra_images() ? "s" : "");
+#NEW
+        banner_log("gpu", "帧生成现在每帧需要 %d 次呈现%s：重建交换链",
+                   1 + vkp_framegen_extra_images(), vkp_framegen_extra_images() ? "" : "");
+#OLD
+want_hdr ? "HDR frames with frame generation: rebuilding the screen swapchain as HDR10"
+#NEW
+want_hdr ? "带帧生成的 HDR 帧：把屏幕交换链重建为 HDR10"
+#OLD
+: hf     ? "HDR output switched off: rebuilding the screen swapchain as SDR (frames tone-mapped)"
+#NEW
+: hf     ? "HDR 输出已关闭：把屏幕交换链重建为 SDR（帧被色调映射）"
+#OLD
+: "no HDR frames through the screen swapchain any more: rebuilding it as SDR");
+#NEW
+: "屏幕交换链不再承载 HDR 帧：将其重建为 SDR");
+#OLD
+                banner_log("color", "frame generation runs on the HDR picture in FP16 (RGBA16F): more than 8 bits of PQ "
+                           "through interpolation, into the HDR10 swapchain (%s)", sw);
+#NEW
+                banner_log("color", "帧生成以 FP16（RGBA16F）在 HDR 画面上运行：插值保留超过 8 位的 "
+                           "PQ，进入 HDR10 交换链（%s）", sw);
+#OLD
+                banner_log("color", "frame generation runs on the HDR picture in 8 bits (the engine cannot take FP16 here), "
+                           "into the HDR10 swapchain (%s): banding possible in smooth gradients", sw);
+#NEW
+                banner_log("color", "帧生成以 8 位在 HDR 画面上运行（引擎在此无法使用 FP16）， "
+                           "进入 HDR10 交换链（%s）：平滑渐变可能出现色带", sw);
+#OLD
+"present %d/%d: no swapchain image; the frame ends early"
+#NEW
+"present %d/%d：没有交换链图像；本帧提前结束"
+#OLD
+"present: submit %d/%d failed (%d)"
+#NEW
+"present: 提交 %d/%d 失败（%d）"
+#OLD
+"screen surface %s on present: rebuilding the swapchain"
+#NEW
+"呈现时屏幕表面 %s：重建交换链"
+#OLD
+"surface reports SUBOPTIMAL (panel rotation); presenting as is"
+#NEW
+"表面报告 SUBOPTIMAL（面板旋转）；按原样呈现"
+#OLD
+"present: vkQueuePresentKHR failed (%s %d)"
+#NEW
+"present: vkQueuePresentKHR 失败（%s %d）"
+#OLD
+"layer: blit submit failed (%d)"
+#NEW
+"layer: blit 提交失败（%d）"
+#OLD
+"layer: blit fence wait -> %s"
+#NEW
+"layer: blit 围栏等待 -> %s"
+#OLD
+"layer: effects pass submit failed (%d)"
+#NEW
+"layer: 效果通道提交失败（%d）"
+#OLD
+"layer: effects pass fence wait -> %s"
+#NEW
+"layer: 效果通道围栏等待 -> %s"

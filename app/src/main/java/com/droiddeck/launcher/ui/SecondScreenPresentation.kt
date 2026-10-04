@@ -128,37 +128,37 @@ class SecondScreenPresentation(
         }
         controls.addView(Button(context).apply {
             text = "×"
-            contentDescription = "Close second-screen controls"
+            contentDescription = "关闭第二屏控件"
             minWidth = dp(48)
             setOnClickListener { onClose() }
         })
         controls.addView(TextView(context).apply {
-            text = "Trackpad"
+            text = "触控板"
             textSize = 14f
             setTextColor(Color.WHITE)
         }, LinearLayout.LayoutParams(0, -2, 1f))
         val keyboardButton = Button(context).apply {
-            text = "Show keyboard"
+            text = "显示键盘"
             setOnClickListener {
                 val host = keyboardHost ?: return@setOnClickListener
                 if (host.shown) {
                     host.hide()
-                    text = "Show keyboard"
+                    text = "显示键盘"
                 } else {
                     host.show()
-                    text = "Hide keyboard"
+                    text = "隐藏键盘"
                 }
             }
         }
         controls.addView(keyboardButton)
         controls.addView(Button(context).apply {
             text = "STEAM"
-            contentDescription = "Open Steam menu"
+            contentDescription = "打开 Steam 菜单"
             setOnClickListener { onSteamMenu() }
         })
         controls.addView(Button(context).apply {
             text = "…"
-            contentDescription = "Open Quick Access Menu"
+            contentDescription = "打开 Quick Access（QAM）菜单"
             setOnClickListener { onQam() }
         })
         panel.addView(controls, FrameLayout.LayoutParams(-1, -2, Gravity.TOP))
@@ -179,17 +179,17 @@ class SecondScreenPresentation(
         }
         bar.addView(Button(context).apply {
             text = "×"
-            contentDescription = "Close second-screen controls"
+            contentDescription = "关闭第二屏控件"
             minWidth = dp(48)
             setOnClickListener { onClose() }
         })
         bar.addView(TextView(context).apply {
-            text = "Linux terminal"
+            text = "Linux 终端"
             textSize = 14f
             setTextColor(Color.WHITE)
         }, LinearLayout.LayoutParams(0, -2, 1f))
         bar.addView(Button(context).apply {
-            text = "Keyboard"
+            text = "键盘"
             setOnClickListener { showTerminalKeyboard() }
         })
         root.addView(bar, LinearLayout.LayoutParams(-1, -2))
@@ -205,7 +205,7 @@ class SecondScreenPresentation(
         val session = SessionTerminal.create(terminalClient)
         if (session == null) {
             root.addView(TextView(context).apply {
-                text = "The Linux session is not ready for a terminal yet."
+                text = "Linux 会话尚未就绪，暂时无法使用终端。"
                 setTextColor(Color.WHITE)
                 gravity = Gravity.CENTER
             }, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -339,7 +339,7 @@ class SecondScreenPresentation(
         }
         override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
             (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-                .setPrimaryClip(android.content.ClipData.newPlainText("Terminal", text))
+                .setPrimaryClip(android.content.ClipData.newPlainText("终端", text))
         }
         override fun onPasteTextFromClipboard(session: TerminalSession) {
             val clip = (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip

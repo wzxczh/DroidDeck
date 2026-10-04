@@ -185,9 +185,9 @@ void vkp_framegen_device_ready(VkDevice dev, VkQueue queue, uint32_t qfam, int f
     g_vk.GetPhysicalDeviceMemoryProperties(g_pd, &g_memprops);
     fge_device_ready(g_gipa, g_inst, g_pd, dev, queue, qfam, features_enabled);
     g_dev_ready = vk.CreateImage && vk.CreateImageView && vk.CmdPipelineBarrier;
-    FGLOG("engines ready on the compositor's device: LSFG Native %s (%s), Win-FG Native %s",
-          fge_caps_ok(VKP_FG_ENGINE_LSFG) ? "available" : "unavailable", fge_caps_reason(),
-          fge_caps_ok(VKP_FG_ENGINE_WINFG) ? "available" : "unavailable");
+    FGLOG("合成器设备上的引擎就绪：LSFG Native %s（%s），Win-FG Native %s",
+          fge_caps_ok(VKP_FG_ENGINE_LSFG) ? "可用" : "不可用", fge_caps_reason(),
+          fge_caps_ok(VKP_FG_ENGINE_WINFG) ? "可用" : "不可用");
 }
 
 void vkp_framegen_device_lost(void) { g_dev_lost = 1; }
@@ -246,7 +246,7 @@ static int ensure_ring(uint32_t w, uint32_t h, VkFormat fmt, uint32_t n) {
         g_ring_n = i + 1;
     }
     g_ring_w = w; g_ring_h = h; g_ring_fmt = fmt;
-    LOGD("framegen: generation ring %ux%u x%u", w, h, n);
+    LOGD("framegen: 生成环 %ux%u x%u", w, h, n);
     return 1;
 }
 
@@ -267,8 +267,8 @@ int vkp_framegen_format_ok(VkFormat fmt) {
  * restart the engine on the next frame (a failed build is sticky inside both engines). */
 static void refuse_format(VkFormat fmt, int kind, int w, int h, const char *what) {
     if (g_refused_n < (int)(sizeof(g_refused_fmt) / sizeof(g_refused_fmt[0]))) g_refused_fmt[g_refused_n++] = fmt;
-    FGLOG("%s could not %s in format %d (the HDR picture's FP16) at %dx%d: it restarts, and HDR frames go through "
-          "it in 8 bits from the next frame", fge_engine_name(kind), what, (int)fmt, w, h);
+    FGLOG("%s 无法%s，格式 %d（HDR 画面的 FP16），分辨率 %dx%d：引擎将重启，HDR 帧从下一帧起经由它以 "
+          "8 位处理", fge_engine_name(kind), what, (int)fmt, w, h);
     destroy_ring();
     fge_stop();
     g_engine_ok = 0; g_engine_kind = -1;
@@ -293,14 +293,14 @@ static int ensure_engine(int kind) {
     if (g_cache_path) path = strdup(g_cache_path);
     pthread_mutex_unlock(&g_lock);
     if (kind == VKP_FG_ENGINE_LSFG && !path) {
-        FGLOG("LSFG Native can't start: no shader cache (import Lossless.dll in Settings)");
+        FGLOG("LSFG Native 无法启动：没有着色器缓存（在设置中导入 Lossless.dll）");
         mark_failed(kind);
         return 0;
     }
     int r = fge_start(kind, path);
     free(path);
     if (r != 0) {
-        FGLOG("%s failed to start on the compositor's driver; frame generation stays off",
+        FGLOG("%s 在合成器驱动上启动失败；帧生成保持关闭",
               fge_engine_name(kind));
         mark_failed(kind);
         return 0;
@@ -308,7 +308,7 @@ static int ensure_engine(int kind) {
     g_engine_ok = 1; g_engine_kind = kind;
     atomic_store(&g_cfg_dirty, 1);
     g_built_w = g_built_h = 0;
-    FGLOG("%s engine ready (%s)", fge_engine_name(kind), fge_build_info());
+    FGLOG("%s 引擎就绪（%s）", fge_engine_name(kind), fge_build_info());
     return 1;
 }
 
@@ -317,7 +317,7 @@ static void log_arm_transition(int armed, int kind, int mult) {
     if (armed == g_was_armed) {
         if (armed && mult != g_logged_mult) {
             g_logged_mult = mult;
-            FGLOG("%s multiplier changed to x%d (%d interpolated frames per game frame)", fge_engine_name(kind), mult, mult - 1);
+            FGLOG("%s 倍数改为 x%d（每个游戏帧插入 %d 帧）", fge_engine_name(kind), mult, mult - 1);
         }
         return;
     }
@@ -326,10 +326,10 @@ static void log_arm_transition(int armed, int kind, int mult) {
         g_logged_mult = mult;
         float flow, hz;
         pthread_mutex_lock(&g_lock); flow = g_flow; hz = g_refresh_hz; pthread_mutex_unlock(&g_lock);
-        FGLOG("%s x%d armed (flow scale %.2f, panel %.0f Hz): real frames are presented one slot late "
-              "with the interpolated frames ahead of them", fge_engine_name(kind), mult, (double)flow, (double)hz);
+        FGLOG("%s x%d 已启用（光流缩放 %.2f，面板 %.0f Hz）：真实帧延后一格呈现，"
+              "插值帧排在它们前面", fge_engine_name(kind), mult, (double)flow, (double)hz);
     } else {
-        FGLOG("frame generation off (%llu frames generated this session)", (unsigned long long)g_total_generated);
+        FGLOG("帧生成已关闭（本次会话共生成 %llu 帧）", (unsigned long long)g_total_generated);
         g_generating_logged = 0;
     }
 }
@@ -352,11 +352,11 @@ int vkp_framegen_run(VkCommandBuffer cmd, VkImage scene, VkImageView scene_view,
     }
     if (!fge_prepare((uint32_t)w, (uint32_t)h, fmt)) {
         if (fmt != VK_FORMAT_R8G8B8A8_UNORM && fge_unavailable()) {
-            refuse_format(fmt, kind, w, h, "build its chain");
+            refuse_format(fmt, kind, w, h, "构建其管线");
             return 0;
         }
         if (fge_unavailable()) {
-            FGLOG("%s could not build its chain at %dx%d; frame generation stays off", fge_engine_name(kind), w, h);
+            FGLOG("%s 无法在 %dx%d 构建管线；帧生成保持关闭", fge_engine_name(kind), w, h);
             mark_failed(kind);
         }
         return 0;
@@ -367,8 +367,8 @@ int vkp_framegen_run(VkCommandBuffer cmd, VkImage scene, VkImageView scene_view,
     }
     uint32_t want = (uint32_t)(mult - 1);
     if (!ensure_ring((uint32_t)w, (uint32_t)h, fmt, want)) {
-        if (fmt != VK_FORMAT_R8G8B8A8_UNORM) { refuse_format(fmt, kind, w, h, "make its generation ring"); return 0; }
-        FGLOG("no memory for the generation ring (%dx%d x%u); frame generation stays off", w, h, want);
+        if (fmt != VK_FORMAT_R8G8B8A8_UNORM) { refuse_format(fmt, kind, w, h, "创建其生成环"); return 0; }
+        FGLOG("生成环内存不足（%dx%d x%u）；帧生成保持关闭", w, h, want);
         mark_failed(kind);
         return 0;
     }
@@ -426,9 +426,9 @@ int vkp_framegen_run(VkCommandBuffer cmd, VkImage scene, VkImageView scene_view,
                               0, 0, NULL, 0, NULL, nb, bars);
         if (!g_generating_logged) {
             g_generating_logged = 1;
-            FGLOG("generating: %s x%d at %dx%d (%u interpolated frame%s per game frame%s)",
-                  fge_engine_name(kind), mult, w, h, n_gen, n_gen == 1 ? "" : "s",
-                  fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? ", FP16: the HDR picture" : "");
+            FGLOG("生成中：%s x%d，%dx%d（每个游戏帧插入 %u 帧%s%s）",
+                  fge_engine_name(kind), mult, w, h, n_gen, n_gen == 1 ? "" : "",
+                  fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "，FP16：HDR 画面" : "");
         }
     }
     return (int)n_gen;

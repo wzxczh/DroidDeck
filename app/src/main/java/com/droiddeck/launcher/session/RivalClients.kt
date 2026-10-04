@@ -39,15 +39,15 @@ object RivalClients {
     fun stopBeforeSession(context: Context) {
         val rivals = installed(context)
         if (rivals.isEmpty()) return
-        Log.w(TAG, "competing Steam client installed: $rivals")
+        Log.w(TAG, "已安装竞争的 Steam 客户端：$rivals")
         try {
             val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
             if (am != null) {
                 for (pkg in rivals) am.killBackgroundProcesses(pkg)
-                Log.i(TAG, "asked Android to stop background processes of $rivals")
+                Log.i(TAG, "已请求 Android 停止 $rivals 的后台进程")
             }
         } catch (t: Throwable) {
-            Log.w(TAG, "could not stop competing Steam clients", t)
+            Log.w(TAG, "无法停止竞争的 Steam 客户端", t)
         }
     }
 }

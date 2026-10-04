@@ -77,31 +77,31 @@ def release_asset(source, tag):
             sums = [u for n, u in assets.items()
                     if n.startswith(name.split(".tar")[0]) and "sha512" in n]
             return tag, assets[name], (sums[0] if sums else None)
-    raise SystemExit("bannerlator-proton-extra: %s has no ARM64 asset" % tag)
+    raise SystemExit("bannerlator-proton-extra: %s 没有 ARM64 资源" % tag)
 
 
 def download(url, path):
     """Resumable, because this is hundreds of megabytes over a phone's connection. curl is used
     rather than urllib so a retry continues rather than starting again."""
-    log("downloading %s" % os.path.basename(path))
+    log("正在下载 %s" % os.path.basename(path))
     rc = subprocess.call([
         "curl", "-fL", "--retry", "5", "--retry-delay", "3", "--retry-connrefused",
         "-C", "-", "-A", USER_AGENT, "-o", path, url])
     if rc != 0:
-        raise SystemExit("bannerlator-proton-extra: download failed (curl %d)" % rc)
-    log("downloaded %.0f MB" % (os.path.getsize(path) / 1048576.0))
+        raise SystemExit("bannerlator-proton-extra: 下载失败 (curl %d)" % rc)
+    log("已下载 %.0f MB" % (os.path.getsize(path) / 1048576.0))
 
 
 def verify(path, sums_url):
     if not sums_url:
-        log("no checksum published; skipping verification")
+        log("未发布校验和; 跳过校验")
         return
     try:
         req = urllib.request.Request(sums_url, headers={"User-Agent": USER_AGENT})
         with urllib.request.urlopen(req, timeout=60) as r:
             want = r.read().decode("utf-8", "replace").split()[0].lower()
     except (urllib.error.URLError, IndexError, OSError) as e:
-        log("could not read the checksum (%s); skipping verification" % e)
+        log("无法读取校验和 (%s); 跳过校验" % e)
         return
     h = hashlib.sha512()
     with open(path, "rb") as f:
@@ -109,16 +109,16 @@ def verify(path, sums_url):
             h.update(chunk)
     if h.hexdigest() != want:
         os.unlink(path)
-        raise SystemExit("bannerlator-proton-extra: checksum mismatch; the download was deleted")
-    log("checksum ok")
+        raise SystemExit("bannerlator-proton-extra: 校验和不匹配; 已删除下载的文件")
+    log("校验和通过")
 
 
 def extract(tarball, into):
     os.makedirs(into, exist_ok=True)
-    log("unpacking (a few minutes; nothing is shown while tar runs)")
+    log("unpacking (需数分钟; tar 运行期间没有输出)")
     rc = subprocess.call(["tar", "-xf", tarball, "-C", into])
     if rc != 0:
-        raise SystemExit("bannerlator-proton-extra: tar failed (%d)" % rc)
+        raise SystemExit("bannerlator-proton-extra: tar 失败 (%d)" % rc)
     # A Proton tarball holds one top-level directory. Take whichever entry has the entry point so a
     # stray ._ file or a nested layout does not decide it.
     entries = [e for e in sorted(os.listdir(into)) if not e.startswith(".")]
@@ -128,7 +128,7 @@ def extract(tarball, into):
             return path
     if len(entries) == 1 and os.path.isdir(os.path.join(into, entries[0])):
         return os.path.join(into, entries[0])
-    raise SystemExit("bannerlator-proton-extra: no Proton tree in the archive")
+    raise SystemExit("bannerlator-proton-extra: 压缩包里没有 Proton 目录树")
 
 
 def installed(tools):
@@ -144,14 +144,14 @@ def installed(tools):
 def main():
     argv = sys.argv[1:]
     if not argv:
-        raise SystemExit(__doc__ or "usage: bannerlator-proton-extra <steam root> ge|cachyos|<url>")
+        raise SystemExit(__doc__ or "用法: bannerlator-proton-extra <steam root> ge|cachyos|<url>")
     steam_root = argv.pop(0)
     tools = os.path.join(steam_root, "compatibilitytools.d")
     os.makedirs(tools, exist_ok=True)
 
     if not argv or argv[0] in ("--list", "-l"):
         for name in installed(tools):
-            log("installed: %s" % name)
+            log("已安装: %s" % name)
         return
 
     what = argv.pop(0)
@@ -167,20 +167,20 @@ def main():
     if what in SOURCES:
         tag, url, sums = release_asset(what, tag) if tag else pick_asset(what)
         if not url:
-            raise SystemExit("bannerlator-proton-extra: no ARM64 build published for %s" % what)
+            raise SystemExit("bannerlator-proton-extra: %s 未发布 ARM64 版本" % what)
         log("%s -> %s" % (what, tag))
     elif what.startswith("http"):
         url, sums = what, None
     elif os.path.isfile(what):
         local, url, sums = what, None, None
-        log("using %s" % what)
+        log("使用 %s" % what)
     else:
         raise SystemExit(
-            "bannerlator-proton-extra: expected ge, cachyos, a URL or a tarball path, got %r" % what)
+            "bannerlator-proton-extra: 需要 ge、cachyos、URL 或 tarball 路径之一，收到 %r" % what)
 
     free = shutil.disk_usage(tools).free
     if free < NEED_BYTES:
-        raise SystemExit("bannerlator-proton-extra: needs about %d GB free, has %.1f GB" % (
+        raise SystemExit("bannerlator-proton-extra: 需要约 %d GB 可用空间，当前只有 %.1f GB" % (
             NEED_BYTES // (1024 ** 3), free / float(1024 ** 3)))
 
     staging = os.path.join(tools, ".bannerlator-download")
@@ -206,7 +206,7 @@ def main():
         shutil.rmtree(os.path.join(staging, "unpacked"), ignore_errors=True)
     else:
         shutil.rmtree(staging, ignore_errors=True)
-    log("installed %s" % name)
+    log("已安装 %s" % name)
 
     # Patches out require_tool_appid and wraps the entry point, which is what makes it launchable
     # here. Doing it now means the client picks the tool up on its next restart with no extra step.

@@ -26,7 +26,7 @@ class RuntimeInstallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val release = intent?.let(::releaseFrom)
-        startForeground(NOTIFICATION_ID, notification("Starting…", -1))
+        startForeground(NOTIFICATION_ID, notification("正在开始…", -1))
         if (release == null) {
             stopSelf(startId)
             return START_NOT_STICKY
@@ -50,9 +50,9 @@ class RuntimeInstallService : Service() {
 
     private fun notification(stage: String, percent: Int): Notification {
         val manager = getSystemService(NotificationManager::class.java)
-        manager?.createNotificationChannel(NotificationChannel(CHANNEL_ID, "Runtime install",
+        manager?.createNotificationChannel(NotificationChannel(CHANNEL_ID, "运行时安装",
             NotificationManager.IMPORTANCE_LOW).apply {
-            description = "Shows while the Linux runtime downloads and installs"
+            description = "显示 Linux 运行时下载与安装的进度"
             setShowBadge(false)
             setSound(null, null)
             enableVibration(false)
@@ -62,7 +62,7 @@ class RuntimeInstallService : Service() {
             PendingIntent.FLAG_IMMUTABLE)
         return Notification.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_session)
-            .setContentTitle("Installing the Linux runtime")
+            .setContentTitle("正在安装 Linux 运行时")
             .setContentText(stage)
             .setProgress(100, percent.coerceIn(0, 100), percent < 0)
             .setContentIntent(open)

@@ -148,7 +148,7 @@ object Library {
         Spec("melonds", "melonDS", "DS", "/opt/appimages/melonds.AppImage", listOf("ds", "nds"), setOf("nds", "dsi"), atPanel = true),
         Spec("cemu", "Cemu", "Wii U", "/opt/appimages/cemu.AppImage", listOf("wiiu", "wii u"), setOf("wua", "wud", "wux", "rpx")),
         Spec("ppsspp", "PPSSPP", "PSP", "/usr/bin/PPSSPPSDL", listOf("psp"), setOf("iso", "cso", "pbp", "chd")),
-        Spec("retroarch", "RetroArch", "many systems", "/usr/bin/retroarch", emptyList(), emptySet()),
+        Spec("retroarch", "RetroArch", "多种主机", "/usr/bin/retroarch", emptyList(), emptySet()),
     )
     /**
      * A dump's file name as a title: its tags - (USA), (En,Fr,Es,Pt), [!], (v1.01) - identify the

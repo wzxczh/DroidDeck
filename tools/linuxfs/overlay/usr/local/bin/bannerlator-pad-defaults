@@ -10,7 +10,7 @@ HOME = os.environ.get("HOME", "/root")
 CONFIG = os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
 
 
-def seed(path, text, what, done="Player 1 on the controller"):
+def seed(path, text, what, done="玩家 1 已绑定到手柄"):
     if os.path.exists(path):
         return False
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -87,7 +87,7 @@ def rpcs3_shader_mode():
         return
     cfg = os.path.join(d, "config.yml")
     if not os.path.isfile(cfg):
-        if seed(cfg, f"Video:\n  Shader Mode: {RPCS3_RECOMPILER}\n", "RPCS3", f"shader mode {RPCS3_RECOMPILER}"):
+        if seed(cfg, f"Video:\n  Shader Mode: {RPCS3_RECOMPILER}\n", "RPCS3", f"着色器模式 {RPCS3_RECOMPILER}"):
             open(marker, "w").close()
         return
     with open(cfg, encoding="utf-8", errors="replace") as f:
@@ -97,7 +97,7 @@ def rpcs3_shader_mode():
         with open(cfg + ".tmp", "w", encoding="utf-8") as f:
             f.write(text)
         os.replace(cfg + ".tmp", cfg)
-        print(f"bannerlator-pad-defaults: RPCS3: shader mode {RPCS3_RECOMPILER} ({cfg})")
+        print(f"bannerlator-pad-defaults: RPCS3: 着色器模式 {RPCS3_RECOMPILER} ({cfg})")
     open(marker, "w").close()
 
 
@@ -116,7 +116,7 @@ def ini_section(lines, name):
     return (start, len(lines)) if start is not None else None
 
 
-def patch_ini_section(path, section, body, what, needle="SDL-", require=None, done="Player 1 on the controller"):
+def patch_ini_section(path, section, body, what, needle="SDL-", require=None, done="玩家 1 已绑定到手柄"):
     """Add body's lines to [section] of an ini the emulator wrote itself, unless the section
     already binds a controller (needle). Missing file: nothing - the emulator writes its own
     defaults on first run and this runs again."""
@@ -274,23 +274,23 @@ def duckstation():
                   f"[GameList]\nRecursivePaths = {ps1}\n\n"
                   "[GPU]\nRenderer = Vulkan\n\n"
                   "[Hotkeys]\nOpenPauseMenu = Keyboard/Escape\nOpenPauseMenu = SDL-0/Guide\n\n"
-                  "[Pad1]\n" + DUCKSTATION_PAD1_GUIDE_FREE, "DuckStation", "first-time setup, BIOS from " + bios)
+                  "[Pad1]\n" + DUCKSTATION_PAD1_GUIDE_FREE, "DuckStation", "首次设置, BIOS 来自 " + bios)
         return
     patch_ini_section(ini, "Pad1", DUCKSTATION_PAD1_GUIDE_FREE, "DuckStation")
     drop_line(ini, "Analog = SDL-0/Guide")
     patch_ini_section(ini, "Hotkeys", "OpenPauseMenu = SDL-0/Guide\n", "DuckStation", needle="SDL-0/Guide",
-                      done="the guide button opens the pause menu")
+                      done="Guide 键打开暂停菜单")
     patch_ini_section(ini, "GameList", f"RecursivePaths = {ps1}\n", "DuckStation", needle=ROMS,
-                      done="games listed from the ROMs folder")
+                      done="游戏列表取自 ROMs 文件夹")
     # One set up by an earlier build still has its first-time setup pending, in the way of a game.
     if ini_get(ini, "Main", "SetupWizardIncomplete") == "true":
         ini_set(ini, "Main", "SetupWizardIncomplete", "false")
-        print("bannerlator-pad-defaults: DuckStation: first-time setup already done here")
+        print("bannerlator-pad-defaults: DuckStation: 首次设置此前已完成")
     # Keeping the screen awake goes through org.freedesktop.ScreenSaver, which nothing in the session
     # provides (Android decides when the screen sleeps): DuckStation only warns it failed, every game.
     if (ini_get(ini, "Main", "InhibitScreensaver") or "true") == "true":
         ini_set(ini, "Main", "InhibitScreensaver", "false")
-        print("bannerlator-pad-defaults: DuckStation: no screensaver inhibit (no such service here)")
+        print("bannerlator-pad-defaults: DuckStation: 未禁用屏保 (此处没有该服务)")
     # Once, for a DuckStation set up before this: its own empty BIOS folder moves to the ROMs folder,
     # and Automatic becomes Vulkan. A later choice in DuckStation's settings is kept.
     marker = os.path.join(os.path.dirname(ini), ".droiddeck-setup")
@@ -300,10 +300,10 @@ def duckstation():
     own = current if os.path.isabs(current) else os.path.join(os.path.dirname(ini), current)
     if not (os.path.isdir(own) and os.listdir(own)):
         ini_set(ini, "BIOS", "SearchDirectory", bios_folder(ps1))
-        print(f"bannerlator-pad-defaults: DuckStation: BIOS from {bios_folder(ps1)}")
+        print(f"bannerlator-pad-defaults: DuckStation: BIOS 来自 {bios_folder(ps1)}")
     if (ini_get(ini, "GPU", "Renderer") or "Automatic") == "Automatic":
         ini_set(ini, "GPU", "Renderer", "Vulkan")
-        print("bannerlator-pad-defaults: DuckStation: renderer Vulkan")
+        print("bannerlator-pad-defaults: DuckStation: 渲染器 Vulkan")
     open(marker, "w").close()
 
 
@@ -451,7 +451,7 @@ def armsx2():
             src = os.path.join(old, sub)
             if os.path.isdir(src):
                 shutil.copytree(src, os.path.join(root, sub), dirs_exist_ok=True)
-        print(f"bannerlator-pad-defaults: ARMSX2: settings and memory cards copied from PCSX2 ({root})")
+        print(f"bannerlator-pad-defaults: ARMSX2: 设置与记忆卡已从 PCSX2 复制 ({root})")
     elif not os.path.isfile(ini):
         # A new player: everything ARMSX2's first-time setup asks is answered here - the BIOS
         # folder in the ROMs folder, the ps2 folder as its game list, the controller on Player 1 -
@@ -463,7 +463,7 @@ def armsx2():
                   # Vulkan outright rather than Auto's pick: the renderer every other path here uses.
                   "[EmuCore/GS]\nRenderer = 14\n\n"
                   "[Hotkeys]\nOpenPauseMenu = Keyboard/Escape\nOpenPauseMenu = SDL-0/Guide\n\n"
-                  "[Pad1]\n" + ARMSX2_PAD1, "ARMSX2", "first-time setup, BIOS from " + bios)
+                  "[Pad1]\n" + ARMSX2_PAD1, "ARMSX2", "首次设置, BIOS 来自 " + bios)
         armsx2_bios(ini)
         return
     patch_ini_section(ini, "Pad1", ARMSX2_PAD1, "ARMSX2", require="SettingsVersion")
@@ -477,12 +477,12 @@ def armsx2():
             f.write("\n".join(kept) + "\n")
         os.replace(ini + ".tmp", ini)
     patch_ini_section(ini, "Hotkeys", "OpenPauseMenu = SDL-0/Guide\n", "ARMSX2", needle="SDL-0/Guide",
-                      require="SettingsVersion", done="the guide button opens the pause menu")
+                      require="SettingsVersion", done="Guide 键打开暂停菜单")
     patch_ini_section(ini, "GameList", f"RecursivePaths = {ps2_folder()}\n", "ARMSX2", needle=ROMS,
-                      require="SettingsVersion", done="games listed from the ROMs folder")
+                      require="SettingsVersion", done="游戏列表取自 ROMs 文件夹")
     if ini_get(ini, "UI", "SetupWizardIncomplete") == "true":
         ini_set(ini, "UI", "SetupWizardIncomplete", "false")
-        print("bannerlator-pad-defaults: ARMSX2: first-time setup already done here")
+        print("bannerlator-pad-defaults: ARMSX2: 首次设置此前已完成")
     armsx2_bios(ini)
 
 
@@ -596,7 +596,7 @@ def dolphin_data():
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=600)
         src = os.path.join(work, "squashfs-root/usr/share/dolphin-emu")
         if not os.path.isfile(os.path.join(src, "Sys/GC/font_western.bin")):
-            print("bannerlator-pad-defaults: Dolphin: could not unpack its data from the AppImage")
+            print("bannerlator-pad-defaults: Dolphin: 无法从 AppImage 解出其数据")
             return
         new = DOLPHIN_DATA + ".new"
         shutil.rmtree(new, ignore_errors=True)
@@ -605,9 +605,9 @@ def dolphin_data():
             f.write(stamp)
         shutil.rmtree(DOLPHIN_DATA, ignore_errors=True)
         os.rename(new, DOLPHIN_DATA)
-        print("bannerlator-pad-defaults: Dolphin: its data (fonts, per-game fixes) in " + DOLPHIN_DATA)
+        print("bannerlator-pad-defaults: Dolphin: 其数据 (字体、逐游戏修正) 已解出到 " + DOLPHIN_DATA)
     except (OSError, subprocess.SubprocessError) as e:
-        print("bannerlator-pad-defaults: Dolphin: unpacking its data failed: %s" % e)
+        print("bannerlator-pad-defaults: Dolphin: 解出其数据失败: %s" % e)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
@@ -622,16 +622,16 @@ def dolphin():
     wii_pad = os.path.join(d, "WiimoteNew.ini")
     if ini_get(wii_pad, "Wiimote1", "Buttons/Home") == "`Guide`":
         ini_set(wii_pad, "Wiimote1", "Buttons/Home", "`Shoulder R`")
-        print("bannerlator-pad-defaults: Dolphin (Wii): Home on the right shoulder button (guide = Dolphin's window)")
+        print("bannerlator-pad-defaults: Dolphin (Wii): Home 移到右肩键 (Guide = Dolphin 的窗口)")
     hotkeys = os.path.join(d, "Hotkeys.ini")
     if not os.path.isfile(hotkeys):
-        seed(hotkeys, DOLPHIN_HOTKEYS, "Dolphin", "the guide button shows Dolphin's window (Toggle Fullscreen)")
+        seed(hotkeys, DOLPHIN_HOTKEYS, "Dolphin", "Guide 键显示 Dolphin 的窗口 (切换全屏)")
     else:
         current = ini_get(hotkeys, "Hotkeys", "General/Toggle Fullscreen")
         if current is not None and DOLPHIN_GUIDE not in current:
             ini_set(hotkeys, "Hotkeys", "General/Toggle Fullscreen",
                     (current + " | " if current else "") + DOLPHIN_GUIDE)
-            print("bannerlator-pad-defaults: Dolphin: the guide button shows Dolphin's window (Toggle Fullscreen)")
+            print("bannerlator-pad-defaults: Dolphin: Guide 键显示 Dolphin 的窗口 (切换全屏)")
     # Games from the ROMs folder's gamecube and wii folders, subfolders included; Vulkan; no
     # NKit warning (it will not let a game start until a box is ticked - games run either way,
     # the warning is about loading times, netplay and save states); no statistics question.
@@ -647,7 +647,7 @@ def dolphin():
                     "[Core]\nGFXBackend = Vulkan\n"
                     "[General]\nISOPaths = 2\nISOPath0 = %s\nISOPath1 = %s\nRecursiveISOPaths = True\n"
                     "[Interface]\nSkipNKitWarning = True\n" % (gc, wii))
-        print("bannerlator-pad-defaults: Dolphin: first-time setup (Vulkan, games from %s and %s)" % (gc, wii))
+        print("bannerlator-pad-defaults: Dolphin: 首次设置 (Vulkan, 游戏来自 %s 和 %s)" % (gc, wii))
         return
     try:
         count = int(ini_get(ini, "General", "ISOPaths") or "0")
@@ -666,7 +666,7 @@ def dolphin():
             ini_set(ini, "General", "ISOPath%d" % i, "")
         count = len(paths)
         ini_set(ini, "General", "ISOPaths", str(count))
-        changed.append("not the whole ROMs folder")
+        changed.append("已移除整个 ROMs 文件夹")
     for folder in (gc, wii):
         if folder not in paths:
             ini_set(ini, "General", "ISOPath%d" % count, folder)
@@ -677,9 +677,9 @@ def dolphin():
         ini_set(ini, "General", "ISOPaths", str(count))
     if ini_get(ini, "General", "RecursiveISOPaths") != "True":
         ini_set(ini, "General", "RecursiveISOPaths", "True")
-        changed.append("subfolders")
+        changed.append("已包含子文件夹")
     if changed:
-        print("bannerlator-pad-defaults: Dolphin: games from " + ", ".join(changed))
+        print("bannerlator-pad-defaults: Dolphin: 游戏目录 " + ", ".join(changed))
     # Once, for a Dolphin set up before this: Vulkan unless it was chosen already, and the NKit box.
     marker = os.path.join(d, ".droiddeck-setup")
     if os.path.exists(marker):
@@ -691,7 +691,7 @@ def dolphin():
         ini_set(ini, "Analytics", "Enabled", "False")
         ini_set(ini, "Analytics", "PermissionAsked", "True")
     open(marker, "w").close()
-    print("bannerlator-pad-defaults: Dolphin: Vulkan, no NKit warning")
+    print("bannerlator-pad-defaults: Dolphin: Vulkan, 已跳过 NKit 警告")
 
 
 # Cemu: an SDLController profile for the GamePad. The uuid is "<index>_<SDL GUID>" and SDL's GUID
@@ -746,7 +746,7 @@ def cemu():
     seed(os.path.join(CONFIG, "Cemu/controllerProfiles/controller0.xml"), CEMU_XML, "Cemu")
     games = system_folder(["wiiu", "wii u"], "wiiu")
     seed(os.path.join(CONFIG, "Cemu/settings.xml"), CEMU_SETTINGS.format(games=games), "Cemu",
-         done=f"games in {games}, Vulkan, Cubeb audio on the default device")
+         done=f"游戏位于 {games}, Vulkan, 默认设备上的 Cubeb 音频")
 
 
 # melonDS 1.x: raw SDL joystick indices. The session's pad has the kernel's Xbox 360 layout
@@ -912,7 +912,7 @@ def melonds():
     if not os.path.isfile(path):
         seed(path, "[Instance0]\nJoystickID = 0\n\n" + MELONDS_JOY + "\n" + MELONDS_WINDOW +
              f'Geometry = "{melonds_geometry()}"\n', "melonDS",
-             "Player 1 on the controller, big top screen")
+             "玩家 1 已绑定到手柄, 上屏最大化")
         open(marker, "w").close()
     with open(path, encoding="utf-8", errors="replace") as f:
         text = f.read()
@@ -933,10 +933,10 @@ def melonds():
             if not skipping:
                 out.append(line)
         lines = "\n".join(out).rstrip("\n").splitlines() + [""] + MELONDS_JOY.rstrip("\n").splitlines()
-        done.append("Player 1 on the controller")
+        done.append("玩家 1 已绑定到手柄")
     elif joy.get("HK_FullscreenToggle", -1) == -1 and MELONDS_GUIDE not in joy.values():
         toml_set(lines, "Instance0.Joystick", "HK_FullscreenToggle", str(MELONDS_GUIDE))
-        done.append("guide button toggles full screen")
+        done.append("Guide 键切换全屏")
     # Once, for a melonDS set up before this: the big top screen, where it is still on its own
     # defaults. The marker keeps whatever the user picks in melonDS's View menu afterwards.
     if not os.path.exists(marker):
@@ -945,7 +945,7 @@ def melonds():
             if toml_get(lines, "Instance0.Window0", k) in (None,) + MELONDS_WINDOW_DEFAULTS.get(k, ()):
                 toml_set(lines, "Instance0.Window0", k, v)
         toml_set(lines, "Instance0.Window0", "Geometry", f'"{melonds_geometry()}"')
-        done.append("big top screen, 1x window")
+        done.append("上屏最大化, 1x 窗口")
         open(marker, "w").close()
     bios = melonds_bios(lines)
     if bios:
@@ -1041,7 +1041,7 @@ def retroarch():
         with open(cfg + ".tmp", "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
         os.replace(cfg + ".tmp", cfg)
-        print(f"bannerlator-pad-defaults: RetroArch: joypad driver udev -> sdl2 ({cfg})")
+        print(f"bannerlator-pad-defaults: RetroArch: 手柄驱动 udev -> sdl2 ({cfg})")
 
 
 for step in (rpcs3, duckstation, pcsx2, armsx2, dolphin, cemu, melonds, ppsspp, retroarch):

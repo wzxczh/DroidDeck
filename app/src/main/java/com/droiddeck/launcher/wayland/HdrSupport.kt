@@ -24,8 +24,8 @@ class HdrProbe(
 ) {
     /** Why HDR cannot be offered, or null when it can. */
     val reason: String? = when {
-        Build.VERSION.SDK_INT < 29 -> "needs Android 10 or newer (display layers with a color space)"
-        !hdr10 -> if (formats.isEmpty()) "this display reports no HDR support" else "this display supports $formats, not HDR10"
+        Build.VERSION.SDK_INT < 29 -> "需要 Android 10 或更高版本（显示层需支持色彩空间）"
+        !hdr10 -> if (formats.isEmpty()) "该屏幕未报告 HDR 支持" else "该屏幕支持 $formats，但不支持 HDR10"
         else -> null
     }
 }

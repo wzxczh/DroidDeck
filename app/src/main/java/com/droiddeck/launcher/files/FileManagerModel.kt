@@ -87,15 +87,15 @@ fun describeLocation(file: File): FavLocation {
 
     val internal = "/storage/emulated/0"
     if (abs == internal || abs.startsWith("$internal/")) {
-        return FavLocation(FavStorage.INTERNAL, "Internal", abs)
+        return FavLocation(FavStorage.INTERNAL, "内部存储", abs)
     }
 
     if (abs.startsWith("/storage/")) {
         val name = abs.removePrefix("/storage/").substringBefore('/')
         if (name.isNotEmpty() && name != "emulated" && name != "self") {
-            return FavLocation(FavStorage.SD, "SD card", abs)
+            return FavLocation(FavStorage.SD, "SD 卡", abs)
         }
     }
 
-    return FavLocation(FavStorage.OTHER, "Storage", abs)
+    return FavLocation(FavStorage.OTHER, "存储设备", abs)
 }

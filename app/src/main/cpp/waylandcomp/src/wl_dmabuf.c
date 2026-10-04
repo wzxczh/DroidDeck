@@ -155,21 +155,21 @@ static void dmabuf_build_formats(void) {
                             vkp_modifier_name(g_dmabuf_fmts[f].mods[i]));
         if (pos >= (int)sizeof(line)) pos = (int)sizeof(line) - 1;
     }
-    banner_log("dmabuf", "formats: %s%s", line,
-               !g_ubwc ? " (BANNER_WAYLAND_UBWC=0: qcom_compressed not advertised)" : "");
+    banner_log("dmabuf", "格式：%s%s", line,
+               !g_ubwc ? "（BANNER_WAYLAND_UBWC=0：未公布 qcom_compressed）" : "");
     if (g_ubwc && !compressed)
-        banner_log("dmabuf", "the compositor's driver (%s) reports no importable qcom_compressed layout: "
-                   "game swapchains stay linear", vkp_gpu_name());
+        banner_log("dmabuf", "合成器驱动（%s）没有可导入的 qcom_compressed 布局："
+                   "游戏交换链保持线性", vkp_gpu_name());
     if (g_dmabuf_nfmt > DMABUF_NFMT_SDR) {
         /* The rows above always carry LINEAR; say what the compositor's own driver can really import
          * for 10-bit, since a gralloc buffer it cannot import is shown on the display layer only. */
         uint64_t got[DMABUF_NMOD];
         int n = vkp_dmabuf_modifiers(DRM_XBGR2101010, got, DMABUF_NMOD), ubwc10 = 0;
         for (int i = 0; i < n; i++) if (got[i] == VKP_MOD_QCOM_COMPRESSED) ubwc10 = 1;
-        banner_log("color", "10-bit dma-buf formats AB30/XB30 advertised for HDR10; the compositor's driver (%s) "
-                   "imports XB30 %s", vkp_gpu_name(),
-                   n == 0 ? "with no layout it reports (copy path unlikely; display layer only)"
-                          : ubwc10 ? "linear and UBWC" : "linear only (UBWC 10-bit frames: display layer only)");
+        banner_log("color", "已为 HDR10 公布 10 位 dma-buf 格式 AB30/XB30；合成器驱动（%s）"
+                   "导入 XB30：%s", vkp_gpu_name(),
+                   n == 0 ? "未报告任何可用布局（复制路径不太可能；仅显示图层）"
+                          : ubwc10 ? "线性与 UBWC" : "仅线性（UBWC 10 位帧：仅显示图层）");
     }
     dmabuf_build_feedback();
 }
@@ -239,10 +239,10 @@ static void dmabuf_build_feedback(void) {
 
     int fd = (int)syscall(__NR_memfd_create, "banner-dmabuf-formats",
                           MFD_CLOEXEC | MFD_ALLOW_SEALING);
-    if (fd < 0) { WLOGE("dmabuf feedback: memfd_create failed (%s)", strerror(errno)); return; }
+    if (fd < 0) { WLOGE("dmabuf 反馈：memfd_create 失败（%s）", strerror(errno)); return; }
     size_t size = (size_t)n * sizeof(entries[0]);
     if (write(fd, entries, size) != (ssize_t)size) {
-        WLOGE("dmabuf feedback: could not write the format table (%s)", strerror(errno));
+        WLOGE("dmabuf 反馈：无法写入格式表（%s）", strerror(errno));
         close(fd);
         return;
     }
@@ -251,15 +251,15 @@ static void dmabuf_build_feedback(void) {
     g_fmt_table_fd = fd;
     g_fmt_table_size = size;
     g_fmt_table_n = (uint16_t)n;
-    banner_log("dmabuf", "feedback ready: %d format/modifier pairs, main device %u:%u",
+    banner_log("dmabuf", "反馈就绪：%d 组格式/修饰符，主设备 %u:%u",
                n, (unsigned)major(g_main_device), (unsigned)minor(g_main_device));
     /* Vulkan games never need the node. Mesa's EGL did until Wayland layer versionCode 9: without
      * one it fell back to a software path that draws nothing here (black window, sound plays). */
     if (!g_main_device)
-        banner_log("dmabuf", "%s: OpenGL games need Wayland layer versionCode 9 or newer, "
-                   "which runs OpenGL on the GPU without a DRM node; older layers show a black window",
-                   g_no_render_node ? "no DRM device named (forced by BANNER_WAYLAND_NO_RENDER_NODE=1)"
-                                    : "this device gives apps no display (DRM) device (/dev/dri)");
+        banner_log("dmabuf", "%s：OpenGL 游戏需要 Wayland 层 versionCode 9 或更新，"
+                   "该版本无需 DRM 节点即可在 GPU 上运行 OpenGL；更早的层显示黑窗",
+                   g_no_render_node ? "未指定 DRM 设备（由 BANNER_WAYLAND_NO_RENDER_NODE=1 强制）"
+                                    : "本设备不向应用提供显示（DRM）设备（/dev/dri）");
 }
 
 /* One tranche: our device, every pair in the table, no scanout flag. */

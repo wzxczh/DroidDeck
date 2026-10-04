@@ -27,7 +27,7 @@ public final class TarZst {
         try (InputStream in = context.getAssets().open(assetPath)) {
             return extract(in, destination);
         } catch (Exception e) {
-            Log.e(TAG, "extract " + assetPath, e);
+            Log.e(TAG, "解压资源失败 " + assetPath, e);
             return false;
         }
     }
@@ -64,7 +64,7 @@ public final class TarZst {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "extract into " + destination, e);
+            Log.e(TAG, "解压到 " + destination + " 失败", e);
             return false;
         }
     }

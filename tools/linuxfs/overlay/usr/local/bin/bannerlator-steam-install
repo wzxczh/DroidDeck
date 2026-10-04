@@ -19,13 +19,13 @@ awk -F'"' '
   $2 == "sha2" { sha[block] = $4 }
   END { for (b in file) if (b ~ /_all$/ || b ~ /_linuxarm64_linuxarm64$/) print b, file[b], sha[b] }
 ' "$work/manifest" | sort > "$work/parts"
-[ -s "$work/parts" ] || { echo "bannerlator-steam-install: no client components in $manifest" >&2; exit 1; }
+[ -s "$work/parts" ] || { echo "bannerlator-steam-install: $manifest 中没有客户端组件" >&2; exit 1; }
 total=$(grep -c . "$work/parts" 2>/dev/null || echo 0)
 
 mkdir -p "$steam_root/package"
 while read -r block file sum; do
   i=$((${i:-0} + 1))
-  echo "== STEP $(date -u +%H:%M:%S) downloading Steam: $block ($i/$total)"
+  echo "== STEP $(date -u +%H:%M:%S) 正在下载 Steam: $block ($i/$total)"
   curl -fsSL "$cdn/$file" -o "$work/$file"
   echo "$sum  $work/$file" | sha256sum -c --quiet
   unzip -qo "$work/$file" -d "$steam_root"

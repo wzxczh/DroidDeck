@@ -74,17 +74,17 @@ public final class LsfgNative {
             }
             int status = nativeValidateDll(dll.getPath());
             if (status != STATUS_OK) {
-                Log.w(TAG, "Lossless.dll rejected: " + statusName(status));
+                Log.w(TAG, "Lossless.dll 被拒绝：" + statusName(status));
                 return status;
             }
             //noinspection ResultOfMethodCallIgnored
             cache.getParentFile().mkdirs();
             status = nativeBuildCache(dll.getPath(), cache.getPath(), true);
-            Log.i(TAG, "cache build: " + statusName(status)
-                    + (status == STATUS_OK ? " (" + nativeVariantName(nativeCacheVariant(cache.getPath())) + ")" : ""));
+            Log.i(TAG, "缓存构建：" + statusName(status)
+                    + (status == STATUS_OK ? "（" + nativeVariantName(nativeCacheVariant(cache.getPath())) + "）" : ""));
             return status;
         } catch (Throwable t) {
-            Log.e(TAG, "ensureCache", t);
+            Log.e(TAG, "构建 LSFG 缓存失败", t);
             return STATUS_CACHE_UNUSABLE;
         }
     }
@@ -93,7 +93,7 @@ public final class LsfgNative {
         try {
             return nativeStatusName(status);
         } catch (Throwable t) {
-            return "status " + status;
+            return "状态 " + status;
         }
     }
 }

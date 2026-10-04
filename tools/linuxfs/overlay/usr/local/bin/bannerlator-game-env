@@ -51,7 +51,7 @@ def main():
         except FileNotFoundError:
             pass
         except (OSError, ValueError, TypeError, AttributeError):
-            print("bannerlator-game-env: invalid configuration; using inherited environment", file=sys.stderr)
+            print("bannerlator-game-env: 配置无效; 使用继承的环境", file=sys.stderr)
     os.execvpe(command[0], command, env)
 
 

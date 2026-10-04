@@ -104,9 +104,9 @@ private fun CheckRow(state: CheckState, title: String, detail: String?, divider:
                     CheckState.BUSY -> Icons.Filled.Refresh
                 },
                 contentDescription = when (state) {
-                    CheckState.OK -> "Done"
-                    CheckState.WARN -> "Needs attention"
-                    CheckState.BUSY -> "Working"
+                    CheckState.OK -> "完成"
+                    CheckState.WARN -> "需要处理"
+                    CheckState.BUSY -> "处理中"
                 },
                 tint = tint, modifier = Modifier.size(16.dp),
             )
@@ -138,16 +138,16 @@ internal fun SetupPanel(
             if (error == null) {
                 a.onRefreshPhantomStatus()
             } else {
-                processLimitMessage = "Check the Wireless debugging IP address & Port, or pair again if Android removed this device."
+                processLimitMessage = "请检查无线调试的 IP 地址与端口；若 Android 已移除该设备，请重新配对。"
                 onRequestWirelessAdb(enabled)
             }
         }
     }
     val runtime = when {
-        s.busy -> "Working…"
-        !s.ready -> "Install"
-        s.available != null && s.available != s.installed -> "Update"
-        else -> "Manage"
+        s.busy -> "处理中…"
+        !s.ready -> "安装"
+        s.available != null && s.available != s.installed -> "更新"
+        else -> "管理"
     }
     val colors = MaterialTheme.colorScheme
     val pal = LocalPalette.current
@@ -159,7 +159,7 @@ internal fun SetupPanel(
     val checks = 4
     val readyCount = listOf(gpuOk, s.ready && !s.busy, !limitBlocks, signedIn).count { it }
     // Five tabs instead of one long scroll; LB and RB turn them from anywhere on the page.
-    val tabs = listOf("Overview", "Controller", "Session", "Launcher", "About")
+    val tabs = listOf("概览", "手柄", "会话", "启动器", "关于")
     var tab by rememberSaveable { mutableStateOf(0) }
     val tabFocus = remember { List(tabs.size) { FocusRequester() } }
     var tabTurned by remember { mutableStateOf(false) }
@@ -179,45 +179,45 @@ internal fun SetupPanel(
                 onNext = { pick((tab + 1) % tabs.size) },
             ),
         ) {
-            PageHeader("Setup") {
-                Chip(if (readyCount == checks) "● All set" else "$readyCount of $checks ready", ok = readyCount == checks)
+            PageHeader("设置") {
+                Chip(if (readyCount == checks) "● 全部就绪" else "$readyCount/$checks 就绪", ok = readyCount == checks)
             }
             TabStrip(tabs, tab, pick, Modifier.padding(bottom = 4.dp), tabFocus)
             Column(modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
                 when (tab) {
                     0 -> {
-                        SectionTitle("System check", null)
+                        SectionTitle("系统检查", null)
                         // What Steam needs, one row each: green when done, one button when not. The
                         // process-limit controls only open under their row.
                         Column(modifier = Modifier.fillMaxWidth().clip(Shape14).background(colors.surface).border(1.dp, pal.line, Shape14)) {
                             CheckRow(
                                 if (gpuOk) CheckState.OK else CheckState.WARN,
-                                if (gpuOk) "Device supported" else "GPU not supported",
-                                if (gpuOk) gpuName else "Steam draws with an Adreno driver; $gpuName may show a black screen",
+                                if (gpuOk) "设备受支持" else "GPU 不受支持",
+                                if (gpuOk) gpuName else "Steam 使用 Adreno 驱动渲染；$gpuName 可能出现黑屏",
                             )
                             CheckRow(
                                 when { s.busy -> CheckState.BUSY; !s.ready -> CheckState.WARN; else -> CheckState.OK },
-                                "Linux runtime",
+                                "Linux 运行时",
                                 when {
                                     s.busy -> if (s.percent >= 0) "${s.stage} · ${s.percent}%" else s.stage
-                                    !s.ready -> "Not installed · about 3 GB, installed on the first Play"
-                                    s.available != null && s.available != s.installed -> "${s.installed ?: "Installed"} · update available"
-                                    else -> "${s.installed ?: "Installed"} · up to date"
+                                    !s.ready -> "未安装 · 约 3 GB，首次启动时安装"
+                                    s.available != null && s.available != s.installed -> "${s.installed ?: "已安装"} · 有更新可用"
+                                    else -> "${s.installed ?: "已安装"} · 已是最新"
                                 },
                             ) { SecondaryButton(runtime, enabled = !s.busy, compact = true, onClick = a.onRuntime) }
                             CheckRow(
                                 if (limitBlocks) CheckState.WARN else CheckState.OK,
-                                "Child-process limit",
+                                "子进程限制",
                                 when (s.phantomProcessStatus) {
-                                    PhantomProcessStatus.ENABLED -> "On · Android may close Steam. Turning it off takes a minute"
-                                    PhantomProcessStatus.UNSET -> "Not set · the ROM default may close Steam. Turning it off takes a minute"
-                                    PhantomProcessStatus.UNREADABLE -> "Could not be checked · turning it off takes a minute"
+                                    PhantomProcessStatus.ENABLED -> "已开启 · Android 可能会关闭 Steam。关闭它约需一分钟"
+                                    PhantomProcessStatus.UNSET -> "未设置 · ROM 默认值可能会关闭 Steam。关闭它约需一分钟"
+                                    PhantomProcessStatus.UNREADABLE -> "无法检查 · 关闭它约需一分钟"
                                     else -> PhantomProcessLimit.title(s.phantomProcessStatus)
                                 },
                             ) {
-                                if (limitBlocks) PrimaryButton(if (showLimitDetails) "Hide" else "Fix it", compact = true) { showLimitDetails = !showLimitDetails }
+                                if (limitBlocks) PrimaryButton(if (showLimitDetails) "隐藏" else "修复", compact = true) { showLimitDetails = !showLimitDetails }
                                 else if (s.phantomProcessStatus != PhantomProcessStatus.NOT_APPLICABLE) {
-                                    SecondaryButton(if (showLimitDetails) "Hide" else "Details", compact = true) { showLimitDetails = !showLimitDetails }
+                                    SecondaryButton(if (showLimitDetails) "隐藏" else "详情", compact = true) { showLimitDetails = !showLimitDetails }
                                 }
                             }
                             AnimatedVisibility(showLimitDetails, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
@@ -231,11 +231,11 @@ internal fun SetupPanel(
                                     )
                                     Actions {
                                         if (limitBlocks) {
-                                            PrimaryButton("Developer options", compact = true, onClick = onOpenDeveloperOptions)
-                                            SecondaryButton("Use Wireless debugging", compact = true, enabled = !processLimitBusy) { setProcessLimit(false) }
-                                            SecondaryButton("Check again", compact = true, onClick = a.onRefreshPhantomStatus)
+                                            PrimaryButton("开发者选项", compact = true, onClick = onOpenDeveloperOptions)
+                                            SecondaryButton("使用无线调试", compact = true, enabled = !processLimitBusy) { setProcessLimit(false) }
+                                            SecondaryButton("重新检查", compact = true, onClick = a.onRefreshPhantomStatus)
                                         } else if (s.phantomProcessStatus == PhantomProcessStatus.DISABLED) {
-                                            SecondaryButton("Turn limit on", compact = true, enabled = !processLimitBusy) { setProcessLimit(true) }
+                                            SecondaryButton("开启限制", compact = true, enabled = !processLimitBusy) { setProcessLimit(true) }
                                         }
                                     }
                                     if (processLimitBusy) LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp))
@@ -244,51 +244,51 @@ internal fun SetupPanel(
                             }
                             CheckRow(
                                 if (signedIn) CheckState.OK else CheckState.WARN,
-                                "Steam account",
-                                s.offlineAccount?.let { if (s.offline) "Signed in as $it · offline mode" else "Signed in as $it" } ?: "Press Play and sign in to Steam",
+                                "Steam 账户",
+                                s.offlineAccount?.let { if (s.offline) "已登录 $it · 离线模式" else "已登录 $it" } ?: "点击启动并登录 Steam",
                                 divider = false,
                             )
                         }
-                        SectionTitle("Tools", null)
+                        SectionTitle("工具", null)
                         ToolGrid(s, a)
                     }
                     1 -> {
                         val controller = s.controller
-                        if (controller != null && a.controller != null) SettingsGroup("Controller") {
+                        if (controller != null && a.controller != null) SettingsGroup("手柄") {
                             ControllerRows(host, s.oscMode, controller, a.controller)
                         }
-                        if (s.controller == null || a.controller == null) Note("Controller settings are unavailable.")
+                        if (s.controller == null || a.controller == null) Note("手柄设置不可用。")
                     }
                     2 -> {
-                        SettingsGroup("Session") {
+                        SettingsGroup("会话") {
                             ChoiceRow(
-                                host, "back-actions", "Back", SessionPrefs.backActionsOrder(s.backActionsInverted),
+                                host, "back-actions", "返回", SessionPrefs.backActionsOrder(s.backActionsInverted),
                                 listOf(
                                     false to SessionPrefs.BACK_MENU_THEN_QAM,
                                     true to SessionPrefs.BACK_QAM_THEN_MENU,
                                 ), s.backActionsInverted, onPick = a.onBackActionsInverted,
                             )
-                            SettingsRow("Frame generation", "Select the frame generation mode") {
+                            SettingsRow("帧生成", "选择帧生成模式") {
                                 Box {
                                     ValueChip(s.frameGenLabel, host.open == "fg") { host.open = if (host.open == "fg") null else "fg" }
                                     FrameGenMenu(s, a, host)
                                 }
                             }
-                            ToggleRow(host, "logs", "Session logs", "Saved after each session", s.logsEnabled) { a.onLogs() }
-                            ActionRow("Latest session logs", "Send them with a bug report", "Share logs", a.onShareLogs)
+                            ToggleRow(host, "logs", "会话日志", "每次会话结束后保存", s.logsEnabled) { a.onLogs() }
+                            ActionRow("最新的会话日志", "随错误报告一同发送", "分享日志", a.onShareLogs)
                             ToggleRow(
-                                host, "offline", "Offline mode",
-                                s.offlineAccount?.let { "Signed in as $it" } ?: "Sign in to Steam first",
+                                host, "offline", "离线模式",
+                                s.offlineAccount?.let { "已登录 $it" } ?: "请先登录 Steam",
                                 s.offline, enabled = s.offlineAccount != null,
                             ) { a.onOffline() }
                         }
                     }
                     3 -> {
-                        SettingsGroup("Launcher") {
-                            SettingsRow("Theme", "Choose the launcher appearance") {
+                        SettingsGroup("启动器") {
+                            SettingsRow("主题", "选择启动器外观") {
                                 Box {
                                     ValueChip(Themes.byId(s.theme).label, host.open == "theme") { host.open = if (host.open == "theme") null else "theme" }
-                                    AnchoredMenu(host.open == "theme", onDismiss = { if (host.open == "theme") host.open = null }, title = "Theme") { firstItemFocus ->
+                                    AnchoredMenu(host.open == "theme", onDismiss = { if (host.open == "theme") host.open = null }, title = "主题") { firstItemFocus ->
                                         Themes.all.forEachIndexed { index, theme ->
                                             MenuItem(theme.label, checked = s.theme == theme.id, focusRequester = if (index == 0) firstItemFocus else null) {
                                                 a.onTheme(theme.id)
@@ -299,38 +299,38 @@ internal fun SetupPanel(
                                 }
                             }
                             ToggleRow(
-                                host, "home-screen", "Use as a Home screen",
-                                if (s.homeScreenEnabled) "DroidDeck can be the phone's Home app" else "Off: DroidDeck is never offered as a Home app",
+                                host, "home-screen", "设为主屏幕应用",
+                                if (s.homeScreenEnabled) "DroidDeck 可以作为手机的主屏幕应用" else "关闭：DroidDeck 不会作为主屏幕应用",
                                 s.homeScreenEnabled,
                             ) { a.onHomeScreen(it) }
                             ToggleRow(
-                                host, "launcher-fullscreen", "Fullscreen",
-                                if (s.launcherFullscreen) "Hide the Android status and navigation bars" else "Show the Android status and navigation bars",
+                                host, "launcher-fullscreen", "全屏",
+                                if (s.launcherFullscreen) "隐藏 Android 状态栏与导航栏" else "显示 Android 状态栏与导航栏",
                                 s.launcherFullscreen,
                             ) { a.onLauncherFullscreen(it) }
                             if (s.homeScreenEnabled) {
-                                ActionRow("Default Home app", s.defaultHomeLabel ?: "Choose a Home app", "Choose", a.onHomeApp)
+                                ActionRow("默认主屏幕应用", s.defaultHomeLabel ?: "选择主屏幕应用", "选择", a.onHomeApp)
                             }
                         }
-                        SettingsGroup("Linux apps (beta)") {
+                        SettingsGroup("Linux 应用（测试版）") {
                             ToggleRow(
-                                host, "store-enabled", "Flathub Store",
-                                if (s.storeEnabled) "The Store is in the menu. Some apps may not start; logs are in Download/DroidDeck"
-                                else "Off: install Linux apps and games from Flathub with Flatpak",
+                                host, "store-enabled", "Flathub 商店",
+                                if (s.storeEnabled) "商店位于菜单中。部分应用可能无法启动；日志在 Download/DroidDeck"
+                                else "关闭：使用 Flatpak 从 Flathub 安装 Linux 应用与游戏",
                                 s.storeEnabled,
                             ) { a.onStoreEnabled(it) }
                             ToggleRow(
                                 host, "appimages-enabled", "AppImages",
-                                if (s.appImagesEnabled) "Add AppImage is on the Desktop page. ARM64 (aarch64) AppImages only"
-                                else "Off: import ARM64 AppImages from your storage",
+                                if (s.appImagesEnabled) "“添加 AppImage”在桌面页面。仅支持 ARM64（aarch64）AppImage"
+                                else "关闭：从存储空间导入 ARM64 AppImage",
                                 s.appImagesEnabled,
                             ) { a.onAppImagesEnabled(it) }
                         }
                     }
                     else -> {
-                        SettingsGroup("About") {
-                            ActionRow("Build", s.buildLabel, "Check for newer", a.onCheckLatestBuild)
-                            ActionRow("Credits", "The people and projects DroidDeck builds on", "View", a.onCredits)
+                        SettingsGroup("关于") {
+                            ActionRow("版本", s.buildLabel, "检查新版本", a.onCheckLatestBuild)
+                            ActionRow("致谢", "DroidDeck 所基于的人物与项目", "查看", a.onCredits)
                         }
                     }
                 }
@@ -344,10 +344,10 @@ internal fun SetupPanel(
 private fun ToolGrid(s: FrontEndState, a: FrontEndActions) {
     val columns = if (LocalNarrowPane.current) 2 else 4
     val tools = listOf(
-        ToolSpec(Icons.Outlined.Folder, "Files", "Browse and manage files", a.onFiles),
-        ToolSpec(Icons.Outlined.Extension, "Proton versions", "Install ARM64 Proton builds", a.onProtons),
-        ToolSpec(Icons.Outlined.Speed, "Performance", "CPU core assignment", a.onPerformance),
-        ToolSpec(Icons.Outlined.VideogameAsset, "ROMs folder", s.romsDir ?: "Choose where emulator games are stored", a.onRoms),
+        ToolSpec(Icons.Outlined.Folder, "文件", "浏览与管理文件", a.onFiles),
+        ToolSpec(Icons.Outlined.Extension, "Proton 版本", "安装 ARM64 Proton 构建", a.onProtons),
+        ToolSpec(Icons.Outlined.Speed, "性能", "CPU 核心分配", a.onPerformance),
+        ToolSpec(Icons.Outlined.VideogameAsset, "ROM 文件夹", s.romsDir ?: "选择模拟器游戏的存储位置", a.onRoms),
     )
     Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
         for (row in tools.chunked(columns)) {
@@ -401,16 +401,16 @@ internal fun LaunchSettings(s: FrontEndState, a: FrontEndActions, host: MenuHost
     val columns = if (LocalNarrowPane.current) 2 else 3
     val controller = a.controller
     val cards = buildList<@Composable (Modifier) -> Unit> {
-        add { m -> SettingCard("Components", "FEX, DXVK, VKD3D", "card:components", m) { a.onComponents(true) } }
+        add { m -> SettingCard("组件", "FEX, DXVK, VKD3D", "card:components", m) { a.onComponents(true) } }
         add { m ->
             Box(m) {
-                SettingCard("Frame generation", s.frameGenLabel, "card:fg", Modifier.fillMaxSize()) {
+                SettingCard("帧生成", s.frameGenLabel, "card:fg", Modifier.fillMaxSize()) {
                     host.open = if (host.open == "fg") null else "fg"
                 }
                 FrameGenMenu(s, a, host)
             }
         }
-        if (controller != null) add { m -> SettingCard("Controls", "Button mapping", "card:controls", m, controller.onMapping) }
+        if (controller != null) add { m -> SettingCard("控制", "按键映射", "card:controls", m, controller.onMapping) }
     }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
         for (row in cards.chunked(columns)) {

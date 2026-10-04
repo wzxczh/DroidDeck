@@ -50,7 +50,7 @@ if [ -f "$HOME/.droiddeck-remote-run" ]; then
       for f in "$HOME"/.cache/droiddeck/run/*.sh; do
         [ -f "$f" ] || continue
         mv -f "$f" "$f.running" || continue
-        ( echo "[run] $(basename "$f") started"; bash "$f.running" 2>&1 | sed "s/^/[run] /"; echo "[run] $(basename "$f") exited"; rm -f "$f.running" ) &
+        ( echo "[run] $(basename "$f") 已启动"; bash "$f.running" 2>&1 | sed "s/^/[run] /"; echo "[run] $(basename "$f") 已退出"; rm -f "$f.running" ) &
       done
     done
   ) &

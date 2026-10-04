@@ -37,7 +37,7 @@ public final class Downloader {
                 return new String(out.toByteArray(), StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
-            Log.w(TAG, "GET " + url, e);
+            Log.w(TAG, "读取失败 " + url, e);
             return null;
         } finally {
             if (connection != null) connection.disconnect();
@@ -94,7 +94,7 @@ public final class Downloader {
             if (progress != null) progress.accept(1f);
             return total <= 0 || written >= total;
         } catch (Exception e) {
-            Log.w(TAG, "download " + url, e);
+            Log.w(TAG, "下载失败 " + url, e);
             return false;
         } finally {
             if (connection != null) connection.disconnect();

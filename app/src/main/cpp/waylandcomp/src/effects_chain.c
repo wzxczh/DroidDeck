@@ -97,12 +97,12 @@ void vkp_effects_set_screen(float brightness, float contrast, float gamma, float
 }
 void vkp_effects_set_look(const char *name) {
     set_begin();
-    snprintf(g_set.look, sizeof(g_set.look), "%s", name && *name ? name : "Custom");
+    snprintf(g_set.look, sizeof(g_set.look), "%s", name && *name ? name : "自定义");
     set_end();
 }
 
 static const char *scaling_name(int m) {
-    static const char *n[] = {"None", "Linear", "Nearest", "SGSR", "FSR", "FSR Fit", "Sharpen", "NIS", "SGSR HQ"};
+    static const char *n[] = {"无", "线性", "最近邻", "SGSR", "FSR", "FSR Fit", "锐化", "NIS", "SGSR HQ"};
     return (m >= 0 && m <= 8) ? n[m] : "?";
 }
 static int spatial_mode(int m) { return m >= 3 && m <= 8; }
@@ -115,23 +115,23 @@ static void log_settings(const struct fx_settings *s) {
     char line[400];
     int n;
     if (!spatial_mode(s->scaling) && !effect_count(s)) {
-        banner_log("effects", "all off: scaling=%s (plain blit)", scaling_name(s->scaling));
+        banner_log("effects", "全部关闭：缩放=%s（普通拷贝）", scaling_name(s->scaling));
         return;
     }
-    n = snprintf(line, sizeof(line), "scaling=%s", scaling_name(s->scaling));
+    n = snprintf(line, sizeof(line), "缩放=%s", scaling_name(s->scaling));
     if (spatial_mode(s->scaling)) n += snprintf(line + n, sizeof(line) - n, " %d%%", s->sharp_pct);
-    if (cas_active(s)) n += snprintf(line + n, sizeof(line) - n, ", CAS on %d%%", s->cas_pct);
-    else n += snprintf(line + n, sizeof(line) - n, ", CAS off");
+    if (cas_active(s)) n += snprintf(line + n, sizeof(line) - n, "，CAS 开启 %d%%", s->cas_pct);
+    else n += snprintf(line + n, sizeof(line) - n, "，CAS 关闭");
     n += snprintf(line + n, sizeof(line) - n, ", Look=\"%s\"", s->look);
     if (s->color_on)
-        n += snprintf(line + n, sizeof(line) - n, ", colour b=%+.0f c=%+.0f g=%.2f s=%.0f%%",
+        n += snprintf(line + n, sizeof(line) - n, "，色彩 b=%+.0f c=%+.0f g=%.2f s=%.0f%%",
                       s->b_raw, s->c_raw, s->gamma, s->s_raw);
-    if (s->fxaa) n += snprintf(line + n, sizeof(line) - n, ", FXAA on");
-    if (s->toon) n += snprintf(line + n, sizeof(line) - n, ", Toon on");
-    if (s->hdr_on) n += snprintf(line + n, sizeof(line) - n, ", HDR on");
-    if (s->ntsc) n += snprintf(line + n, sizeof(line) - n, ", NTSC on");
-    if (s->crt) n += snprintf(line + n, sizeof(line) - n, ", CRT on");
-    if (s->deband_on) n += snprintf(line + n, sizeof(line) - n, ", Deband on %d%%", s->deband_pct);
+    if (s->fxaa) n += snprintf(line + n, sizeof(line) - n, "，FXAA 开启");
+    if (s->toon) n += snprintf(line + n, sizeof(line) - n, "，Toon 开启");
+    if (s->hdr_on) n += snprintf(line + n, sizeof(line) - n, "，HDR 开启");
+    if (s->ntsc) n += snprintf(line + n, sizeof(line) - n, "，NTSC 开启");
+    if (s->crt) n += snprintf(line + n, sizeof(line) - n, "，CRT 开启");
+    if (s->deband_on) n += snprintf(line + n, sizeof(line) - n, "，Deband 开启 %d%%", s->deband_pct);
     (void)n;
     banner_log("effects", "%s", line);
 }
@@ -262,7 +262,7 @@ static int target_ensure(struct fx_target *t, int w, int h, const char *what) {
                                      VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
                             .sharingMode = VK_SHARING_MODE_EXCLUSIVE, .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED};
     VkResult r = g_vk.CreateImage(g_dev, &ii, NULL, &t->img);
-    if (r != VK_SUCCESS) { banner_log("error", "effects: %s image %dx%d: vkCreateImage %d", what, w, h, (int)r); return -1; }
+    if (r != VK_SUCCESS) { banner_log("error", "effects: %s 图像 %dx%d：vkCreateImage %d", what, w, h, (int)r); return -1; }
     VkMemoryRequirements req;
     g_vk.GetImageMemoryRequirements(g_dev, t->img, &req);
     int idx = memtype(req.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -271,7 +271,7 @@ static int target_ensure(struct fx_target *t, int w, int h, const char *what) {
                                 .memoryTypeIndex = (uint32_t)(idx < 0 ? 0 : idx)};
     r = g_vk.AllocateMemory(g_dev, &mai, NULL, &t->mem);
     if (r != VK_SUCCESS) {
-        banner_log("error", "effects: %s image %dx%d (%llu bytes): vkAllocateMemory %d", what, w, h,
+        banner_log("error", "effects: %s 图像 %dx%d（%llu 字节）：vkAllocateMemory %d", what, w, h,
                    (unsigned long long)req.size, (int)r);
         target_destroy(t); return -1;
     }
@@ -312,7 +312,7 @@ static VkShaderModule shader(const uint32_t *code, size_t size) {
  * viewport/scissor - the X11 renderer's createPostPipeline. */
 static VkPipeline post_pipeline(VkShaderModule vert, const uint32_t *frag_code, size_t frag_size, const char *name) {
     VkShaderModule frag = shader(frag_code, frag_size);
-    if (!frag) { banner_log("error", "effects: %s: vkCreateShaderModule failed", name); return VK_NULL_HANDLE; }
+    if (!frag) { banner_log("error", "effects: %s：vkCreateShaderModule 失败", name); return VK_NULL_HANDLE; }
     VkPipelineShaderStageCreateInfo st[2] = {
         {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_VERTEX_BIT, .module = vert, .pName = "main"},
         {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_FRAGMENT_BIT, .module = frag, .pName = "main"}};
@@ -340,7 +340,7 @@ static VkPipeline post_pipeline(VkShaderModule vert, const uint32_t *frag_code, 
     VkPipeline p = VK_NULL_HANDLE;
     VkResult r = g_vk.CreateGraphicsPipelines(g_dev, VK_NULL_HANDLE, 1, &pi, NULL, &p);
     g_vk.DestroyShaderModule(g_dev, frag, NULL);
-    if (r != VK_SUCCESS) { banner_log("error", "effects: %s: vkCreateGraphicsPipelines %d", name, (int)r); return VK_NULL_HANDLE; }
+    if (r != VK_SUCCESS) { banner_log("error", "effects: %s：vkCreateGraphicsPipelines %d", name, (int)r); return VK_NULL_HANDLE; }
     return p;
 }
 
@@ -367,12 +367,12 @@ void vkp_effects_set_formats(VkFormat scene_fmt, VkFormat target_fmt) {
         g_fx_fmt = target_fmt;
         g_scene_fmt = scene_fmt;
         if (g_dev)
-            banner_log("effects", "chain now works in %s (%s)",
+            banner_log("effects", "效果链现以 %s 工作（%s）",
                        target_fmt == FX_FORMAT ? "8-bit RGBA"
                        : target_fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "FP16 RGBA" : "10-bit RGB",
-                       target_fmt == FX_FORMAT ? "SDR frames"
-                       : target_fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "the HDR picture for frame generation"
-                       : "the HDR composition's picture: PQ, or tone-mapped SDR with HDR output off");
+                       target_fmt == FX_FORMAT ? "SDR 帧"
+                       : target_fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "用于帧生成的 HDR 画面"
+                       : "HDR 合成的画面：PQ，或关闭 HDR 输出后色调映射的 SDR");
     } else if (scene_fmt != g_scene_fmt) {
         scene_release();
         g_scene_fmt = scene_fmt;
@@ -383,7 +383,7 @@ void vkp_effects_set_formats(VkFormat scene_fmt, VkFormat target_fmt) {
  * unavailable for this session (logged once; frames fall back to the plain blit). */
 static int objects_ensure(void) {
     if (g_ready) return g_ready == 1 ? 0 : -1;
-    if (!g_dev || !g_vk.CreateGraphicsPipelines) { g_ready = -1; banner_log("error", "effects: no device for the chain"); return -1; }
+    if (!g_dev || !g_vk.CreateGraphicsPipelines) { g_ready = -1; banner_log("error", "effects: 效果链没有可用设备"); return -1; }
     /* Render pass: one colour target, overwritten whole (DONT_CARE), left SHADER_READ_ONLY for the
      * next pass. The dependencies order this pass after whoever read the target last (previous
      * pass / previous frame's blit) and before whoever samples or blits it next. */
@@ -448,12 +448,12 @@ static int objects_ensure(void) {
 #undef MK
     g_vk.DestroyShaderModule(g_dev, vert, NULL);
     g_ready = 1;
-    banner_log("effects", "chain ready: 13 passes (SGSR, SGSR HQ, NIS, FSR EASU+RCAS, CAS, colour, FXAA, Toon, HDR, NTSC, CRT, deband) on %s", vkp_gpu_name());
+    banner_log("effects", "效果链就绪：13 个通道（SGSR、SGSR HQ、NIS、FSR EASU+RCAS、CAS、色彩、FXAA、Toon、HDR、NTSC、CRT、Deband），设备 %s", vkp_gpu_name());
     return 0;
 fail:
     objects_destroy();
     g_ready = -1;
-    banner_log("error", "effects: the screen-effect chain could not be built on this driver; effects are off for this session");
+    banner_log("error", "effects: 无法在该驱动上构建屏幕效果链；本次会话关闭效果");
     return -1;
 }
 

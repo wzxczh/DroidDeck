@@ -131,7 +131,7 @@ class SessionService : Service() {
                 return START_NOT_STICKY
             }
             ACTION_STOP -> {
-                Log.i(TAG, "stop requested from the notification")
+                Log.i(TAG, "收到通知栏的停止请求")
                 stopSession(0)
                 return START_NOT_STICKY
             }
@@ -234,7 +234,7 @@ class SessionService : Service() {
         val lines = FileUtils.readString(file)?.lines().orEmpty()
             .map { it.trim() }
             .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains('=') && !it.startsWith("=") }
-        if (lines.isNotEmpty()) Log.i(TAG, "extra environment from $ENV_SWITCH: $lines")
+        if (lines.isNotEmpty()) Log.i(TAG, "来自 $ENV_SWITCH 的额外环境变量：$lines")
         return lines
     }
 
@@ -255,7 +255,7 @@ class SessionService : Service() {
         try {
             LinuxRuntime.writeAccounts(this)
         } catch (e: Exception) {
-            Log.e(TAG, "could not write the guest's passwd/group", e)
+            Log.e(TAG, "无法写入 guest 的 passwd/group", e)
             stopSession(-1)
             return
         }
@@ -314,7 +314,7 @@ class SessionService : Service() {
             val listing = com.droiddeck.launcher.frontend.AddedGames.writeListing(this, added)
             guest.add("BL_ADDED_GAMES=" + listing.path)
             if (OfflineMode.enabled(this)) guest.add("BL_STEAM_OFFLINE=1")
-            if (added.isNotEmpty()) Log.i(TAG, "added games: " + added.joinToString { "${it.name} (${it.exe.name})" })
+            if (added.isNotEmpty()) Log.i(TAG, "已添加游戏：" + added.joinToString { "${it.name} (${it.exe.name})" })
         }
         // Where the guest leaves a request for another session (the desktop's Steam launchers).
         guest.add("BL_LAUNCH_DIR=" + sessionRoot.path)
@@ -335,7 +335,7 @@ class SessionService : Service() {
         guest.add(SessionState.mode)
         if (SessionState.mode == MODE_STEAM) SessionState.steamUrl?.takeIf { it.startsWith("steam://") }?.let {
             guest.add(it)
-            Log.i(TAG, "steam: handing the client $it")
+            Log.i(TAG, "steam: 交给客户端 $it")
         }
         // A program under gamescope: the script's run mode takes the path (an AppImage, a script
         // or a binary inside the runtime). This is how an emulator gets the GPU - the desktop's
@@ -345,13 +345,13 @@ class SessionService : Service() {
         if (SessionState.mode == MODE_RUN) {
             val program = SessionState.program
             if (program.isNullOrEmpty()) {
-                Log.e(TAG, "run mode without a program")
+                Log.e(TAG, "run 模式未指定程序")
                 stopSession(65)
                 return
             }
             guest.add(program)
             guest.addAll(SessionState.programArgs)
-            Log.i(TAG, "run: $program ${SessionState.programArgs.joinToString(" ")} under gamescope")
+            Log.i(TAG, "run: $program ${SessionState.programArgs.joinToString(" ")}（在 gamescope 下）")
         }
 
         // Android has no /dev/shm; the cache stands in for it and, unlike the real thing, keeps
@@ -373,7 +373,7 @@ class SessionService : Service() {
         // proot reads this itself, so it belongs in proot's own environment rather than the guest's.
         if (SessionPrefs.prootNoSeccomp(this)) {
             hostEnv["PROOT_NO_SECCOMP"] = "1"
-            Log.i(TAG, "proot: seccomp acceleration off by request")
+            Log.i(TAG, "proot: 按请求关闭 seccomp 加速")
         }
         val prootLibs = LinuxRuntime.prootLibraryPath(this)
         if (prootLibs.isNotEmpty()) hostEnv["LD_LIBRARY_PATH"] = prootLibs
@@ -399,7 +399,7 @@ class SessionService : Service() {
         networkLink.publish()
         components.add(networkLink)
         if (gen != sessionGen || !SessionState.running) {
-            Log.i(TAG, "session stopped while it was starting; not launching it")
+            Log.i(TAG, "会话在启动过程中被停止；不再启动")
             if (gen == sessionGen) components.clear()
             return
         }
@@ -415,15 +415,15 @@ class SessionService : Service() {
         // that started it.
         val pid = HostProcess.start(line, hostEnv.asArray(), root, { status ->
             if (gen != sessionGen) {
-                Log.i(TAG, "an earlier session's process ended ($status); the current one carries on")
+                Log.i(TAG, "更早会话的进程已结束（$status）；当前会话继续运行")
                 return@start
             }
-            Log.i(TAG, "session ended: $status")
+            Log.i(TAG, "会话结束：$status")
             stopSession(status ?: -1)
         }, null)
-        Log.i(TAG, "session pid $pid, log ${sessionLog.path}")
+        Log.i(TAG, "会话 pid $pid，日志 ${sessionLog.path}")
         if (gen != sessionGen || !SessionState.running) {
-            Log.i(TAG, "session stopped while its guest was starting; taking it down")
+            Log.i(TAG, "会话在 guest 启动过程中被停止；正在关闭")
             if (gen == sessionGen) {
                 launchWatcher?.stopWatching()
                 launchWatcher = null
@@ -438,7 +438,7 @@ class SessionService : Service() {
             SessionEvents.guestStarted(pid)
         } else {
             SessionEvents.record("guest.start_failed", mapOf("pid" to pid))
-            SessionEvents.fail("GUEST_START_FAILED", "The guest process could not be started", pid)
+            SessionEvents.fail("GUEST_START_FAILED", "无法启动 guest 进程", pid)
             stopSession(-1)
             return
         }
@@ -447,10 +447,10 @@ class SessionService : Service() {
                 sessionRoot = { sessionPid },
                 helperRoots = { components.mapNotNull { it.suspendPid().takeIf { pid -> pid > 1 } } },
                 suspendAudio = {
-                    if (!pulse.setSinkSuspended(true)) Log.w(TAG, "could not suspend audio sink")
+                    if (!pulse.setSinkSuspended(true)) Log.w(TAG, "无法暂停音频 sink")
                 },
                 resumeAudio = {
-                    if (!pulse.setSinkSuspended(false)) Log.w(TAG, "could not resume audio sink")
+                    if (!pulse.setSinkSuspended(false)) Log.w(TAG, "无法恢复音频 sink")
                 },
             )
             mainHandler.post { updateSuspendPolicy() }
@@ -600,7 +600,7 @@ class SessionService : Service() {
             guest.add("BL_DIRECTAUDIO=/" + SessionFiles.DIRECTAUDIO_DIR)
             guest.add("BANNER_AUDIO_DIRECT_RELAY=" + relaySocket.absolutePath)
         }
-        Log.i(TAG, "audio: client " + (if (clientDirectAudio) "DirectAudio" else "classic AAudio sink") + (if (wantsDirectAudio) " + DirectAudio for games" else "")
+        Log.i(TAG, "音频：客户端 " + (if (clientDirectAudio) "DirectAudio" else "经典 AAudio sink") + (if (wantsDirectAudio) " + 游戏 DirectAudio" else "")
             + (if (wantsMic) " + microphone" else "") +
             (if (SessionPrefs.micEnabled(this) && !wantsMic) " (microphone wanted but RECORD_AUDIO not granted)" else ""))
         return pulse
@@ -632,7 +632,7 @@ class SessionService : Service() {
             !File(Environment.getExternalStorageDirectory(), NO_DECK_PAD_SWITCH).exists()
         deckBinds = if (wantsDeck) SteamDeckPad.prepare(this, fakeInputDir.parentFile!!.parentFile!!) else emptyList()
         SessionState.deckPad = deckBinds.isNotEmpty()
-        if (wantsDeck && !SessionState.deckPad) Log.w(TAG, "deck pad: not available this session; the pad stays an Xbox 360 controller")
+        if (wantsDeck && !SessionState.deckPad) Log.w(TAG, "Deck 手柄：本会话不可用；手柄保持为 Xbox 360 控制器")
         if (uinput) {
             // /dev/uinput, stood in for by libfakeinput: the virtual pad Steam Input makes for a
             // game becomes a node the game reads, carrying the player's layout, as on a Deck.
@@ -690,12 +690,12 @@ class SessionService : Service() {
             if (problem == null) {
                 File(LinuxRuntime.rootDir(this), "mnt/bannerlator-sd").mkdirs()
                 binds.add("${library.path}:/mnt/bannerlator-sd")
-                Log.i(TAG, "game storage: ${library.path} -> /mnt/bannerlator-sd (\"${library.label}\")")
+                Log.i(TAG, "游戏存储：${library.path} -> /mnt/bannerlator-sd (\"${library.label}\")")
             } else {
-                Log.w(TAG, "game storage: $problem; internal only this session")
+                Log.w(TAG, "游戏存储：$problem；本会话仅使用内部存储")
             }
         } else {
-            Log.i(TAG, "game storage: internal only")
+            Log.i(TAG, "游戏存储：仅内部存储")
         }
         // The user's own games folder (the Steam cog's "Added games"), bound at a fixed place so
         // the shortcuts the app writes point somewhere whatever storage the folder is on.
@@ -703,18 +703,18 @@ class SessionService : Service() {
             if (root.host.isDirectory && root.host.canRead()) {
                 File(LinuxRuntime.rootDir(this), root.guest.removePrefix("/")).mkdirs()
                 binds.add(root.host.path + ":" + root.guest)
-                Log.i(TAG, "added games: ${root.host} -> ${root.guest}")
+                Log.i(TAG, "已添加游戏：${root.host} -> ${root.guest}")
             } else {
-                Log.w(TAG, "added games: ${root.host} is not a readable folder this session")
+                Log.w(TAG, "已添加游戏：${root.host} 在本会话中不是可读文件夹")
             }
         }
         val roms = SessionPrefs.romsDir(this).takeIf { it.isNotEmpty() }?.let { File(it) }
         if (roms != null && roms.isDirectory && roms.canRead()) {
             File(home, "ROMs").mkdirs()
             binds.add(roms.path + ":/root/ROMs")
-            Log.i(TAG, "roms: $roms -> /root/ROMs")
+            Log.i(TAG, "ROMs：$roms -> /root/ROMs")
         } else if (roms != null) {
-            Log.w(TAG, "roms: $roms is not a readable folder; /root/ROMs not offered this session")
+            Log.w(TAG, "ROMs：$roms 不是可读文件夹；本会话不提供 /root/ROMs")
         }
         return binds
     }
@@ -727,7 +727,7 @@ class SessionService : Service() {
         android.os.Process.sendSignal(prootPid, 15) // SIGTERM
         if (!waitForExit(prootPid, GRACE_MS)) {
             if (!stillSameProcess()) return
-            Log.w(TAG, "proot $prootPid did not exit on SIGTERM; killing it")
+            Log.w(TAG, "proot $prootPid 未响应 SIGTERM 退出；正在强制结束")
             android.os.Process.killProcess(prootPid)
         }
         var killed = 0
@@ -737,7 +737,7 @@ class SessionService : Service() {
             android.os.Process.killProcess(pid)
             killed++
         }
-        if (killed > 0) Log.i(TAG, "swept $killed process(es) proot left behind")
+        if (killed > 0) Log.i(TAG, "已清理 proot 遗留的 $killed 个进程")
     }
 
     /** Every process under [root], as (pid, start time), from a single walk of /proc. */
@@ -780,7 +780,7 @@ class SessionService : Service() {
         try {
             request.writeText("")
         } catch (e: Exception) {
-            Log.w(TAG, "could not ask the Steam client to exit", e)
+            Log.w(TAG, "无法请求 Steam 客户端退出", e)
             return
         }
         val started = System.currentTimeMillis()
@@ -789,7 +789,7 @@ class SessionService : Service() {
             return
         }
         val exited = waitForExit(prootPid, STEAM_EXIT_MS)
-        Log.i(TAG, "Steam client ${if (exited) "exited" else "did not exit"} after ${System.currentTimeMillis() - started} ms")
+        Log.i(TAG, "Steam 客户端${if (exited) "已退出" else "未退出"}（${System.currentTimeMillis() - started} ms）")
     }
 
     private fun waitForExit(pid: Int, timeoutMs: Long): Boolean {
@@ -828,7 +828,7 @@ class SessionService : Service() {
             android.os.Process.killProcess(pid)
             killed++
         }
-        if (killed > 0) Log.w(TAG, "killed $killed guest process(es) proot no longer tracked")
+        if (killed > 0) Log.w(TAG, "已强制结束 $killed 个 proot 不再跟踪的 guest 进程")
     }
 
     private fun killStragglers() {
@@ -847,7 +847,7 @@ class SessionService : Service() {
             android.os.Process.killProcess(pid)
             killed++
         }
-        if (killed > 0) Log.w(TAG, "killed $killed leftover process(es) of a previous session")
+        if (killed > 0) Log.w(TAG, "已强制结束上一个会话遗留的 $killed 个进程")
     }
 
     /**
@@ -878,7 +878,7 @@ class SessionService : Service() {
                         line.startsWith("session=") && line.removePrefix("session=").trim() == "desktop" -> session = MODE_DESKTOP
                     }
                 }
-                Log.i(TAG, "launch request from the session: " + (if (session == MODE_DESKTOP) "the desktop with " else "") +
+                Log.i(TAG, "来自会话的启动请求：" + (if (session == MODE_DESKTOP) "桌面，参数 " else "") +
                     "Steam $ui" + (if (url.isNotEmpty()) " $url" else ""))
                 val next = Intent(this@SessionService, com.droiddeck.launcher.SessionActivity::class.java)
                     .putExtra(EXTRA_MODE, session)
@@ -918,7 +918,7 @@ class SessionService : Service() {
                         refreshNotification()
                     } else {
                         suspendAttemptFailed = true
-                        Log.w(TAG, "could not confirm that the session stopped")
+                        Log.w(TAG, "无法确认会话已停止")
                     }
                     updateSuspendPolicy()
                 }
@@ -935,7 +935,7 @@ class SessionService : Service() {
                         refreshNotification()
                     } else {
                         suspendAttemptFailed = true
-                        Log.w(TAG, "could not confirm that the session resumed")
+                        Log.w(TAG, "无法确认会话已恢复")
                     }
                     updateSuspendPolicy()
                 }
@@ -946,7 +946,7 @@ class SessionService : Service() {
     private fun finishSessionStop(status: Int, stoppedGen: Int) {
         mainHandler.post {
             if (stoppedGen != sessionGen || SessionState.running) {
-                Log.i(TAG, "session $stoppedGen finished stopping after a new one started")
+                Log.i(TAG, "会话 $stoppedGen 在新会话启动后完成停止")
                 return@post
             }
             SessionState.suspended = false
@@ -956,7 +956,7 @@ class SessionService : Service() {
                 SessionEvents.transition(SessionPhase.IDLE, "session.stopped", mapOf("status" to status))
             } else {
                 val code = SessionState.failureCode ?: "GUEST_EXIT"
-                val message = SessionState.failureMessage ?: "Session guest exited with status $status"
+                val message = SessionState.failureMessage ?: "Session guest 以状态 $status 退出"
                 val failureStatus = SessionState.failureStatus ?: status
                 SessionEvents.fail(code, message, failureStatus)
             }
@@ -1032,7 +1032,7 @@ class SessionService : Service() {
      * guest would survive as an orphan holding the rootfs and the GPU. Treat the swipe as "quit".
      */
     override fun onTaskRemoved(rootIntent: Intent?) {
-        Log.i(TAG, "task removed - ending the session")
+        Log.i(TAG, "任务已被移除 — 结束会话")
         stopSession(0)
         super.onTaskRemoved(rootIntent)
     }
@@ -1059,9 +1059,9 @@ class SessionService : Service() {
                     acquire(12L * 60L * 60L * 1000L)
                 }
             }
-            Log.i(TAG, "wake lock held=${wakeLock?.isHeld}")
+            Log.i(TAG, "唤醒锁 held=${wakeLock?.isHeld}")
         } catch (t: Throwable) {
-            Log.w(TAG, "no wake lock (${t.message}) - the session may be killed in the background")
+            Log.w(TAG, "无法获取唤醒锁（${t.message}）— 会话可能在后台被结束")
         }
         try {
             val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
@@ -1073,11 +1073,11 @@ class SessionService : Service() {
                         acquire()
                     }
             }
-            Log.i(TAG, "wifi lock held=${wifiLock?.isHeld}")
+            Log.i(TAG, "WiFi 锁 held=${wifiLock?.isHeld}")
         } catch (t: Throwable) {
             // A partial wake lock keeps the process alive but does not stop WiFi power-save from
             // throttling a backgrounded download to nothing, which is what this lock is for.
-            Log.w(TAG, "no wifi lock (${t.message}) - a backgrounded download may stall")
+            Log.w(TAG, "无法获取 WiFi 锁（${t.message}）— 后台下载可能停滞")
         }
     }
 
@@ -1085,13 +1085,13 @@ class SessionService : Service() {
         try {
             wakeLock?.takeIf { it.isHeld }?.release()
         } catch (t: Throwable) {
-            Log.w(TAG, "releasing the wake lock", t)
+            Log.w(TAG, "释放唤醒锁时出错", t)
         }
         wakeLock = null
         try {
             wifiLock?.takeIf { it.isHeld }?.release()
         } catch (t: Throwable) {
-            Log.w(TAG, "releasing the wifi lock", t)
+            Log.w(TAG, "释放 WiFi 锁时出错", t)
         }
         wifiLock = null
     }

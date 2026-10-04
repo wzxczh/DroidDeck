@@ -74,7 +74,7 @@ public final class PadBridge {
     public synchronized boolean start() {
         if (!open) {
             open = writer.open();
-            Log.i(TAG, "ring slot " + SLOT + (open ? " open" : " NOT open"));
+            Log.i(TAG, "环形缓冲槽位 " + SLOT + (open ? " 已打开" : " 未打开"));
         }
         return open;
     }

@@ -64,7 +64,7 @@ import com.droiddeck.launcher.store.StoreState
 // The Store rail section: Flathub's apps for this device's architecture, installed into the
 // Linux runtime with Flatpak, and the ones already installed.
 
-private val TABS = listOf("Discover", "Search", "Installed")
+private val TABS = listOf("发现", "搜索", "已安装")
 
 @Composable
 internal fun StorePage(s: FrontEndState, a: FrontEndActions, modifier: Modifier) {
@@ -112,13 +112,13 @@ internal fun StorePage(s: FrontEndState, a: FrontEndActions, modifier: Modifier)
             return@Column
         }
         Rise(0) {
-            PageHeader("Store") {
+            PageHeader("商店") {
                 Chip("Flathub · ARM64", ok = false)
-                if (StoreState.ready) Chip("● Flatpak ready", ok = true)
+                if (StoreState.ready) Chip("● Flatpak 就绪", ok = true)
             }
         }
         if (!s.ready) {
-            Rise(1) { Note("Install the Linux runtime from Setup first; the store installs apps into it.") }
+            Rise(1) { Note("请先在设置中安装 Linux 运行时；商店会把应用装入其中。") }
             return@Column
         }
         if (!StoreState.ready) Rise(1) { SetupCard() }
@@ -148,14 +148,14 @@ private fun SetupCard() {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth().padding(top = 12.dp).clip(Shape16).background(colors.surface).border(1.dp, pal.line, Shape16).padding(16.dp),
     ) {
-        Text("Set up Flatpak", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
+        Text("设置 Flatpak", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
         Text(
-            "Adds Flatpak to the Linux runtime and connects it to Flathub, about 20 MB. Apps then install " +
-                "with the runtimes they need; the first one is the biggest download.",
+            "将 Flatpak 加入 Linux 运行时并连接 Flathub，约 20 MB。之后应用会连同所需运行时一起安装；" +
+                "第一个应用的下载量最大。",
             fontSize = 14.sp, color = colors.onSurfaceVariant,
         )
         Actions {
-            PrimaryButton(if (busy) "Setting up…" else "Set up Flatpak", enabled = StoreState.busy == null, main = true) { StoreState.setup(ctx) }
+            PrimaryButton(if (busy) "正在设置…" else "设置 Flatpak", enabled = StoreState.busy == null, main = true) { StoreState.setup(ctx) }
         }
     }
 }
@@ -166,11 +166,11 @@ private fun BusyBar() {
     val colors = MaterialTheme.colorScheme
     val busy = StoreState.busy ?: return
     val name = StoreState.installed.firstOrNull { it.id == busy }?.name ?: StoreState.details[busy]?.name
-        ?: when (busy) { "setup" -> "Flatpak"; "update-all" -> "Updates"; else -> busy.substringAfterLast('.') }
+        ?: when (busy) { "setup" -> "Flatpak"; "update-all" -> "更新"; else -> busy.substringAfterLast('.') }
     Column(modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 4.dp)) {
         val stage = StoreState.stage
         Text(
-            "$name · " + (if (stage != null && StoreState.percent >= 0) "$stage · ${StoreState.percent}%" else stage ?: "Starting…"),
+            "$name · " + (if (stage != null && StoreState.percent >= 0) "$stage · ${StoreState.percent}%" else stage ?: "正在开始…"),
             fontSize = 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(bottom = 6.dp),
         )
@@ -181,20 +181,20 @@ private fun BusyBar() {
 
 @Composable
 private fun Discover(onOpen: (String) -> Unit, onCategory: (String) -> Unit) {
-    Rise(3) { SectionTitle("Categories", null) }
+    Rise(3) { SectionTitle("分类", null) }
     Rise(3) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(vertical = 4.dp)) {
             FlathubApi.categories.forEach { c -> PillButton(c.label, selected = false) { onCategory(c.id) } }
         }
     }
     if (StoreState.sectionsFailed && StoreState.sections.values.all { it.isEmpty() }) {
-        Rise(4) { Note("Flathub could not be reached. Check the connection and open the Store again.") }
-        Actions { SecondaryButton("Try again") { StoreState.loadSections(force = true) } }
+        Rise(4) { Note("无法连接 Flathub。请检查网络后重新打开商店。") }
+        Actions { SecondaryButton("重试") { StoreState.loadSections(force = true) } }
         return
     }
     StoreState.SECTIONS.forEachIndexed { i, (key, title) ->
         val apps = StoreState.sections[key]
-        Rise(4 + i) { SectionTitle(title, apps?.let { if (it.isEmpty()) null else it.size.toString() } ?: "loading…") }
+        Rise(4 + i) { SectionTitle(title, apps?.let { if (it.isEmpty()) null else it.size.toString() } ?: "加载中…") }
         if (apps != null && apps.isNotEmpty()) Rise(4 + i) { AppGrid(apps.take(12), first = i == 0, onOpen = onOpen) }
     }
 }
@@ -211,15 +211,15 @@ private fun Search(query: String, category: String?, onQuery: (String) -> Unit, 
     Rise(3) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
             AdbTextField(
-                value = query, onValueChange = onQuery, label = "Search Flathub", keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done, placeholder = "Firefox, games, emulators…", modifier = Modifier.weight(1f), onDone = run,
+                value = query, onValueChange = onQuery, label = "搜索 Flathub", keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done, placeholder = "Firefox、游戏、模拟器…", modifier = Modifier.weight(1f), onDone = run,
             )
-            PrimaryButton("Search", main = true, onClick = run)
+            PrimaryButton("搜索", main = true, onClick = run)
         }
     }
     Rise(4) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(top = 12.dp, bottom = 4.dp)) {
-            PillButton("All", selected = category == null) { onCategory(null); StoreState.search(query.trim(), null) }
+            PillButton("全部", selected = category == null) { onCategory(null); StoreState.search(query.trim(), null) }
             FlathubApi.categories.forEach { c ->
                 PillButton(c.label, selected = category == c.id) { onCategory(c.id); StoreState.search(query.trim(), c.id) }
             }
@@ -227,11 +227,11 @@ private fun Search(query: String, category: String?, onQuery: (String) -> Unit, 
     }
     val results = StoreState.searchResults
     when {
-        StoreState.searching -> Rise(5) { SectionTitle("Searching…", null) }
-        results == null -> Rise(5) { Note("Search Flathub by name, or pick a category. Only apps built for ARM64 are listed.") }
-        results.isEmpty() -> Rise(5) { Note("Nothing on Flathub for ARM64 matches that.") }
+        StoreState.searching -> Rise(5) { SectionTitle("搜索中…", null) }
+        results == null -> Rise(5) { Note("按名称搜索 Flathub，或选择分类。仅列出为 ARM64 构建的应用。") }
+        results.isEmpty() -> Rise(5) { Note("Flathub 上没有匹配的 ARM64 应用。") }
         else -> {
-            Rise(5) { SectionTitle("Results", results.size.toString()) }
+            Rise(5) { SectionTitle("结果", results.size.toString()) }
             Rise(6) { AppGrid(results, first = true, onOpen = onOpen) }
         }
     }
@@ -245,19 +245,19 @@ private fun Installed(a: FrontEndActions, onOpen: (String) -> Unit) {
     val apps = StoreState.installed
     Rise(3) {
         Actions {
-            SecondaryButton(if (StoreState.checkingUpdates) "Checking…" else "Check for updates", enabled = StoreState.ready && !StoreState.checkingUpdates && StoreState.busy == null) {
+            SecondaryButton(if (StoreState.checkingUpdates) "检查中…" else "检查更新", enabled = StoreState.ready && !StoreState.checkingUpdates && StoreState.busy == null) {
                 StoreState.checkUpdates(ctx)
             }
-            if (StoreState.updates.isNotEmpty()) PrimaryButton("Update all (${StoreState.updates.size})", enabled = StoreState.busy == null) {
-                StoreState.update(ctx, null, "Updates")
-            } else if (StoreState.updatesChecked && !StoreState.checkingUpdates) ActionChip("● Everything is up to date", ok = true)
+            if (StoreState.updates.isNotEmpty()) PrimaryButton("全部更新 (${StoreState.updates.size})", enabled = StoreState.busy == null) {
+                StoreState.update(ctx, null, "全部更新")
+            } else if (StoreState.updatesChecked && !StoreState.checkingUpdates) ActionChip("● 全部已是最新", ok = true)
         }
     }
     if (apps.isEmpty()) {
-        Rise(4) { Box(Modifier.padding(top = 12.dp)) { Note(if (StoreState.ready) "No apps yet. Find some under Discover or Search." else "Set up Flatpak to install apps.") } }
+        Rise(4) { Box(Modifier.padding(top = 12.dp)) { Note(if (StoreState.ready) "还没有应用。到“发现”或“搜索”里找找。" else "请先设置 Flatpak 再安装应用。") } }
         return
     }
-    Rise(4) { SectionTitle("Installed", apps.size.toString()) }
+    Rise(4) { SectionTitle("已安装", apps.size.toString()) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
         apps.forEachIndexed { i, app ->
             key(app.id) {
@@ -270,13 +270,13 @@ private fun Installed(a: FrontEndActions, onOpen: (String) -> Unit) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(app.name, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(
-                                (if (app.id in StoreState.updates) "Update available · " else "") + (app.summary ?: app.id),
+                                (if (app.id in StoreState.updates) "有可用更新 · " else "") + (app.summary ?: app.id),
                                 fontSize = 13.sp, color = if (app.id in StoreState.updates) pal.signal else colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        PrimaryButton("Open", compact = true, enabled = !s_busyFor(app.id)) { a.onFlatpakApp(app.id, app.name) }
-                        if (app.id in StoreState.updates) SecondaryButton("Update", compact = true, enabled = StoreState.busy == null) { StoreState.update(ctx, app.id, app.name) }
-                        SecondaryButton("Details", compact = true) { onOpen(app.id) }
+                        PrimaryButton("打开", compact = true, enabled = !s_busyFor(app.id)) { a.onFlatpakApp(app.id, app.name) }
+                        if (app.id in StoreState.updates) SecondaryButton("更新", compact = true, enabled = StoreState.busy == null) { StoreState.update(ctx, app.id, app.name) }
+                        SecondaryButton("详情", compact = true) { onOpen(app.id) }
                     }
                 }
             }
@@ -295,7 +295,7 @@ private fun AppDetail(s: FrontEndState, a: FrontEndActions, id: String, onBack: 
     val d = StoreState.details[id]
     val local = StoreState.installed.firstOrNull { it.id == id }
     val name = d?.name ?: local?.name ?: id
-    Rise(0) { BackLink("Store", onClick = onBack) }
+    Rise(0) { BackLink("商店", onClick = onBack) }
     Rise(1) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) {
             AppIcon(d?.icon ?: local?.icon ?: FlathubApi.iconUrl(id), name, 72)
@@ -315,35 +315,35 @@ private fun AppDetail(s: FrontEndState, a: FrontEndActions, id: String, onBack: 
     Rise(2) {
         Actions {
             if (installed) {
-                PrimaryButton("Open", enabled = !busyHere, main = true) { a.onFlatpakApp(id, name) }
-                if (id in StoreState.updates) SecondaryButton("Update", enabled = StoreState.busy == null) { StoreState.update(ctx, id, name) }
-                SecondaryButton(if (busyHere) "Working…" else if (confirmRemove) "Press again to remove" else "Remove", enabled = StoreState.busy == null) {
+                PrimaryButton("打开", enabled = !busyHere, main = true) { a.onFlatpakApp(id, name) }
+                if (id in StoreState.updates) SecondaryButton("更新", enabled = StoreState.busy == null) { StoreState.update(ctx, id, name) }
+                SecondaryButton(if (busyHere) "处理中…" else if (confirmRemove) "再次点击移除" else "移除", enabled = StoreState.busy == null) {
                     if (confirmRemove) { confirmRemove = false; StoreState.uninstall(ctx, id, name) } else confirmRemove = true
                 }
             } else {
                 PrimaryButton(
-                    if (busyHere) "Installing…" else "Install", main = true,
+                    if (busyHere) "正在安装…" else "安装", main = true,
                     enabled = StoreState.ready && StoreState.busy == null && s.ready && (d == null || d.arches.isEmpty() || "aarch64" in d.arches),
                 ) { StoreState.install(ctx, id, name) }
-                if (!StoreState.ready) ActionChip("Set up Flatpak first", ok = false)
+                if (!StoreState.ready) ActionChip("请先设置 Flatpak", ok = false)
             }
             d?.version?.let { ActionChip("v$it", ok = false) }
-            if (d != null && d.downloadSize > 0) ActionChip("${FileUtils.sizeToString(d.downloadSize)} download", ok = false)
-            if (installed) ActionChip("● Installed", ok = true)
+            if (d != null && d.downloadSize > 0) ActionChip("${FileUtils.sizeToString(d.downloadSize)} 下载", ok = false)
+            if (installed) ActionChip("● 已安装", ok = true)
         }
     }
     if (busyHere) BusyBar()
     if (d == null) {
         Rise(3) {
             Box(Modifier.padding(top = 14.dp)) {
-                Note(if (StoreState.detailsFailed[id] == true) "Flathub's page for this app could not be loaded." else "Loading from Flathub…")
+                Note(if (StoreState.detailsFailed[id] == true) "无法加载该应用的 Flathub 页面。" else "正在从 Flathub 加载…")
             }
         }
         return
     }
-    if (d.arches.isNotEmpty() && "aarch64" !in d.arches) Rise(3) { Box(Modifier.padding(top = 12.dp)) { Note("Flathub has no ARM64 build of this app, so it cannot be installed here.") } }
+    if (d.arches.isNotEmpty() && "aarch64" !in d.arches) Rise(3) { Box(Modifier.padding(top = 12.dp)) { Note("Flathub 没有该应用的 ARM64 版本，无法在此安装。") } }
     if (d.screenshots.isNotEmpty()) {
-        Rise(3) { SectionTitle("Screenshots", null) }
+        Rise(3) { SectionTitle("截图", null) }
         Rise(3) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())) {
                 d.screenshots.take(6).forEach { shot ->
@@ -356,18 +356,18 @@ private fun AppDetail(s: FrontEndState, a: FrontEndActions, id: String, onBack: 
         }
     }
     if (d.description.isNotEmpty()) {
-        Rise(4) { SectionTitle("About", null) }
+        Rise(4) { SectionTitle("关于", null) }
         Rise(4) { Text(d.description, fontSize = 14.sp, lineHeight = 20.sp, color = colors.onBackground, modifier = Modifier.fillMaxWidth()) }
     }
-    Rise(5) { SectionTitle("Details", null) }
+    Rise(5) { SectionTitle("详情", null) }
     Rise(5) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(bottom = 16.dp)) {
             listOfNotNull(
-                "App ID" to d.id,
-                d.license?.let { "License" to it },
-                d.runtime?.let { "Runtime" to it.replace("/x86_64/", "/aarch64/") },
-                if (d.installedSize > 0) "Installed size" to FileUtils.sizeToString(d.installedSize) + " (plus its runtime, shared between apps)" else null,
-                d.homepage?.let { "Website" to it },
+                "应用 ID" to d.id,
+                d.license?.let { "许可证" to it },
+                d.runtime?.let { "运行时" to it.replace("/x86_64/", "/aarch64/") },
+                if (d.installedSize > 0) "已安装大小" to FileUtils.sizeToString(d.installedSize) + "（另计其运行时，各应用共享）" else null,
+                d.homepage?.let { "网站" to it },
             ).forEach { (k, v) ->
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(k, fontSize = 13.sp, color = colors.onSurfaceVariant, modifier = Modifier.width(110.dp))
@@ -419,9 +419,9 @@ private fun AppTile(app: FlathubApi.AppSummary, modifier: Modifier, isFirst: Boo
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(app.name, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
-                if (app.verified) Icon(Icons.Outlined.Verified, contentDescription = "Verified", tint = pal.signal, modifier = Modifier.size(14.dp))
+                if (app.verified) Icon(Icons.Outlined.Verified, contentDescription = "已验证", tint = pal.signal, modifier = Modifier.size(14.dp))
             }
-            Text(if (installed) "Installed" else app.summary, fontSize = 13.sp, color = if (installed) pal.good else colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(if (installed) "已安装" else app.summary, fontSize = 13.sp, color = if (installed) pal.good else colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -467,7 +467,7 @@ internal fun InstalledAppsGrid(a: FrontEndActions) {
     val pal = LocalPalette.current
     val columns = if (LocalNarrowPane.current) 1 else 3
     Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-        SectionTitle("Apps from the Store", apps.size.toString())
+        SectionTitle("商店应用", apps.size.toString())
         apps.chunked(columns).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                 row.forEach { app ->
@@ -511,16 +511,16 @@ internal fun AppImagesSection(a: FrontEndActions, runtimeReady: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
         SectionTitle("AppImages", state.items.size.takeIf { it > 0 }?.toString())
         Actions {
-            SecondaryButton(if (state.importing != null) "Importing…" else "Add AppImage", enabled = runtimeReady && state.importing == null) { a.onImportAppImage() }
-            if (!runtimeReady) ActionChip("Runtime required", ok = false)
+            SecondaryButton(if (state.importing != null) "正在导入…" else "添加 AppImage", enabled = runtimeReady && state.importing == null) { a.onImportAppImage() }
+            if (!runtimeReady) ActionChip("需要运行时", ok = false)
         }
         state.importing?.let { name ->
-            Text("$name · ${state.stage ?: "Starting…"}", fontSize = 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text("$name · ${state.stage ?: "正在开始…"}", fontSize = 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(4.dp))
         }
         state.lastError?.let { Note(it) }
         if (state.items.isEmpty() && state.importing == null && state.lastError == null) {
-            Note("Add an ARM64 (aarch64) AppImage from your storage. It is unpacked into the Linux runtime once, then opens full screen from here or from the desktop's menu.")
+            Note("从存储空间添加 ARM64（aarch64）AppImage。首次会解包进 Linux 运行时，之后可从这里或桌面菜单全屏启动。")
         }
         state.items.forEach { item ->
             key(item.id) {
@@ -546,7 +546,7 @@ internal fun AppImagesSection(a: FrontEndActions, runtimeReady: Boolean) {
                             Text(item.comment ?: "AppImage", fontSize = 13.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
-                    SecondaryButton(if (confirm) "Press again to remove" else "Remove", compact = true) {
+                    SecondaryButton(if (confirm) "再次点击移除" else "移除", compact = true) {
                         if (confirm) { confirm = false; com.droiddeck.launcher.store.AppImageState.remove(ctx, item.id) } else confirm = true
                     }
                 }

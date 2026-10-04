@@ -113,11 +113,11 @@ object SessionFiles {
                 }
                 installed = staged.setExecutable(true, false) && staged.renameTo(target)
             } catch (e: Exception) {
-                Log.w(TAG, "could not stage $relative", e)
+                Log.w(TAG, "预置 $relative 失败", e)
             } finally {
                 if (!installed) staged.delete()
             }
-            if (!installed) Log.e(TAG, "$relative NOT staged")
+            if (!installed) Log.e(TAG, "$relative 未能预置")
         }
         // The DirectAudio driver for games under Proton: the glibc build of winedirectaudio, which
         // the Proton wrappers add to WINEDLLPATH when the session asks for it (BL_DIRECTAUDIO).
@@ -138,11 +138,11 @@ object SessionFiles {
                 }
                 installed = staged.setReadable(true, false) && staged.renameTo(target)
             } catch (e: Exception) {
-                Log.w(TAG, "could not stage DirectAudio $relative", e)
+                Log.w(TAG, "预置 DirectAudio $relative 失败", e)
             } finally {
                 if (!installed) staged.delete()
             }
-            if (!installed) Log.e(TAG, "DirectAudio $relative NOT staged")
+            if (!installed) Log.e(TAG, "DirectAudio $relative 未能预置")
         }
         // What every process in the session preloads. LD_PRELOAD in the environment would not
         // survive: the Steam client rebuilds it for each process it starts and appends its own
@@ -156,7 +156,7 @@ object SessionFiles {
         if (!FileUtils.writeString(staged, preload.toString())
             || !staged.renameTo(File(etc, "ld.so.preload"))) {
             staged.delete()
-            Log.e(TAG, "could not write ld.so.preload")
+            Log.e(TAG, "无法写入 ld.so.preload")
         }
 
         val startupMovieDir = File(root, "root/.local/share/Steam/config/uioverrides/movies")
@@ -184,11 +184,11 @@ object SessionFiles {
             }
             installed = staged.setReadable(true, false) && staged.renameTo(movie)
         } catch (e: Exception) {
-            Log.w(TAG, "could not stage Steam startup movie $name", e)
+            Log.w(TAG, "预置 Steam 开机动画 $name 失败", e)
         } finally {
             if (!installed) staged.delete()
         }
-        if (!installed) Log.e(TAG, "Steam startup movie $name NOT staged")
+        if (!installed) Log.e(TAG, "Steam 开机动画 $name 未能预置")
         return installed
     }
 
@@ -198,7 +198,7 @@ object SessionFiles {
         val path = "/uioverrides/movies/bigpicture_startup.webm"
         val legacyPath = "/uioverrides/movies/droiddeck-startup.webm"
         var text = if (config.isFile) runCatching { config.readText() }.getOrElse {
-            Log.w(TAG, "could not read Steam config for startup movie", it)
+            Log.w(TAG, "读取 Steam 配置以设置开机动画失败", it)
             return
         } else ""
         val newline = if (text.contains("\r\n")) "\r\n" else "\n"
@@ -208,14 +208,14 @@ object SessionFiles {
             val selectedId = scalar(block, "MovieID")
             val selectedPath = scalar(block, "LocalPath")
             if (selectedPath == path) {
-                Log.i(TAG, "Steam startup movie is set to DroidDeck")
+                Log.i(TAG, "Steam 开机动画已设为 DroidDeck")
                 return
             }
             val legacyDefault = selectedId == "0" && selectedPath == legacyPath
             val hasExplicitSelection =
                 (!selectedId.isNullOrEmpty() && selectedId != "0") || !selectedPath.isNullOrEmpty()
             if (!legacyDefault && hasExplicitSelection) {
-                Log.i(TAG, "Steam startup movie selection preserved")
+                Log.i(TAG, "已保留原有的 Steam 开机动画选择")
                 return
             }
             val updated = setScalar(block, "MovieID", "0", newline)
@@ -225,7 +225,7 @@ object SessionFiles {
             val steam = findSteamBlock(text)
             if (steam == null) {
                 if (text.isNotBlank()) {
-                    Log.w(TAG, "Steam config has no Steam settings block; startup movie default not set")
+                    Log.w(TAG, "Steam 配置中没有 Steam 设置块；未设置默认开机动画")
                     return
                 }
                 text = "\"InstallConfigStore\"${newline}{${newline}\t\"Software\"${newline}\t{${newline}\t\t\"Valve\"${newline}\t\t{${newline}\t\t\t\"Steam\"${newline}\t\t\t{${newline}"
@@ -244,13 +244,13 @@ object SessionFiles {
             staged.writeText(text)
             if (!staged.renameTo(config)) {
                 staged.delete()
-                Log.e(TAG, "could not write Steam startup movie selection")
+                Log.e(TAG, "无法写入 Steam 开机动画选择")
             } else {
-                Log.i(TAG, "Steam startup movie default selected")
+                Log.i(TAG, "已选择默认 Steam 开机动画")
             }
         } catch (e: Exception) {
             staged.delete()
-            Log.w(TAG, "could not write Steam startup movie selection", e)
+            Log.w(TAG, "无法写入 Steam 开机动画选择", e)
         }
     }
 
@@ -332,7 +332,7 @@ object SessionFiles {
             } catch (ignored: Exception) {
             }
         }
-        Log.w(TAG, "$public is not writable (storage permission?); logging to files/logs")
+        Log.w(TAG, "$public 不可写（存储权限？）；日志改写入 files/logs")
         return File(context.filesDir, "logs").apply { mkdirs() }
     }
 }

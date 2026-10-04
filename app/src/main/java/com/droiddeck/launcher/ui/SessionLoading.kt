@@ -92,14 +92,14 @@ fun HudText(text: String) {
 private class LoadStage(val label: String, val detail: String)
 
 private fun loadStages(steam: Boolean): List<LoadStage> = if (steam) listOf(
-    LoadStage("Linux runtime", "Getting the Linux runtime ready"),
-    LoadStage("Session", "Starting the display and audio"),
-    LoadStage("Steam client", "Checking the Steam client and its compatibility tools"),
-    LoadStage("Opening Steam", "Waiting for Steam's first frame"),
+    LoadStage("Linux 运行时", "正在准备 Linux 运行时"),
+    LoadStage("会话", "正在启动显示与音频"),
+    LoadStage("Steam 客户端", "正在检查 Steam 客户端及其兼容性工具"),
+    LoadStage("启动 Steam", "正在等待 Steam 的第一帧"),
 ) else listOf(
-    LoadStage("Linux runtime", "Getting the Linux runtime ready"),
-    LoadStage("Desktop", "Getting the desktop ready"),
-    LoadStage("Opening", "Waiting for the first frame"),
+    LoadStage("Linux 运行时", "正在准备 Linux 运行时"),
+    LoadStage("桌面", "正在准备桌面"),
+    LoadStage("启动", "正在等待第一帧"),
 )
 
 /**
@@ -110,11 +110,12 @@ private fun loadStages(steam: Boolean): List<LoadStage> = if (steam) listOf(
 private fun stageOf(step: String, steam: Boolean): Int {
     val t = step.lowercase()
     return when {
-        "linux runtime" in t -> 0
-        "starting the session" in t -> 1
-        !steam && "desktop" in t -> 1
-        steam && "starting the steam client" in t -> 3
-        steam && ("steam" in t || "client" in t || "proton" in t || "library" in t || "compatibility" in t) -> 2
+        "linux runtime" in t || "运行时" in t -> 0
+        "starting the session" in t || "启动会话" in t -> 1
+        !steam && ("desktop" in t || "桌面" in t) -> 1
+        steam && ("starting the steam client" in t || "启动 steam 客户端" in t) -> 3
+        steam && ("steam" in t || "client" in t || "proton" in t || "library" in t || "compatibility" in t ||
+            "客户端" in t || "游戏库" in t || "兼容性" in t) -> 2
         else -> -1
     }
 }
@@ -122,13 +123,14 @@ private fun stageOf(step: String, steam: Boolean): Int {
 /** Download and install lines are worth reading as they are; the script's own notes are not. */
 private fun readableStep(step: String): Boolean {
     val t = step.lowercase()
-    return t.startsWith("download") || t.startsWith("checking the linux") || t.startsWith("unpacking") || t.startsWith("installing")
+    return t.startsWith("download") || t.startsWith("checking the linux") || t.startsWith("unpacking") || t.startsWith("installing") ||
+        t.startsWith("正在下载") || t.startsWith("正在校验") || t.startsWith("正在解包") || t.startsWith("正在安装")
 }
 
 @Composable
 fun LoadingOverlay(
     step: String, percent: Int, elapsed: String, hint: String, ended: Boolean,
-    title: String = "Starting Steam", steam: Boolean = true, onCancel: (() -> Unit)? = null,
+    title: String = "正在启动 Steam", steam: Boolean = true, onCancel: (() -> Unit)? = null,
     /** An ended session's exit status and log path, shown small under the advice. */
     endedDetail: String? = null,
     onRetry: (() -> Unit)? = null,
@@ -186,7 +188,7 @@ fun LoadingOverlay(
             }
             Spacer(Modifier.height(30.dp))
             Text(
-                if (ended) "The session ended" else title, fontSize = 20.sp, fontWeight = FontWeight.SemiBold,
+                if (ended) "会话已结束" else title, fontSize = 20.sp, fontWeight = FontWeight.SemiBold,
                 color = colors.onBackground, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis,
             )
             Text(
@@ -223,9 +225,9 @@ private fun EndedActions(onRetry: (() -> Unit)?, onShareLogs: (() -> Unit)?, onC
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(top = 22.dp)) {
         var firstUsed = false
         fun claim(): Modifier = if (firstUsed) Modifier else { firstUsed = true; Modifier.focusRequester(first) }
-        if (onRetry != null) PrimaryButton("Try again", modifier = claim(), onClick = onRetry)
-        if (onShareLogs != null) SecondaryButton("Share logs", modifier = claim(), onClick = onShareLogs)
-        if (onClose != null) SecondaryButton("Back", modifier = claim(), onClick = onClose)
+        if (onRetry != null) PrimaryButton("重试", modifier = claim(), onClick = onRetry)
+        if (onShareLogs != null) SecondaryButton("共享日志", modifier = claim(), onClick = onShareLogs)
+        if (onClose != null) SecondaryButton("返回", modifier = claim(), onClick = onClose)
     }
 }
 
@@ -239,7 +241,7 @@ private fun LoadSegments(count: Int, active: Int, percent: Int, modifier: Modifi
     val still = Motion.scale == 0f
     Row(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = modifier.semantics { contentDescription = "Step ${active + 1} of $count" },
+        modifier = modifier.semantics { contentDescription = "第 ${active + 1} 步，共 $count 步" },
     ) {
         repeat(count) { i ->
             Box(
@@ -272,13 +274,13 @@ private fun CancelHint(onCancel: () -> Unit, modifier: Modifier = Modifier) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.size(20.dp).clip(CircleShape).background(colors.onBackground)) {
             Text("B", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colors.background)
         }
-        Text("Cancel", fontSize = 13.sp, color = colors.onSurfaceVariant)
+        Text("取消", fontSize = 13.sp, color = colors.onSurfaceVariant)
     }
 }
 
 /** A session paused in the background, ready to pick up where it left off. */
 @Composable
-fun SessionPausedOverlay(title: String = "Steam is paused", onResume: () -> Unit) {
+fun SessionPausedOverlay(title: String = "Steam 已暂停", onResume: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     val pal = LocalPalette.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -304,7 +306,7 @@ fun SessionPausedOverlay(title: String = "Steam is paused", onResume: () -> Unit
             }
             Text(title, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = colors.onBackground, textAlign = TextAlign.Center)
             PrimaryButton(
-                "Resume",
+                "继续",
                 modifier = Modifier.padding(top = 14.dp).focusRequester(resumeFocus).controllerConfirm(onClick = onResume),
                 onClick = onResume,
             )

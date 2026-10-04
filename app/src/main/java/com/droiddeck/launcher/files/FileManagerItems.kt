@@ -107,7 +107,7 @@ private fun FileContextMenuItems(
 ) {
     val isDir = file.isDirectory
     DropdownMenuItem(
-        text = { Text("Select") },
+        text = { Text("选择") },
         leadingIcon = { Icon(Icons.Filled.Checklist, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onSelect() },
     )
@@ -115,7 +115,7 @@ private fun FileContextMenuItems(
     // Properties: basic info + Read-only / Hidden toggles, for ANY file or folder (handy for config
     // files like .txt/.cfg/.ini). Kept near the top since it's a common reason to open this menu.
     DropdownMenuItem(
-        text = { Text("Properties") },
+        text = { Text("属性") },
         leadingIcon = { Icon(Icons.Filled.Info, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onProperties() },
     )
@@ -123,7 +123,7 @@ private fun FileContextMenuItems(
     // Favorites are directories - only folders get the pin toggle.
     if (isDir) {
         DropdownMenuItem(
-            text = { Text(if (isFavorite) "Remove from Favorites" else "Add to Favorites") },
+            text = { Text(if (isFavorite) "移出收藏夹" else "添加到收藏夹") },
             leadingIcon = {
                 Icon(
                     if (isFavorite) Icons.Filled.Star else Icons.Filled.StarBorder,
@@ -136,25 +136,25 @@ private fun FileContextMenuItems(
         MenuItemDivider()
     }
     DropdownMenuItem(
-        text = { Text("Rename") },
+        text = { Text("重命名") },
         leadingIcon = { Icon(Icons.Filled.Edit, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onRename() },
     )
     MenuItemDivider()
     DropdownMenuItem(
-        text = { Text("Copy") },
+        text = { Text("复制") },
         leadingIcon = { Icon(Icons.Filled.FileCopy, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onCopy() },
     )
     MenuItemDivider()
     DropdownMenuItem(
-        text = { Text("Cut") },
+        text = { Text("剪切") },
         leadingIcon = { Icon(Icons.Filled.ContentCut, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onCut() },
     )
     MenuItemDivider()
     DropdownMenuItem(
-        text = { Text("Delete") },
+        text = { Text("删除") },
         leadingIcon = { Icon(Icons.Filled.Delete, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = { onDismissMenu(); onDelete() },
     )
@@ -285,7 +285,7 @@ internal fun FileItemRow(
             }
             if (showActions) Box {
                 IconButton(onClick = onMenu) {
-                    Icon(Icons.Filled.MoreVert, "Actions", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                    Icon(Icons.Filled.MoreVert, "操作", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                 }
                 DropdownMenu(
                     expanded = menuExpanded,
@@ -338,7 +338,7 @@ internal fun FavoritesList(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
-                    text = "Favorites",
+                    text = "收藏夹",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -351,7 +351,7 @@ internal fun FavoritesList(
                     Icon(Icons.Filled.PushPin, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        text = "Pin current folder",
+                        text = "收藏当前文件夹",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 13.sp,
                     )
@@ -366,7 +366,7 @@ internal fun FavoritesList(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "No favorites yet - pin a folder with its ⋮ menu to jump back here fast.",
+                        text = "暂无收藏 — 在文件夹的 ⋮ 菜单中收藏，即可快速回到这里。",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp,
                         modifier = Modifier.padding(horizontal = 32.dp),
@@ -443,9 +443,9 @@ private fun FavoriteCard(
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = when (loc.storage) {
-                            FavStorage.INTERNAL -> "Internal storage"
-                            FavStorage.SD -> "SD card"
-                            FavStorage.OTHER -> "Storage"
+                            FavStorage.INTERNAL -> "内部存储"
+                            FavStorage.SD -> "SD 卡"
+                            FavStorage.OTHER -> "存储设备"
                         },
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
@@ -464,7 +464,7 @@ private fun FavoriteCard(
             IconButton(onClick = onUnpin) {
                 Icon(
                     Icons.Filled.Star,
-                    contentDescription = "Remove from favorites",
+                    contentDescription = "移出收藏夹",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(22.dp),
                 )

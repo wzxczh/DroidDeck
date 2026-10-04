@@ -63,7 +63,7 @@ object StorageRoots {
 
         // Internal storage is never removable and never absent; seed it first so it heads the menu.
         volumeOf(PRIMARY_KEY).apply {
-            label = "Internal"
+            label = "内部存储"
             removable = false
             candidates += File(INTERNAL_PATH)
         }
@@ -132,7 +132,7 @@ object StorageRoots {
         )
     }
 
-    private fun Volume.defaultLabel(): String = if (removable) "SD card" else key
+    private fun Volume.defaultLabel(): String = if (removable) "SD 卡" else key
 
     /** Appends the volume id to any label used by more than one volume, so entries stay tellable apart. */
     private fun disambiguate(roots: List<StorageRoot>): List<StorageRoot> {
@@ -183,12 +183,12 @@ object StorageRoots {
      * name like "android", which tells the user nothing about which card they are looking at.
      */
     private fun labelFor(context: Context, volume: StorageVolume, uuid: String?): String {
-        if (volume.isPrimary) return "Internal"
-        if (volume.isRemovable) return "SD card"
+        if (volume.isPrimary) return "内部存储"
+        if (volume.isRemovable) return "SD 卡"
         val description = volume.getDescription(context)?.trim()
         return description?.takeIf { it.isNotBlank() && !it.equals("android", ignoreCase = true) }
             ?: uuid
-            ?: "Storage"
+            ?: "存储设备"
     }
 
     private fun isEmulated(dir: File): Boolean = dir.absolutePath.startsWith(EMULATED_PREFIX)

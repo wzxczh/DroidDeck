@@ -111,23 +111,23 @@ static void open_session_log(void) {
     } else {
         mkdir("/storage/emulated/0/Download", 0775);
         if (mkdir(SESSION_LOG_DIR, 0775) != 0 && errno != EEXIST)
-            WLOGE("can't create %s: %s", SESSION_LOG_DIR, strerror(errno));
+            WLOGE("无法创建 %s：%s", SESSION_LOG_DIR, strerror(errno));
         snprintf(path, sizeof(path), "%s/wayland-%s.log", SESSION_LOG_DIR, stamp);
     }
     if (!(f = fopen(path, "w"))) {
-        WLOGE("can't open session log %s: %s", path, strerror(errno));
+        WLOGE("无法打开会话日志 %s：%s", path, strerror(errno));
         return;
     }
     setvbuf(f, NULL, _IOLBF, 0);
     strftime(stamp, sizeof(stamp), "%Y-%m-%d %H:%M:%S", &tm);
     fprintf(f,
-            "Bannerlator Wayland session\n"
+            "Bannerlator Wayland 会话\n"
             "===========================\n"
-            "Started   %s\n"
-            "Display   Wayland: Windows programs draw through the Bannerlator compositor.\n"
-            "          No X server is used for this session.\n"
-            "Log       %s\n\n"
-            "Time          Area      Event\n"
+            "开始时间  %s\n"
+            "显示      Wayland：Windows 程序通过 Bannerlator 合成器绘制。\n"
+            "          本次会话不使用 X 服务器。\n"
+            "日志      %s\n\n"
+            "时间          区域      事件\n"
             "------------  --------  -----------------------------------------------------\n",
             stamp, path);
     /* Publish the file and flush anything logged before it existed, in one critical section, so a
@@ -137,7 +137,7 @@ static void open_session_log(void) {
     g_prelog_n = 0;
     g_log = f;
     pthread_mutex_unlock(&g_log_lock);
-    WLOGI("session log: %s", path);
+    WLOGI("会话日志：%s", path);
 }
 
 /* At most ~10 lines a second for chatty events (window moves), so a drag can't flood logcat. */
@@ -178,7 +178,7 @@ static const char *client_name(struct wl_client *client) {
 
 static void on_client_destroyed(struct wl_listener *l, void *data) {
     struct client_info *ci = wl_container_of(l, ci, destroy), **pp;
-    banner_log("program", "disconnected: %s (pid %d)", ci->name, (int)ci->pid);
+    banner_log("program", "断开连接：%s（pid %d）", ci->name, (int)ci->pid);
     banner_color_client_gone(ci->client); /* HDR summary for a program that presented HDR (gate open only) */
     for (pp = &g_clients; *pp; pp = &(*pp)->next)
         if (*pp == ci) { *pp = ci->next; break; }
@@ -211,7 +211,7 @@ static void on_client_created(struct wl_listener *l, void *data) {
     wl_client_add_destroy_listener(client, &ci->destroy);
     ci->next = g_clients;
     g_clients = ci;
-    banner_log("program", "connected over Wayland: %s (pid %d)", ci->name, (int)ci->pid);
+    banner_log("program", "通过 Wayland 连接：%s（pid %d）", ci->name, (int)ci->pid);
 }
 
 /* ------------------------------------------------------------------ surfaces */
@@ -613,8 +613,8 @@ static void describe(const struct surface *s, char *out, size_t size) {
     while (w->parent) w = w->parent;
     const char *prog = client_name(wl_resource_get_client(w->resource));
     if (w->title && *w->title) snprintf(out, size, "\"%s\" (%s)", w->title, prog);
-    else if (w->role == ROLE_DESKTOP) snprintf(out, size, "the desktop (%s)", prog);
-    else snprintf(out, size, "window %#x (%s)", w->hwnd, prog);
+    else if (w->role == ROLE_DESKTOP) snprintf(out, size, "桌面（%s）", prog);
+    else snprintf(out, size, "窗口 %#x（%s）", w->hwnd, prog);
 }
 
 static struct surface *toplevel_by_hwnd(uint32_t hwnd) {
@@ -643,8 +643,8 @@ static void map_toplevel(struct surface *s) {
     {
         char name[160];
         describe(s, name, sizeof(name));
-        banner_log("window", "opened %s %dx%d at %d,%d%s", name, w, h, s->x, s->y,
-                   s->placed ? "" : " (no desktop position yet)");
+        banner_log("window", "打开 %s %dx%d，位于 %d,%d%s", name, w, h, s->x, s->y,
+                   s->placed ? "" : "（尚无桌面位置）");
     }
     wl_list_insert(g_toplevels.prev, &s->toplevel_link); /* new windows start on top */
     /* Without a Wine desktop the clients are whole programs (the Linux desktop, a gamescope a
@@ -660,7 +660,7 @@ static void unmap_toplevel(struct surface *s) {
     {
         char name[160];
         describe(s, name, sizeof(name));
-        banner_log("window", "closed %s", name);
+        banner_log("window", "关闭 %s", name);
     }
     wl_list_remove(&s->toplevel_link);
     wl_list_init(&s->toplevel_link);
@@ -764,7 +764,7 @@ static void take_dmabuf(struct surface *s, struct dmabuf_buffer *b, struct wl_re
         if (b->img && g_zero_copy) sc_layer_probe_dmabuf_fd(b->fd[0]);
         if (!b->img) {
             b->import_failed = 1;
-            WLOGE("dmabuf import failed (%dx%d fmt=0x%08x mod=0x%llx)", b->width, b->height,
+            WLOGE("dmabuf 导入失败（%dx%d fmt=0x%08x mod=0x%llx）", b->width, b->height,
                   b->format, (unsigned long long)b->modifier);
         }
     }
@@ -794,18 +794,18 @@ static void take_dmabuf(struct surface *s, struct dmabuf_buffer *b, struct wl_re
         if (b->img)
             /* Imported for the copy path. Whether its frames ALSO go on the display layer without a copy
              * is decided per frame (fullscreen, zero-copy on) and counted in the 10 s lines. */
-            banner_log("vulkan", "%s is presenting GPU frames through Wayland: %dx%d, format %c%c%c%c, %s (%s)",
+            banner_log("vulkan", "%s 正通过 Wayland 呈现 GPU 帧：%dx%d，格式 %c%c%c%c，%s（%s）",
                        name, b->width, b->height, b->format & 0xff, (b->format >> 8) & 0xff,
                        (b->format >> 16) & 0xff, (b->format >> 24) & 0xff,
                        vkp_modifier_name(b->modifier),
-                       ahb_swapchain_has_ahb(b) ? "gralloc buffers: can go on the display layer without a copy"
-                                                : "dma-buf: copied into the screen swapchain");
+                       ahb_swapchain_has_ahb(b) ? "gralloc 缓冲：可不经拷贝上显示图层"
+                                                : "dma-buf：拷贝进屏幕交换链");
         else if (ahb_swapchain_has_ahb(b))
-            banner_log("vulkan", "%s is presenting GPU frames through Wayland: %dx%d on its own display layer only "
-                       "(gralloc buffers the compositor cannot import for the copy path)",
+            banner_log("vulkan", "%s 正通过 Wayland 呈现 GPU 帧：%dx%d，且只能在其自己的显示图层上 "
+                       "（合成器无法为拷贝路径导入的 gralloc 缓冲）",
                        name, b->width, b->height);
         else
-            banner_log("error", "could not import GPU frames from %s (%dx%d, modifier %#llx)",
+            banner_log("error", "无法从 %s 导入 GPU 帧（%dx%d，修饰符 %#llx）",
                        name, b->width, b->height, (unsigned long long)b->modifier);
     }
     /* The HUD follows the window whether its frames are copied or go straight to the layer: a
@@ -832,13 +832,13 @@ static void take_dmabuf(struct surface *s, struct dmabuf_buffer *b, struct wl_re
         uint32_t af = ahb_swapchain_ahb_format(b);
         int ten = b->format == FOURCC('A', 'B', '3', '0') || b->format == FOURCC('X', 'B', '3', '0');
         describe(s, name, sizeof(name));
-        banner_log("color", "%s presents %dx%d buffers in %c%c%c%c (%s), %s%s%s; %s", name, b->width, b->height,
+        banner_log("color", "%s 呈现 %dx%d 缓冲，格式 %c%c%c%c（%s），%s%s%s；%s", name, b->width, b->height,
                    b->format & 0xff, (b->format >> 8) & 0xff, (b->format >> 16) & 0xff, (b->format >> 24) & 0xff,
-                   ten ? "10-bit A2B10G10R10" : "8-bit", vkp_modifier_name(b->modifier),
-                   af ? ", gralloc " : ", no gralloc buffer (copy path only)", af ? banner_ahb_format_name(af) : "",
-                   b->img ? "the compositor imported it"
-                          : af ? "the compositor's driver could NOT import it (display layer only, fullscreen)"
-                               : "the compositor's driver could NOT import it (nothing can show it)");
+                   ten ? "10 位 A2B10G10R10" : "8 位", vkp_modifier_name(b->modifier),
+                   af ? "，gralloc " : "，没有 gralloc 缓冲（仅拷贝路径）", af ? banner_ahb_format_name(af) : "",
+                   b->img ? "合成器已导入"
+                          : af ? "合成器驱动无法导入（仅显示图层，全屏）"
+                               : "合成器驱动无法导入（没有任何路径能显示它）");
         s->hdr_fmt_logged = b->format;
     }
     /* Every buffer that reaches take_dmabuf is a presented GPU frame, so the HUD counts it.
@@ -1176,7 +1176,7 @@ static void surface_resource_destroy(struct wl_resource *r) {
     if (g_key_target == s) g_key_target = NULL;
     if (g_ime_click == s) g_ime_click = NULL;
     banner_text_input_surface_gone(r);
-    if (g_desktop == s) { g_desktop = NULL; banner_log("desktop", "the desktop closed"); }
+    if (g_desktop == s) { g_desktop = NULL; banner_log("desktop", "桌面已关闭"); }
     if (g_hud_surface == s) { g_hud_surface = NULL; banner_on_game_surface(NULL, NULL); }
     constraints_surface_gone(s);
 
@@ -1604,7 +1604,7 @@ static void desktop_set_desktop(struct wl_client *c, struct wl_resource *r, stru
     if (!s || (s->role != ROLE_NONE && s->role != ROLE_DESKTOP)) return;
     s->role = ROLE_DESKTOP;
     g_desktop = s;
-    banner_log("desktop", "Windows virtual desktop created by %s", client_name(c));
+    banner_log("desktop", "Windows 虚拟桌面已由 %s 创建", client_name(c));
     schedule_render();
 }
 static void desktop_set_window(struct wl_client *c, struct wl_resource *r, struct wl_resource *surface,
@@ -1614,7 +1614,7 @@ static void desktop_set_window(struct wl_client *c, struct wl_resource *r, struc
     if (s->placed && (s->x != x || s->y != y) && s->mapped && log_budget()) {
         char name[160];
         describe(s, name, sizeof(name));
-        banner_log("window", "moved %s to %d,%d", name, x, y);
+        banner_log("window", "将 %s 移动到 %d,%d", name, x, y);
     }
     s->hwnd = hwnd;
     s->x = x;
@@ -1937,35 +1937,35 @@ static void hdr_note_route(int route, const struct hdr_scene *hs) {
     if (route == said && tm == said_tm && (route != 1 || hs->why == said_why)) return;
     int was = said;
     said = route; said_why = hs->why; said_tm = tm;
-    char name[160] = "the HDR game";
+    char name[160] = "HDR 游戏";
     if (hs->who) describe(hs->who, name, sizeof(name));
     switch (route) {
     case 1:
         if (tm)
-            banner_log("color", "tone-mapped picture for %s: %s - the whole scene is composed and tone-mapped to SDR "
-                       "(HDR peak %.0f nits rolled off to SDR white, screen effects applied after it) on the game's "
-                       "display layer, untagged", name, hs->why ? hs->why : "?", hs->hf.peak_nits);
+            banner_log("color", "%s 的色调映射画面：%s - 整个场景合成为 SDR "
+                       "（HDR 峰值 %.0f nits 回落到 SDR 白点，之后再应用屏幕效果）置于游戏的 "
+                       "显示图层上，不带标记", name, hs->why ? hs->why : "?", hs->hf.peak_nits);
         else
-            banner_log("color", "HDR picture for %s: %s - the whole scene is composed into one 10-bit PQ BT.2020 picture "
-                       "(SDR content at %.0f nits, screen effects applied in 10-bit) on the game's display layer, tagged "
-                       "BT2020_PQ", name, hs->why ? hs->why : "?", banner_color_sdr_white());
+            banner_log("color", "%s 的 HDR 画面：%s - 整个场景合成为单幅 10 位 PQ BT.2020 画面 "
+                       "（SDR 内容置于 %.0f nits，屏幕效果以 10 位应用）置于游戏的 "
+                       "显示图层上，标记为 BT2020_PQ", name, hs->why ? hs->why : "?", banner_color_sdr_white());
         break;
     case 2:
         if (tm)
-            banner_log("color", "HDR with frame generation for %s, HDR output switched off: the scene is tone-mapped to "
-                       "SDR and presented through an SDR screen swapchain", name);
+            banner_log("color", "%s 的 HDR 与帧生成（HDR 输出已关闭）：场景被色调映射为 "
+                       "SDR，并通过 SDR 屏幕交换链呈现", name);
         else
-            banner_log("color", "HDR with frame generation for %s: the scene is composed into PQ and presented through "
-                       "the screen swapchain (HDR10 where the surface offers it, else tone-mapped to SDR)", name);
+            banner_log("color", "%s 的 HDR 与帧生成：场景合成为 PQ 并通过 "
+                       "屏幕交换链呈现（表面支持时为 HDR10，否则色调映射为 SDR）", name);
         break;
     case 3:
         if (tm)
-            banner_log("color", "HDR output is switched off, but %s's HDR frames cannot be imported by the compositor, "
-                       "so nothing can tone-map them: they stay HDR on its own display layer", name);
+            banner_log("color", "HDR 输出已关闭，但合成器无法导入 %s 的 HDR 帧，"
+                       "因此无法对它们做色调映射：这些帧保持 HDR，显示在其自己的显示图层上", name);
         break; /* otherwise hdr_note_precedence says it */
     default:
         if (was == 1 || was == 2)
-            banner_log("color", "%s is back on its own display layer (no composition needed)", name);
+            banner_log("color", "%s 回到其自己的显示图层（无需合成）", name);
         break;
     }
 }
@@ -1974,22 +1974,22 @@ static void hdr_note_route(int route, const struct hdr_scene *hs) {
 static void hdr_note_precedence(struct surface *hs, int fx_on, int framegen) {
     static int fx_said = -1, fg_said = -1;
     int fx_skip = hs && fx_on, fg_skip = hs && framegen;
-    char name[160] = "the game";
+    char name[160] = "游戏";
     if (hs) describe(hs, name, sizeof(name));
     if (fx_skip != fx_said) {
         if (fx_skip)
-            banner_log("color", "screen effects are NOT applied to %s: its HDR frames cannot be imported by the "
-                       "compositor, so only its own display layer can show them (as they are)", name);
+            banner_log("color", "屏幕效果未应用于 %s：合成器无法导入其 HDR 帧，"
+                       "因此只有它自己的显示图层能显示这些帧（保持原样）", name);
         else if (fx_said == 1)
-            banner_log("color", "screen effects apply to the scene again (no HDR game on its layer, or effects off)");
+            banner_log("color", "屏幕效果重新应用于场景（其图层上没有 HDR 游戏，或效果已关闭）");
         fx_said = fx_skip;
     }
     if (fg_skip != fg_said) {
         if (fg_skip)
-            banner_log("color", "frame generation is NOT applied to %s: its HDR frames cannot be imported by the "
-                       "compositor, so only its own display layer can show them (as they are)", name);
+            banner_log("color", "帧生成未应用于 %s：合成器无法导入其 HDR 帧，"
+                       "因此只有它自己的显示图层能显示这些帧（保持原样）", name);
         else if (fg_said == 1)
-            banner_log("color", "frame generation applies again (no HDR game on its layer, or frame generation off)");
+            banner_log("color", "帧生成重新生效（其图层上没有 HDR 游戏，或帧生成已关闭）");
         fg_said = fg_skip;
     }
 }
@@ -2018,8 +2018,8 @@ static void render_scene(void) {
     wl_list_for_each(s, &g_surfaces, link) s->drawn = 0;
     scene_size(&w, &h);
     if (w != g_scene_w || h != g_scene_h) {
-        if (g_desktop) banner_log("desktop", "size %dx%d", w, h);
-        else banner_log("desktop", "no desktop: showing %dx%d (largest window)", w, h);
+        if (g_desktop) banner_log("desktop", "尺寸 %dx%d", w, h);
+        else banner_log("desktop", "没有桌面：显示 %dx%d（最大的窗口）", w, h);
         g_scene_w = w;
         g_scene_h = h;
     }
@@ -2049,13 +2049,13 @@ static void render_scene(void) {
         sc_layer_hide_overlay();
         if (sc_layer_present_hdr_scene(dl.d, dl.n, &hs.hf, w, h, hs.color) == 0) {
             rendered = vkp_base_black(w, h) == 0; /* black under the composed picture, presented only when it is not already */
-            if (fell_back) { fell_back = 0; banner_log("color", "the composed picture is on the game's display layer again"); }
+            if (fell_back) { fell_back = 0; banner_log("color", "合成画面重新回到游戏的显示图层上"); }
         } else {
             hdr_route = 2; /* no layer this frame: the picture goes through the swapchain instead */
             if (!fell_back) {
                 fell_back = 1;
-                banner_log("color", "the composed picture could not go on the game's display layer (no layer, or the "
-                           "10-bit pass failed): it goes through the screen swapchain instead until that changes");
+                banner_log("color", "合成画面无法放到游戏的显示图层上（没有图层，或 "
+                           "10 位通道失败）：在情况改变前改走屏幕交换链");
             }
         }
     }
@@ -2066,7 +2066,7 @@ static void render_scene(void) {
         copy = 1;
         if (rendered && how == 1) banner_color_frame_shown(hs.color, BANNER_HDR_SWAPCHAIN, 0);
         else if (rendered && how == 2) banner_color_frame_shown(hs.color, BANNER_HDR_TONEMAPPED, 0);
-        else if (rendered) hdr_copy = "the HDR composition pass is unavailable on this driver";
+        else if (rendered) hdr_copy = "该驱动上 HDR 合成通道不可用";
     }
     if (hdr_route == 0 || hdr_route == 3) {
     /* What still forces the whole scene back through the compositor pass (and so through the app's
@@ -2094,14 +2094,14 @@ static void render_scene(void) {
     if (g_zero_copy && blocked != g_zero_copy_paused) {
         g_zero_copy_paused = blocked;
         if (blocked == 1)
-            banner_log("framegen", "zero-copy paused: frame generation needs the compositor pass");
+            banner_log("framegen", "零拷贝已暂停：帧生成需要合成器通道");
         else if (blocked == 2)
-            banner_log("effects", "zero-copy paused: a window above the game needs the compositor pass for the whole scene");
+            banner_log("effects", "零拷贝已暂停：游戏上方的窗口需要整个场景走合成器通道");
         else if (blocked == 3)
-            banner_log("layer", "zero-copy paused: a window above the game would need a second display layer, "
-                                "which this display cannot compose in hardware - whole scene on the copy path");
+            banner_log("layer", "零拷贝已暂停：游戏上方的窗口需要第二个显示图层，"
+                                "而本显示屏无法硬件合成它 - 整个场景改走拷贝路径");
         else
-            banner_log("effects", "zero-copy resumed: the game is back on its own display layer");
+            banner_log("effects", "零拷贝已恢复：游戏回到其自己的显示图层上");
     }
     struct surface *ls = li >= 0 ? surface_for_image(dl.d[li].img) : NULL;
     /* A frame this renderer could not import can only be shown on the layer, effects or not. */
@@ -2112,8 +2112,8 @@ static void render_scene(void) {
     if (ls && pass_on && li < 0 && !g_zero_copy_fx_skip_said) {
         g_zero_copy_fx_skip_said = 1;
         banner_log(framegen ? "framegen" : "effects",
-                   "the game's frames cannot be imported by the compositor: shown zero-copy, %s skipped",
-                   framegen ? "frame generation" : "effects");
+                   "合成器无法导入游戏的帧：以零拷贝显示，已跳过 %s",
+                   framegen ? "帧生成" : "效果");
     }
     if (li >= 0 || ls) {
         /* Layer mode: the fullscreen window goes on the game layer and (at most) one window above
@@ -2329,7 +2329,7 @@ static void seat_get_keyboard(struct wl_client *c, struct wl_resource *r, uint32
             wl_keyboard_send_keymap(k, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, fd, (uint32_t)st.st_size);
         close(fd);
     } else {
-        WLOGE("keymap open failed: %s", path);
+        WLOGE("keymap 打开失败：%s", path);
     }
     if (wl_resource_get_version(k) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
         wl_keyboard_send_repeat_info(k, 25, 500);
@@ -2497,7 +2497,7 @@ static void sync_lock_notify(void) {
 
 static void constraint_describe(const struct constraint *k, char *out, size_t size) {
     if (k->surface) describe(k->surface, out, size);
-    else snprintf(out, size, "a closed window");
+    else snprintf(out, size, "已关闭的窗口");
 }
 
 /* Scene position of the constrained surface. */
@@ -2553,7 +2553,7 @@ static void constraint_end(struct constraint *k, int tell_client, const char *wh
     g_raw_valid = 0;
     if (tell_client) constraint_send_state(k, 0);
     constraint_describe(k, name, sizeof(name));
-    banner_log("pointer", "%s: %s (%s), pointer at %d,%d", k->is_lock ? "unlocked" : "unconfined",
+    banner_log("pointer", "%s：%s（%s），指针位于 %d,%d", k->is_lock ? "已解锁" : "已解除限制",
                name, why, (int)g_ptr_x, (int)g_ptr_y);
     sync_lock_notify();
 }
@@ -2563,7 +2563,7 @@ static void constraint_activate(struct constraint *k) {
     int ox, oy;
     if (k->active || k->defunct || !k->surface || !k->pointer) return;
     if (g_active_constraint && g_active_constraint != k)
-        constraint_end(g_active_constraint, 1, "replaced by a newer request");
+        constraint_end(g_active_constraint, 1, "被更新的请求替换");
     k->active = 1;
     g_active_constraint = k;
     if (!k->is_lock) confine_clamp(k, &g_ptr_x, &g_ptr_y);
@@ -2573,16 +2573,16 @@ static void constraint_activate(struct constraint *k) {
     constraint_send_state(k, 1);
     constraint_describe(k, name, sizeof(name));
     if (k->is_lock)
-        banner_log("pointer", "locked: %s (%s), pointer frozen at %d,%d", name,
-                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "oneshot" : "persistent",
+        banner_log("pointer", "已锁定：%s（%s），指针冻结在 %d,%d", name,
+                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "单次" : "持久",
                    (int)g_ptr_x, (int)g_ptr_y);
     else if (k->region.set)
-        banner_log("pointer", "confined: %s (%s) to %dx%d at %d,%d of the window", name,
-                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "oneshot" : "persistent",
+        banner_log("pointer", "已限制：%s（%s）到窗口内 %dx%d，位于 %d,%d", name,
+                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "单次" : "持久",
                    k->region.w, k->region.h, k->region.x, k->region.y);
     else
-        banner_log("pointer", "confined: %s (%s) to the whole window", name,
-                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "oneshot" : "persistent");
+        banner_log("pointer", "已限制：%s（%s）到整个窗口", name,
+                   k->lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT ? "单次" : "持久");
     sync_lock_notify();
     wl_display_flush_clients(g_display);
 }
@@ -2603,7 +2603,7 @@ static void constraints_surface_gone(struct surface *s) {
     struct constraint *k;
     wl_list_for_each(k, &g_constraints, link) {
         if (k->surface != s) continue;
-        constraint_end(k, 1, "window closed");
+        constraint_end(k, 1, "窗口已关闭");
         k->surface = NULL;
         k->defunct = 1;
     }
@@ -2613,7 +2613,7 @@ static void constraints_pointer_gone(struct wl_resource *pointer) {
     struct constraint *k;
     wl_list_for_each(k, &g_constraints, link) {
         if (k->pointer != pointer) continue;
-        constraint_end(k, 1, "pointer released");
+        constraint_end(k, 1, "指针已释放");
         k->pointer = NULL;
         k->defunct = 1;
     }
@@ -2635,7 +2635,7 @@ static void constraints_surface_commit(struct surface *s) {
                 g_ptr_x = ox + k->hint_x;
                 g_ptr_y = oy + k->hint_y;
                 if (log_budget())
-                    banner_log("pointer", "position hint: pointer moved to %d,%d", (int)g_ptr_x, (int)g_ptr_y);
+                    banner_log("pointer", "位置提示：指针已移动到 %d,%d", (int)g_ptr_x, (int)g_ptr_y);
             }
         }
         if (k->pending_region_set) {
@@ -2649,7 +2649,7 @@ static void constraints_surface_commit(struct surface *s) {
 static void constraint_resource_destroy(struct wl_resource *r) {
     struct constraint *k = wl_resource_get_user_data(r);
     if (!k) return;
-    constraint_end(k, 0, "released by the program");
+    constraint_end(k, 0, "已被程序释放");
     wl_list_remove(&k->link);
     free(k);
 }
@@ -2716,7 +2716,7 @@ static void constraint_create(struct wl_client *c, struct wl_resource *r, uint32
     wl_list_insert(g_constraints.prev, &k->link);
     if (!s) { k->defunct = 1; return; }
     constraint_describe(k, name, sizeof(name));
-    banner_log("pointer", "%s requested by %s for %s", is_lock ? "lock" : "confine", client_name(c), name);
+    banner_log("pointer", "%s 由 %s 请求（针对 %s）", is_lock ? "锁定" : "限制", client_name(c), name);
     constraint_activate(k);
 }
 
@@ -2747,7 +2747,7 @@ static void bind_pointer_constraints(struct wl_client *c, void *data, uint32_t v
 static void relative_pointer_resource_destroy(struct wl_resource *r) {
     struct relative_pointer *rp = wl_resource_get_user_data(r);
     if (!rp) return;
-    banner_log("pointer", "relative pointer released by %s", client_name(wl_resource_get_client(r)));
+    banner_log("pointer", "相对指针已由 %s 释放", client_name(wl_resource_get_client(r)));
     wl_list_remove(&rp->link);
     free(rp);
 }
@@ -2766,7 +2766,7 @@ static void relative_pointer_manager_get(struct wl_client *c, struct wl_resource
     rp->pointer = pointer;
     wl_resource_set_implementation(res, &relative_pointer_impl, rp, relative_pointer_resource_destroy);
     wl_list_insert(g_relative_pointers.prev, &rp->link);
-    banner_log("pointer", "relative pointer created for %s (motion arrives as deltas)", client_name(c));
+    banner_log("pointer", "已为 %s 创建相对指针（移动以增量形式到达）", client_name(c));
 }
 static const struct zwp_relative_pointer_manager_v1_interface relative_pointer_manager_impl = {
     .destroy = relative_pointer_manager_destroy,
@@ -3017,7 +3017,7 @@ static void touch_down(int id, double x, double y) {
     if (!any_active) {
         char name[160];
         describe(target, name, sizeof(name));
-        banner_log("touch", "%s gets %s", name, has_touch ? "touch" : "the pointer (it takes no touch)");
+        banner_log("touch", "%s 接收 %s", name, has_touch ? "触摸" : "指针（它不接受触摸）");
     }
     if (!has_touch) {
         if (any_active) return;  /* one finger drives the pointer; a second one is ignored */
@@ -3288,13 +3288,13 @@ static int on_stats_timer(void *data) {
     if (g_stat_frames || g_stat_dmabuf || g_stat_shm || generated) {
         char extra[160] = "";
         int off = 0;
-        if (g_zero_copy || zero_copy) off += snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u zero-copy frames", zero_copy);
+        if (g_zero_copy || zero_copy) off += snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u 个零拷贝帧", zero_copy);
         /* Frames the compositor put on a display layer through one of its OWN gralloc buffers (the
          * plain layer blit, or the effects chain's result): still hardware-composed, but not
          * zero-copy, so they are counted apart from the line above. */
-        if (layer_frames) off += snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u layer frames", layer_frames);
-        if (generated) snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u generated frames", generated);
-        banner_log("stats", "last 10 s: %u frames on screen (%.1f fps) | %u GPU frames from games | %u window redraws | %d windows open%s",
+        if (layer_frames) off += snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u 个图层帧", layer_frames);
+        if (generated) snprintf(extra + off, sizeof(extra) - (size_t)off, " | %u 个生成帧", generated);
+        banner_log("stats", "过去 10 秒：%u 帧上屏（%.1f fps） | %u 个来自游戏的 GPU 帧 | %u 次窗口重绘 | %d 个窗口打开%s",
                    g_stat_frames + generated, (g_stat_frames + generated) / 10.0, g_stat_dmabuf, g_stat_shm, windows, extra);
     }
     /* The perf line, next to the stats line and only when something happened: the compositor thread's
@@ -3306,10 +3306,10 @@ static int on_stats_timer(void *data) {
         const unsigned drops = sc_layer_drops_take();
 #define PERF_MS(sum, n) ((n) ? (double)(sum) / 1e6 / (double)(n) : 0.0)
         if (g_perf.scenes || vp.presents || g_perf.releases || drops)
-            banner_log("perf", "last 10 s: %u ticks, %u scenes, %u on screen (copy %u, zero-copy %u, layer copy %u) | "
-                       "render_scene %.2f/%.2f ms | base %u black kept, %u presented | acquire %.2f/%.2f ms | "
-                       "present %.2f/%.2f ms (%u) | fence wait %.2f/%.2f ms (%u, %u GPU release waits) | "
-                       "release %.2f/%.2f ms (%u, %u held) | %u pool drops",
+            banner_log("perf", "过去 10 秒：%u 次心跳，%u 个场景，%u 帧上屏（拷贝 %u，零拷贝 %u，图层拷贝 %u） | "
+                       "render_scene %.2f/%.2f ms | 基础表面 %u 帧保持黑、%u 帧呈现 | 获取 %.2f/%.2f ms | "
+                       "呈现 %.2f/%.2f ms (%u) | 围栏等待 %.2f/%.2f ms (%u，%u 次 GPU 释放等待) | "
+                       "释放 %.2f/%.2f ms (%u，%u 帧被占用) | %u 次池丢帧",
                        g_perf.ticks, g_perf.scenes, g_stat_frames, g_perf.copy_scenes, zero_copy, layer_frames,
                        PERF_MS(g_perf.scene_ns, g_perf.scenes), (double)g_perf.scene_max_ns / 1e6,
                        vp.base_kept, vp.base_presents,
@@ -3330,9 +3330,9 @@ static int on_stats_timer(void *data) {
         if (!ci->asked_feedback || ci->dmabuf_buffers || ci->shm_gl_said || ci->shm_frames < 150)
             continue;
         ci->shm_gl_said = 1;
-        banner_log("opengl", "%s asked for GPU buffers but has drawn only software (shared-memory) "
-                   "frames: its OpenGL fell back to software rendering, which the Wayland layer cannot "
-                   "draw - expect a black picture (main device %u:%u)", ci->name,
+        banner_log("opengl", "%s 请求了 GPU 缓冲，但只绘制过软件（共享内存）"
+                   "帧：其 OpenGL 已回退到软件渲染，而 Wayland 层无法"
+                   "绘制它 - 预计画面为黑（主设备 %u:%u）", ci->name,
                    (unsigned)major(g_main_device), (unsigned)minor(g_main_device));
     }
     wl_event_source_timer_update(g_stats_timer, 10000);
@@ -3428,11 +3428,11 @@ int banner_wayland_run(void) {
 
     /* Bring the GPU up before any client can connect: loading Turnip the first time
      * can take many seconds, and it must not stall a client mid-handshake. */
-    if (vkp_ready() != 0) WLOGE("renderer unavailable; clients will connect but nothing is drawn");
+    if (vkp_ready() != 0) WLOGE("渲染器不可用；客户端仍会连接，但不会绘制任何内容");
 
     struct wl_display *display = wl_display_create();
     if (!display) {
-        WLOGE("wl_display_create failed");
+        WLOGE("wl_display_create 失败");
         return 1;
     }
 
@@ -3447,11 +3447,11 @@ int banner_wayland_run(void) {
         snprintf(p, sizeof(p), "%s/wayland-0.lock", rt); unlink(p);
     }
     if (wl_display_add_socket(display, "wayland-0") != 0) {
-        WLOGE("add_socket(wayland-0) failed in XDG_RUNTIME_DIR=%s (errno path/perms?)",
+        WLOGE("add_socket(wayland-0) 在 XDG_RUNTIME_DIR=%s 中失败（errno 路径/权限？）",
               rt ? rt : "(null)");
         return 1;
     }
-    banner_log("display", "Wayland compositor listening on %s/wayland-0", rt ? rt : "?");
+    banner_log("display", "Wayland 合成器正在监听 %s/wayland-0", rt ? rt : "?");
     wl_display_add_client_created_listener(display, &g_client_created);
 
     wl_global_create(display, &wl_compositor_interface, 6, NULL, bind_compositor);
@@ -3489,7 +3489,7 @@ int banner_wayland_run(void) {
         wl_event_loop_add_fd(wl_display_get_event_loop(display), g_input_pipe[0],
                              WL_EVENT_READABLE, on_input_readable, NULL);
     } else {
-        WLOGE("input pipe creation failed");
+        WLOGE("输入管道创建失败");
     }
     start_test_input(wl_display_get_event_loop(display));
     if ((g_stats_timer = wl_event_loop_add_timer(wl_display_get_event_loop(display), on_stats_timer, NULL)))

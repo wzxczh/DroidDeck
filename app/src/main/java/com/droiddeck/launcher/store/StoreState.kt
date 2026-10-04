@@ -49,7 +49,7 @@ object StoreState {
         private set
     private var searchSeq = 0
 
-    val SECTIONS = listOf("popular" to "Popular", "trending" to "Trending", "recently-added" to "New", "recently-updated" to "Updated")
+    val SECTIONS = listOf("popular" to "热门", "trending" to "趋势", "recently-added" to "最新收录", "recently-updated" to "最近更新")
 
     fun refresh(context: Context) {
         val app = context.applicationContext
@@ -97,7 +97,7 @@ object StoreState {
     private fun run(context: Context, what: String, label: String, work: (Context, (String, Int) -> Unit) -> String?) {
         if (busy != null) return
         val app = context.applicationContext
-        busy = what; stage = "Starting…"; percent = -1
+        busy = what; stage = "正在开始…"; percent = -1
         Thread({
             val problem = try {
                 work(app) { s, p -> main.post { stage = s; percent = p } }
@@ -114,7 +114,7 @@ object StoreState {
         }, "store-$what").start()
     }
 
-    fun setup(context: Context) = run(context, "setup", "Flatpak setup") { c, p -> FlatpakManager.setup(c, p) }
+    fun setup(context: Context) = run(context, "setup", "Flatpak 设置") { c, p -> FlatpakManager.setup(c, p) }
 
     fun install(context: Context, id: String, name: String) =
         run(context, id, name) { c, p -> FlatpakManager.install(c, id, p) }
@@ -135,7 +135,7 @@ object StoreState {
             val u = FlatpakManager.updates(app)
             main.post {
                 checkingUpdates = false
-                if (u != null) { updates = u; updatesChecked = true } else Toast.makeText(app, "Could not check Flathub for updates", Toast.LENGTH_SHORT).show()
+                if (u != null) { updates = u; updatesChecked = true } else Toast.makeText(app, "无法从 Flathub 检查更新", Toast.LENGTH_SHORT).show()
             }
         }, "store-updates").start()
     }

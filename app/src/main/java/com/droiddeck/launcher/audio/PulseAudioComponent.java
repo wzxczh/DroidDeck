@@ -108,12 +108,12 @@ public class PulseAudioComponent extends SessionPart {
         if (!new File(modulesDir, "arm64/module-aaudio-sink.so").isFile()
                 || !new File(workingDir, "pactl").isFile()
                 || have == null || !want.equals(have.trim())) {
-            Log.i(TAG, "unpacking pulseaudio.tzst (" + want + "; had " + have + ")");
+            Log.i(TAG, "正在解包 pulseaudio.tzst（" + want + "；已有 " + have + "）");
             FileUtils.delete(modulesDir);
             if (TarZst.extractAsset(app(), "pulseaudio.tzst", workingDir)) {
                 FileUtils.writeString(stamp, want);
             } else {
-                Log.e(TAG, "pulseaudio.tzst did not unpack");
+                Log.e(TAG, "pulseaudio.tzst 解包失败");
             }
         }
         File pactl = new File(workingDir, "pactl");
@@ -191,7 +191,7 @@ public class PulseAudioComponent extends SessionPart {
     public boolean setSinkSuspended(boolean suspended) {
         File pactl = new File(workingDir, "pactl");
         if (!pactl.isFile() || pid <= 1) {
-            Log.w(TAG, "cannot change sink state: PulseAudio control client or server unavailable");
+            Log.w(TAG, "无法更改 sink 状态：PulseAudio 控制客户端或服务器不可用");
             return false;
         }
         java.lang.Process process = null;
@@ -209,18 +209,18 @@ public class PulseAudioComponent extends SessionPart {
             process = builder.start();
             if (!process.waitFor(5, TimeUnit.SECONDS)) {
                 process.destroyForcibly();
-                Log.w(TAG, "timed out changing sink state to suspended=" + suspended);
+                Log.w(TAG, "更改 sink 状态超时 suspended=" + suspended);
                 return false;
             }
             int status = process.exitValue();
-            if (status != 0) Log.w(TAG, "sink state change failed with exit " + status);
+            if (status != 0) Log.w(TAG, "更改 sink 状态失败，退出码 " + status);
             return status == 0;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            Log.w(TAG, "interrupted changing sink state", e);
+            Log.w(TAG, "更改 sink 状态时被中断", e);
             return false;
         } catch (Exception e) {
-            Log.w(TAG, "could not change sink state", e);
+            Log.w(TAG, "无法更改 sink 状态", e);
             return false;
         } finally {
             if (process != null && process.isAlive()) process.destroyForcibly();
@@ -236,7 +236,7 @@ public class PulseAudioComponent extends SessionPart {
             w.flush();
             return w;
         } catch (Exception e) {
-            Log.w(TAG, "could not open " + logFile, e);
+            Log.w(TAG, "无法打开 " + logFile, e);
             return null;
         }
     }

@@ -90,17 +90,17 @@ class AppFilesProvider : DocumentsProvider() {
         } catch (e: IOException) {
             false
         }
-        if (!made) throw FileNotFoundException("could not create ${file.path}")
+        if (!made) throw FileNotFoundException("无法创建 ${file.path}")
         return file.absolutePath
     }
 
     override fun deleteDocument(documentId: String) {
         val file = fileFor(documentId)
-        if (file.absolutePath == base.absolutePath) throw FileNotFoundException("the app folder itself is not deleted")
+        if (file.absolutePath == base.absolutePath) throw FileNotFoundException("不能删除应用文件夹本身")
         try {
             deleteTree(file.toPath())
         } catch (e: IOException) {
-            throw FileNotFoundException("could not delete $documentId: ${e.message}")
+            throw FileNotFoundException("无法删除 $documentId: ${e.message}")
         }
     }
 
@@ -132,16 +132,16 @@ class AppFilesProvider : DocumentsProvider() {
     override fun renameDocument(documentId: String, displayName: String): String {
         val file = fileFor(documentId)
         val target = File(file.parentFile, displayName.substringAfterLast('/'))
-        if (target.exists() || !file.renameTo(target)) throw FileNotFoundException("could not rename $documentId")
+        if (target.exists() || !file.renameTo(target)) throw FileNotFoundException("无法重命名 $documentId")
         return target.absolutePath
     }
 
     override fun moveDocument(sourceDocumentId: String, sourceParentDocumentId: String, targetParentDocumentId: String): String {
         val source = fileFor(sourceDocumentId)
         val targetParent = fileFor(targetParentDocumentId)
-        if (!targetParent.isDirectory) throw FileNotFoundException("$targetParentDocumentId is not a folder")
+        if (!targetParent.isDirectory) throw FileNotFoundException("$targetParentDocumentId 不是文件夹")
         val target = File(targetParent, source.name)
-        if (target.exists() || !source.renameTo(target)) throw FileNotFoundException("could not move $sourceDocumentId")
+        if (target.exists() || !source.renameTo(target)) throw FileNotFoundException("无法移动 $sourceDocumentId")
         return target.absolutePath
     }
 
@@ -171,8 +171,8 @@ class AppFilesProvider : DocumentsProvider() {
     /** The file an id names, when it exists and lies inside the data folder (links followed). */
     private fun fileFor(documentId: String): File {
         val f = File(documentId)
-        if (!f.isAbsolute || !inside(f)) throw FileNotFoundException("$documentId is outside the app's files")
-        if (!f.exists()) throw FileNotFoundException("$documentId not found")
+        if (!f.isAbsolute || !inside(f)) throw FileNotFoundException("$documentId 不在应用文件夹内")
+        if (!f.exists()) throw FileNotFoundException("找不到 $documentId")
         return f
     }
 

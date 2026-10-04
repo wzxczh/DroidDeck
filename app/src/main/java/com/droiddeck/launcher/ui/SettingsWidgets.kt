@@ -130,7 +130,7 @@ internal fun TabStrip(
     val pal = LocalPalette.current
     val shape = RoundedCornerShape(12.dp)
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = modifier) {
-        BumperKey("LB", "Previous tab") { onSelect((selected + tabs.size - 1) % tabs.size) }
+        BumperKey("LB", "上一页签") { onSelect((selected + tabs.size - 1) % tabs.size) }
         Row(
             modifier = Modifier.weight(1f, fill = false).clip(shape).background(colors.surfaceVariant).border(1.dp, pal.line2, shape)
                 .horizontalScroll(rememberScrollState()).padding(3.dp),
@@ -155,7 +155,7 @@ internal fun TabStrip(
                 )
             }
         }
-        BumperKey("RB", "Next tab") { onSelect((selected + 1) % tabs.size) }
+        BumperKey("RB", "下一页签") { onSelect((selected + 1) % tabs.size) }
     }
 }
 
@@ -212,7 +212,7 @@ fun AnchoredMenu(open: Boolean, onDismiss: () -> Unit, title: String? = null, no
         if (open && inputMode == InputMode.Keyboard) {
             repeat(2) { androidx.compose.runtime.withFrameNanos { } }
             runCatching { firstItemFocus.requestFocus() }
-            android.util.Log.i("AnchoredMenu", "requested first option focus")
+            android.util.Log.i("AnchoredMenu", "已请求首个选项获得焦点")
         }
     }
     val gap = with(LocalDensity.current) { 6.dp.roundToPx() }
@@ -413,7 +413,7 @@ fun ToggleSwitch(checked: Boolean, enabled: Boolean = true, label: String? = nul
             .hoverable(src)
             .clickable(interactionSource = src, indication = null, enabled = enabled, role = Role.Switch, onClick = flip)
             .controllerConfirm(enabled = enabled, onClick = flip)
-            .semantics { stateDescription = if (checked) "On" else "Off"; if (label != null) contentDescription = label },
+            .semantics { stateDescription = if (checked) "开" else "关"; if (label != null) contentDescription = label },
     ) {
         Box(
             Modifier.size(width = 52.dp, height = 30.dp).clip(shape).background(track)
@@ -437,9 +437,9 @@ fun MultiRow(
 ) {
     val open = host.open == key
     val summary = when {
-        selected.size >= items.size -> "All ${items.size}"
-        selected.isEmpty() -> "None"
-        else -> "${selected.size} of ${items.size}"
+        selected.size >= items.size -> "全部 ${items.size}"
+        selected.isEmpty() -> "全不选"
+        else -> "${selected.size}/${items.size}"
     }
     SettingsRow(label, hint, highlighted = open) {
         Box {
@@ -492,7 +492,7 @@ fun SettingsPage(
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(bottom = 6.dp),
                 ) {
-                    BackLink("Back", compact = true, onClick = onBack)
+                    BackLink("返回", compact = true, onClick = onBack)
                     Text(
                         title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = colors.onBackground,
                         maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f),
@@ -504,7 +504,7 @@ fun SettingsPage(
         } else {
             Rise(0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    BackLink("Back", compact = compactLayout, onClick = onBack)
+                    BackLink("返回", compact = compactLayout, onClick = onBack)
                     if (eyebrow != null) {
                         Spacer(Modifier.width(10.dp))
                         Eyebrow(eyebrow)

@@ -157,11 +157,11 @@ fun PcKeyboard(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(24.dp)) {
-                    Text("PC keyboard", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onSurfaceVariant)
+                    Text("PC 键盘", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onSurfaceVariant)
                     Spacer(Modifier.weight(1f))
-                    HeaderButton("Android keyboard", onAndroidKeyboard)
+                    HeaderButton("Android 键盘", onAndroidKeyboard)
                     Spacer(Modifier.width(8.dp))
-                    HeaderButton("Hide  ✕", onClose)
+                    HeaderButton("隐藏  ✕", onClose)
                 }
                 ROWS.forEachIndexed { r, row ->
                     Row(horizontalArrangement = Arrangement.spacedBy(3.dp), modifier = Modifier.fillMaxWidth().height(rowHeight)) {

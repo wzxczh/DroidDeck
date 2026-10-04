@@ -445,15 +445,15 @@ bool ModuleSet::complete() const {
 
 const char* statusName(DllStatus s) {
     switch (s) {
-        case DllStatus::Ok:                    return "ok";
-        case DllStatus::NotInstalled:          return "not installed";
-        case DllStatus::UnreadableFile:        return "unreadable file";
-        case DllStatus::NotPortableExecutable: return "not a PE file";
-        case DllStatus::MissingShaders:        return "missing shaders";
-        case DllStatus::TranslationFailed:     return "shader translation failed";
-        case DllStatus::CacheUnusable:         return "cache unusable";
+        case DllStatus::Ok:                    return "正常";
+        case DllStatus::NotInstalled:          return "未安装";
+        case DllStatus::UnreadableFile:        return "文件不可读";
+        case DllStatus::NotPortableExecutable: return "不是 PE 文件";
+        case DllStatus::MissingShaders:        return "缺少着色器";
+        case DllStatus::TranslationFailed:     return "着色器转换失败";
+        case DllStatus::CacheUnusable:         return "缓存不可用";
     }
-    return "unknown";
+    return "未知";
 }
 
 const char* variantName(Variant v) {
@@ -536,13 +536,13 @@ DllStatus buildCache(const std::string& dllPath, const std::string& cachePath, b
     header.variant     = (uint32_t)set.variant;
 
     if (!writeCache(cachePath, header, set)) {
-        LSFG_LOGE("cache write failed: %s", cachePath.c_str());
+        LSFG_LOGE("缓存写入失败：%s", cachePath.c_str());
         return DllStatus::CacheUnusable;
     }
 
     size_t totalWords = 0;
     for (const Module& m : set.modules) totalWords += m.words.size();
-    LSFG_LOGI("cached %zu LSFG modules, %zu SPIR-V words (%s)",
+    LSFG_LOGI("已缓存 %zu 个 LSFG 模块、%zu 个 SPIR-V 字（%s）",
               set.modules.size(), totalWords, variantName(set.variant));
     return DllStatus::Ok;
 }

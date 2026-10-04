@@ -42,7 +42,7 @@ def prepare_rootfs():
             with open(target, "wb") as dst:
                 dst.write(data)
     except OSError as err:
-        emit(e="warning", message="could not prepare %s: %s" % (target, err))
+        emit(e="warning", message="无法准备 %s: %s" % (target, err))
 
 
 def emit(**kw):
@@ -132,7 +132,7 @@ def install(app_id):
     inst = installation()
     arch = Flatpak.get_default_arch()
     if app_ref(inst, app_id) is not None:
-        emit(e="done", note="already installed")
+        emit(e="done", note="已安装")
         return 0
     # Flathub publishes apps on "stable"; libflatpak's default branch is "master".
     branch, last = None, None
@@ -143,7 +143,7 @@ def install(app_id):
         except GLib.Error as err:
             last = err
     if branch is None:
-        emit(e="error", message="%s is not on Flathub for %s (%s)" % (app_id, arch, last.message if last else "no branch"))
+        emit(e="error", message="%s 在 Flathub 上没有 %s 架构的版本 (%s)" % (app_id, arch, last.message if last else "没有分支"))
         return 1
     t, state = transaction(inst)
     t.add_install(REMOTE, "app/%s/%s/%s" % (app_id, arch, branch), None)
@@ -151,7 +151,7 @@ def install(app_id):
     # A failure the transaction did not report (an error handler that raised, say) must not read
     # as an install: the app is there, or it is not.
     if rc == 0 and app_ref(installation(), app_id) is None:
-        emit(e="error", message="%s did not install; see flatpak-install.log" % app_id)
+        emit(e="error", message="%s 未能安装; 详见 flatpak-install.log" % app_id)
         return 1
     if rc == 0:
         emit(e="done")
@@ -162,7 +162,7 @@ def uninstall(app_id):
     inst = installation()
     ref = app_ref(inst, app_id)
     if ref is None:
-        emit(e="done", note="not installed")
+        emit(e="done", note="未安装")
         return 0
     t, state = transaction(inst)
     t.add_uninstall(ref.format_ref())
@@ -197,7 +197,7 @@ def update(app_id=None):
     if app_id:
         refs = [r for r in refs if r.get_name() == app_id or r.get_kind() == Flatpak.RefKind.RUNTIME]
     if not refs:
-        emit(e="done", note="up to date")
+        emit(e="done", note="已是最新")
         return 0
     t, state = transaction(inst)
     for r in refs:
@@ -216,7 +216,7 @@ def updates():
 
 def main():
     if len(sys.argv) < 2:
-        sys.stderr.write(__doc__ or "usage: bannerlator-flatpak install|uninstall|update|updates [app-id]\n")
+        sys.stderr.write(__doc__ or "用法: bannerlator-flatpak install|uninstall|update|updates [app-id]\n")
         return 2
     cmd, args = sys.argv[1], sys.argv[2:]
     if cmd in ("install", "update"):
@@ -229,7 +229,7 @@ def main():
         return update(args[0] if args else None)
     if cmd == "updates":
         return updates()
-    sys.stderr.write("usage: bannerlator-flatpak install|uninstall|update|updates [app-id]\n")
+    sys.stderr.write("用法: bannerlator-flatpak install|uninstall|update|updates [app-id]\n")
     return 2
 
 

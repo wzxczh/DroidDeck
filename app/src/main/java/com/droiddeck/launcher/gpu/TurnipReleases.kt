@@ -107,7 +107,7 @@ object TurnipReleases {
                 lastError = e
             }
         }
-        if (failed.size == SOURCES.size) throw lastError ?: IOException("no source answered")
+        if (failed.size == SOURCES.size) throw lastError ?: IOException("没有数据源响应")
         val stored = JSONObject().put("assets", assets).put("latest", latest)
             .put("failed", JSONArray(failed)).put("checkedAt", System.currentTimeMillis())
         prefs(context).edit().putString(KEY_RELEASE, stored.toString()).apply()
@@ -122,8 +122,8 @@ object TurnipReleases {
         c.setRequestProperty("User-Agent", "DroidDeck-app")
         try {
             val code = c.responseCode
-            if (code == 403 || code == 429) throw IOException("GitHub's rate limit was hit - try again later")
-            if (code != 200) throw IOException("GitHub answered HTTP $code")
+            if (code == 403 || code == 429) throw IOException("已触发 GitHub 频率限制 - 请稍后再试")
+            if (code != 200) throw IOException("GitHub 返回 HTTP $code")
             return c.inputStream.bufferedReader().use { it.readText() }
         } finally {
             c.disconnect()
@@ -172,7 +172,7 @@ object TurnipReleases {
 
     /** Download an asset into the cache; the caller imports it and deletes the file. */
     fun download(context: Context, asset: Asset, progress: (Int) -> Unit): File {
-        if (asset.sha256.isEmpty()) throw IOException("This driver list predates checksums - refresh it and try again")
+        if (asset.sha256.isEmpty()) throw IOException("此驱动列表产生于校验和支持之前 - 请刷新后重试")
         val target = File(context.cacheDir, asset.name)
         val c = URL(asset.url).openConnection() as HttpURLConnection
         c.connectTimeout = 15_000
@@ -180,7 +180,7 @@ object TurnipReleases {
         c.setRequestProperty("User-Agent", "DroidDeck-app")
         c.instanceFollowRedirects = true
         try {
-            if (c.responseCode != 200) throw IOException("download answered HTTP ${c.responseCode}")
+            if (c.responseCode != 200) throw IOException("下载请求返回 HTTP ${c.responseCode}")
             val total = c.contentLengthLong.takeIf { it > 0 } ?: asset.size
             c.inputStream.use { input ->
                 FileOutputStream(target).use { out ->
@@ -198,7 +198,7 @@ object TurnipReleases {
                 }
             }
             if (!asset.sha256.equals(Hashes.sha256(target), ignoreCase = true)) {
-                throw IOException("Checksum mismatch - the download was discarded")
+                throw IOException("校验和不匹配 - 已丢弃下载文件")
             }
             return target
         } catch (e: Exception) {

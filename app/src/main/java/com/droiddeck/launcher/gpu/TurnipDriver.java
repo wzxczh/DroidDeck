@@ -59,11 +59,10 @@ public final class TurnipDriver {
     public static final String AUTO = "";
 
     public static final String HELP_TEXT =
-            "The driver the app's compositor puts frames on the screen with - the last step of every "
-            + "session, Steam or desktop. AdrenoTools zips only (vulkan.adXXXX.so): a \"-Linux\" Turnip "
-            + "belongs in the Linux runtime list above and is refused here. The compositor loads its "
-            + "driver once per app process, so a change takes effect after the app is fully closed and "
-            + "started again.";
+            "应用内合成器把画面送上屏幕的驱动 —— 每次会话（Steam 或桌面）的最后一步。"
+            + "仅接受 AdrenoTools 压缩包（vulkan.adXXXX.so）：“-Linux” 的 Turnip "
+            + "属于上方的 Linux 运行时驱动列表，在这里会被拒绝。合成器每个应用进程只加载一次驱动，"
+            + "改动需在应用完全退出并重新启动后才生效。";
 
     private final Context context;
     private final File contentDir;
@@ -103,7 +102,7 @@ public final class TurnipDriver {
         try {
             return new JSONObject(content);
         } catch (Exception e) {
-            Log.w(TAG, "meta.json for " + driverId, e);
+            Log.w(TAG, "读取 " + driverId + " 的 meta.json 失败", e);
             return null;
         }
     }
@@ -138,7 +137,7 @@ public final class TurnipDriver {
         java.util.Set<String> hidden = hiddenBundled();
         hidden.add(driverId);
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putStringSet(KEY_HIDDEN, hidden).apply();
-        Log.i(TAG, "bundled driver " + driverId + " hidden by the user");
+        Log.i(TAG, "内置驱动 " + driverId + " 已被用户隐藏");
     }
 
     public void restoreBundled() {
@@ -167,7 +166,7 @@ public final class TurnipDriver {
     public void remove(String driverId) {
         if (driverId == null || driverId.isEmpty() || BUNDLED.contains(driverId)
                 || driverId.contains("/") || driverId.contains("..")) return;
-        Log.d(TAG, "removing imported driver " + driverId);
+        Log.d(TAG, "正在移除导入的驱动 " + driverId);
         FileUtils.delete(new File(contentDir, driverId));
         if (driverId.equals(SessionPrefs.androidDriver(context))) SessionPrefs.setAndroidDriver(context, AUTO);
     }
@@ -182,12 +181,12 @@ public final class TurnipDriver {
         if (!contentDir.exists()) contentDir.mkdirs();
         File tmpDir = new File(contentDir, ".tmp-" + System.currentTimeMillis());
         FileUtils.delete(tmpDir);
-        if (!tmpDir.mkdirs()) throw new IOException("cannot create " + tmpDir);
+        if (!tmpDir.mkdirs()) throw new IOException("无法创建 " + tmpDir);
         boolean keep = false;
         try {
             try (InputStream is = context.getContentResolver().openInputStream(zipUri);
                  ZipInputStream zis = new ZipInputStream(is)) {
-                if (is == null) throw new IOException("cannot open " + zipUri);
+                if (is == null) throw new IOException("无法打开 " + zipUri);
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry()) != null) {
                     if (entry.isDirectory()) continue;
@@ -199,7 +198,7 @@ public final class TurnipDriver {
                 }
             }
             String rejected = rejectionReason(tmpDir);
-            if (rejected != null) throw new IllegalArgumentException("Not an AdrenoTools driver: " + rejected);
+            if (rejected != null) throw new IllegalArgumentException("不是 AdrenoTools 驱动：" + rejected);
 
             JSONObject meta = readMetaFile(new File(tmpDir, "meta.json"));
             String name = meta != null ? meta.optString("name", "") : "";
@@ -209,9 +208,9 @@ public final class TurnipDriver {
             }
             String id = uniqueId(LinuxVulkanDriverManager.sanitizeId(name));
             File dir = new File(contentDir, id);
-            if (!tmpDir.renameTo(dir)) throw new IOException("cannot move into " + dir);
+            if (!tmpDir.renameTo(dir)) throw new IOException("无法移动到 " + dir);
             keep = true;
-            Log.i(TAG, "imported AdrenoTools driver " + id + " (" + (meta != null ? meta.optString("libraryName", "") : "?") + ") -> " + dir);
+            Log.i(TAG, "已导入 AdrenoTools 驱动 " + id + " (" + (meta != null ? meta.optString("libraryName", "") : "?") + ") -> " + dir);
             return id;
         } finally {
             if (!keep) FileUtils.delete(tmpDir);
@@ -232,29 +231,29 @@ public final class TurnipDriver {
      */
     private static String rejectionReason(File dir) {
         File metaFile = new File(dir, "meta.json");
-        if (!metaFile.isFile()) return "no meta.json";
+        if (!metaFile.isFile()) return "缺少 meta.json";
         String libraryName, kind;
         try {
             JSONObject meta = new JSONObject(FileUtils.readString(metaFile));
             libraryName = meta.optString("libraryName", "");
             kind = meta.optString("kind", "");
         } catch (Exception e) {
-            return "meta.json is unreadable (" + e.getMessage() + ")";
+            return "meta.json 无法读取（" + e.getMessage() + "）";
         }
         if ("linux-vulkan-icd".equals(kind))
-            return "this is a Linux runtime driver (import it under \"Linux runtime driver\")";
+            return "这是 Linux 运行时驱动（请在“运行时驱动”一栏导入）";
         if ("wayland-game-driver".equals(kind))
-            return "this is a Wayland game driver, which this app has no use for";
+            return "这是 Wayland 游戏驱动，本应用用不到";
         if (libraryName.isEmpty())
-            return "meta.json names no libraryName, so nothing could be handed to AdrenoTools";
+            return "meta.json 未指定 libraryName，无法交给 AdrenoTools";
         File library = new File(dir, libraryName);
         if (!library.isFile())
-            return "meta.json names " + libraryName + ", which is not in the zip";
+            return "meta.json 指定的 " + libraryName + " 不在压缩包中";
         if (!LinuxVulkanDriverManager.isAarch64Elf(library))
-            return libraryName + " is not a 64-bit AArch64 ELF shared library";
+            return libraryName + " 不是 64 位 AArch64 ELF 共享库";
         // A glibc build that happens to carry a libraryName would load nothing in this process.
         if (LinuxVulkanDriverManager.containsAscii(library, "libc.so.6"))
-            return libraryName + " links glibc - a \"-Linux\" Turnip, which belongs under \"Linux runtime driver\"";
+            return libraryName + " 链接了 glibc —— 属于“运行时驱动”的“-Linux” Turnip";
         return null;
     }
 
@@ -277,17 +276,17 @@ public final class TurnipDriver {
         if (!new File(dir, "meta.json").isFile()) {
             FileUtils.delete(dir);
             if (!TarZst.extractAsset(context, "graphics_driver/adrenotools-" + id + ".tzst", dir)) {
-                Log.e(TAG, "could not unpack " + id);
+                Log.e(TAG, "无法解包 " + id);
                 FileUtils.delete(dir);
                 return null;
             }
         }
         String library = libraryName(id);
         if (library == null || !new File(dir, library).isFile()) {
-            Log.e(TAG, id + " unpacked without " + library);
+            Log.e(TAG, id + " 解包后缺少 " + library);
             return null;
         }
-        Log.i(TAG, "graphics driver " + id + " (" + library + ")");
+        Log.i(TAG, "图形驱动 " + id + "（" + library + "）");
         return id;
     }
 
@@ -300,14 +299,14 @@ public final class TurnipDriver {
         String chosen = SessionPrefs.androidDriver(context);
         if (chosen != null && !chosen.isEmpty()) {
             if (BUNDLED.contains(chosen)) {
-                Log.i(TAG, "driver pinned by the user: " + chosen);
+                Log.i(TAG, "用户固定的驱动：" + chosen);
                 return chosen;
             }
             if (isInstalled(chosen)) {
-                Log.i(TAG, "imported driver chosen by the user: " + chosen);
+                Log.i(TAG, "用户选择的导入驱动：" + chosen);
                 return chosen;
             }
-            Log.w(TAG, "chosen driver \"" + chosen + "\" is gone; picking by GPU");
+            Log.w(TAG, "所选驱动 \"" + chosen + "\" 已不存在，改按 GPU 选择");
         }
         return chooseByDevice();
     }
@@ -317,13 +316,13 @@ public final class TurnipDriver {
         String forced = override.isFile() ? FileUtils.readString(override) : null;
         if (forced != null) {
             forced = forced.trim().toLowerCase(java.util.Locale.US);
-            Log.i(TAG, "driver forced by " + override + ": " + forced);
+            Log.i(TAG, "由 " + override + " 强制指定的驱动：" + forced);
             if (forced.startsWith("system")) return null;
             if (forced.startsWith("a8")) return DRIVER_A8XX;
             if (forced.startsWith("a7")) return DRIVER_A7XX;
         }
         String model = gpuModel();
-        Log.i(TAG, "gpu model: " + (model == null ? "unknown" : model));
+        Log.i(TAG, "GPU 型号：" + (model == null ? "未知" : model));
         if (model != null) {
             // "Adreno750", "adreno_830" - the generation is the first digit of the three.
             java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d)\\d\\d").matcher(model);

@@ -50,7 +50,7 @@ class FilePickerActivity : ComponentActivity() {
                         pickDirMode = pickDir,
                         pickExtensions = extensions,
                         initialDir = initialDir,
-                        pickerTitle = title ?: if (pickDir) "Choose a folder" else "Choose a file",
+                        pickerTitle = title ?: if (pickDir) "选择文件夹" else "选择文件",
                         onPick = { file ->
                             setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_SELECTED_FILE, file.absolutePath))
                             finish()

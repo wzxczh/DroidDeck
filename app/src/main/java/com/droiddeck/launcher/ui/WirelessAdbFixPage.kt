@@ -89,22 +89,22 @@ fun WirelessAdbFixPage(
                 } else {
                     step = 1
                     busy = true
-                    message = "Paired. Finding the Wireless debugging port…"
+                    message = "配对成功，正在查找无线调试端口…"
                     onFindConnectPort(endpoint.host) { discoveredPort ->
                         if (discoveredPort == null) {
                             connectionAddress = formatAddressHost(endpoint.host) + ":"
                             busy = false
-                            message = "Paired. Enter the port from Settings."
+                            message = "配对成功，请输入“设置”中的端口。"
                         } else {
                             connectionAddress = formatAdbAddress(endpoint.host, discoveredPort)
-                            message = "Device found. Applying the setting…"
+                            message = "已找到设备，正在应用设置…"
                             onApply(endpoint.host, discoveredPort, desiredEnabled) { applyError ->
                                 busy = false
                                 if (applyError == null) {
                                     step = 2
                                     message = null
                                 } else {
-                                    message = "Could not apply automatically. Check the address below and retry. $applyError"
+                                    message = "自动应用失败，请检查下方地址后重试。$applyError"
                                     messageIsError = true
                                 }
                             }
@@ -172,22 +172,22 @@ fun WirelessAdbFixPage(
         SettingsPage(
             host = rememberMenuHost(),
             title = when {
-                compactSplit && step < 2 -> "Wireless debugging"
-                step == 2 -> "Child-process limit updated"
-                else -> "Change the child-process limit"
+                compactSplit && step < 2 -> "无线调试"
+                step == 2 -> "子进程限制已更新"
+                else -> "修改子进程限制"
             },
-            eyebrow = "Setup",
+            eyebrow = "设置",
             lede = when {
-                compactSplit && step == 0 -> "If the option is missing, pair over Wireless debugging."
-                compactSplit && step == 1 -> "Paired. Check IP address & Port in Wireless debugging."
-                compactSplit -> "The child-process limit was updated."
-                step == 0 -> "Use step 2 if Developer options has no child-process setting. In Android Settings, open Developer options → Wireless debugging → Pair device with pairing code."
-                step == 1 -> "Paired. Use the address below; update it from Wireless debugging → IP address & Port if needed."
-                else -> "The child-process limit was updated over Wireless debugging."
+                compactSplit && step == 0 -> "如果没有该选项，请改用无线调试配对。"
+                compactSplit && step == 1 -> "配对成功，请在无线调试中查看 IP 地址和端口。"
+                compactSplit -> "子进程限制已更新。"
+                step == 0 -> "如果开发者选项中没有子进程设置，请使用第 2 步。依次打开 Android“设置 → 开发者选项 → 无线调试 → 使用配对码配对设备”。"
+                step == 1 -> "配对成功，请使用下方地址；如有变化，请在“无线调试 → IP 地址和端口”中更新。"
+                else -> "已通过无线调试更新子进程限制。"
             },
             onBack = { if (!busy) onBack() },
             action = if (compactSplit && step < 2) {
-                { SecondaryButton("Developer options", compact = true, enabled = !busy, onClick = onOpenDeveloperOptions) }
+                { SecondaryButton("开发者选项", compact = true, enabled = !busy, onClick = onOpenDeveloperOptions) }
             } else null,
             scrollContent = !compactSplit,
             compactLayout = compactSplit,
@@ -199,14 +199,14 @@ fun WirelessAdbFixPage(
                         modifier = Modifier.widthIn(max = 680.dp).fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        SettingsGroup("Child-process limit", compact = compactSplit) {
+                        SettingsGroup("子进程限制", compact = compactSplit) {
                             Text(
-                                "Android confirmed the limit is ${if (desiredEnabled) "on" else "off"}.",
+                                "Android 已确认限制当前为${if (desiredEnabled) "开启" else "关闭"}状态。",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(14.dp),
                             )
                         }
-                        PrimaryButton("Done", enabled = !busy, onClick = onBack)
+                        PrimaryButton("完成", enabled = !busy, onClick = onBack)
                     }
                 } else if (compactSplit) {
                     Column(
@@ -267,7 +267,7 @@ private fun WirelessStepForm(
     onPairAgain: () -> Unit,
 ) {
     if (step == 0) {
-        SettingsGroup("2 · Pair Wireless debugging", compact = compact) {
+        SettingsGroup("2 · 配对无线调试", compact = compact) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 8.dp else 12.dp, vertical = if (compact) 6.dp else 12.dp),
                 verticalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 6.dp),
@@ -275,7 +275,7 @@ private fun WirelessStepForm(
                 AdbTextField(
                     value = pairingAddress,
                     onValueChange = onPairingAddressChange,
-                    label = "Pairing pop-up IP address & Port",
+                    label = "配对弹窗的 IP 地址和端口",
                     placeholder = "192.168.1.42:37123",
                     keyboardType = KeyboardType.Ascii,
                     imeAction = ImeAction.Next,
@@ -291,8 +291,8 @@ private fun WirelessStepForm(
                     AdbTextField(
                         value = pairingCode,
                         onValueChange = onPairingCodeChange,
-                        label = "Pairing code (PIN)",
-                        placeholder = "6 digits",
+                        label = "配对码（PIN）",
+                        placeholder = "6 位数字",
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done,
                         compact = compact,
@@ -302,13 +302,13 @@ private fun WirelessStepForm(
                         },
                         modifier = Modifier.weight(1f),
                     )
-                    PrimaryButton("Pair", compact = compact, enabled = !busy && canPair, onClick = onPair)
+                    PrimaryButton("配对", compact = compact, enabled = !busy && canPair, onClick = onPair)
                 }
                 StatusMessage(busy, message, isError = messageIsError)
             }
         }
     } else {
-        SettingsGroup("2 · Apply over Wireless debugging", compact = compact) {
+        SettingsGroup("2 · 通过无线调试应用", compact = compact) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 8.dp else 12.dp, vertical = if (compact) 6.dp else 12.dp),
                 verticalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 6.dp),
@@ -316,7 +316,7 @@ private fun WirelessStepForm(
                 AdbTextField(
                     value = connectionAddress,
                     onValueChange = onConnectionAddressChange,
-                    label = "Connection IP address & Port",
+                    label = "连接的 IP 地址和端口",
                     placeholder = "192.168.1.42:45678",
                     keyboardType = KeyboardType.Ascii,
                     imeAction = ImeAction.Done,
@@ -330,9 +330,9 @@ private fun WirelessStepForm(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     StatusMessage(busy, message, Modifier.weight(1f), isError = messageIsError)
-                    SecondaryButton("Pair again", compact = compact, enabled = !busy, onClick = onPairAgain)
+                    SecondaryButton("重新配对", compact = compact, enabled = !busy, onClick = onPairAgain)
                     PrimaryButton(
-                        if (desiredEnabled) "Turn limit on" else "Turn limit off",
+                        if (desiredEnabled) "开启限制" else "关闭限制",
                         compact = compact,
                         enabled = !busy && parseAdbAddress(connectionAddress) != null,
                         onClick = onApply,
@@ -453,16 +453,16 @@ private fun FallbackOrder(
     busy: Boolean,
     onOpenDeveloperOptions: () -> Unit,
 ) {
-    SettingsGroup("Other ways to change it") {
+    SettingsGroup("其他修改方式") {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text("1 · Developer options (try first)", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
-            Text("Set “Restrict child processes” ${if (desiredEnabled) "on" else "off"}.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            SecondaryButton("Open Developer options", enabled = !busy, onClick = onOpenDeveloperOptions)
-            Text("3 · Computer ADB (last resort)", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
-            Text("Only if Wireless debugging is unavailable.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("1 · 开发者选项（优先尝试）", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+            Text("将“限制子进程”设为${if (desiredEnabled) "开启" else "关闭"}。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            SecondaryButton("打开开发者选项", enabled = !busy, onClick = onOpenDeveloperOptions)
+            Text("3 · 电脑 ADB（最后手段）", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+            Text("仅在无法使用无线调试时使用。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
                 PhantomProcessLimit.adbCommand(desiredEnabled),
                 style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
@@ -474,7 +474,7 @@ private fun FallbackOrder(
 
 @Composable
 private fun CompactComputerFallback(desiredEnabled: Boolean) {
-    SettingsGroup("3 · Computer ADB last resort", compact = true) {
+    SettingsGroup("3 · 电脑 ADB（最后手段）", compact = true) {
         Text(
             PhantomProcessLimit.adbCommand(desiredEnabled),
             style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
@@ -489,7 +489,7 @@ private fun StatusMessage(busy: Boolean, message: String?, modifier: Modifier = 
     if (busy) {
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-            Text(message ?: "Working…", style = MaterialTheme.typography.bodySmall)
+            Text(message ?: "处理中…", style = MaterialTheme.typography.bodySmall)
         }
     } else {
         message?.let {

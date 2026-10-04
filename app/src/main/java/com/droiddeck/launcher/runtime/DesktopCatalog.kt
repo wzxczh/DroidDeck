@@ -81,20 +81,20 @@ object DesktopCatalog {
     /** Downloads, verifies and installs one package. Returns null on success, else a message. */
     fun install(context: Context, entry: Entry, listener: LinuxRuntimeInstaller.ProgressListener?): String? {
         val root = LinuxRuntime.rootDir(context)
-        if (!root.isDirectory) return "The Linux runtime is not installed"
+        if (!root.isDirectory) return "Linux 运行时尚未安装"
         // Every catalog row carries a sha256; one without is refused rather than trusted.
-        if (entry.sha256.isEmpty()) return "The catalog has no checksum for ${entry.name}"
+        if (entry.sha256.isEmpty()) return "目录中没有 ${entry.name} 的校验和"
         val download = File(context.cacheDir, "pkg-${entry.id}.download")
         try {
             listener?.onProgress("Downloading ${entry.name}", 0)
             val ok = Downloader.downloadFile(entry.url, download, true) { f ->
                 listener?.onProgress("Downloading ${entry.name}", if (f < 0) -1 else Math.round(f * 100f))
             }
-            if (!ok) return "Download failed"
+            if (!ok) return "下载失败"
             listener?.onProgress("Verifying", -1)
             val actual = Hashes.sha256(download)
-            if (!entry.sha256.equals(actual, ignoreCase = true)) return "Checksum mismatch - nothing was changed"
-            listener?.onProgress("Installing ${entry.name}", -1)
+            if (!entry.sha256.equals(actual, ignoreCase = true)) return "校验和不匹配 - 未做任何更改"
+            listener?.onProgress("正在安装 ${entry.name}", -1)
             when (entry.kind) {
                 "appimage" -> {
                     val dir = File(root, "opt/appimages").apply { mkdirs() }
@@ -102,20 +102,20 @@ object DesktopCatalog {
                     // Some projects zip the AppImage (melonDS); the one file inside is what we want.
                     val placed = if (entry.url.endsWith(".zip", ignoreCase = true)) unzipAppImage(download, target)
                                  else download.renameTo(target)
-                    if (!placed) return "Could not place the AppImage"
+                    if (!placed) return "无法放置 AppImage"
                     target.setExecutable(true, false)
                     FileUtils.writeString(File(root, "usr/share/applications/droiddeck-${entry.id}.desktop"),
                         "[Desktop Entry]\nType=Application\nName=${entry.name}\n" +
                         "Exec=env APPIMAGE_EXTRACT_AND_RUN=1 /opt/appimages/${entry.id}.AppImage\n" +
                         "Icon=${entry.icon}\nTerminal=false\nCategories=${entry.category};\n")
                 }
-                else -> if (!LinuxRuntimeInstaller.extract(download, root, listener)) return "Extraction failed"
+                else -> if (!LinuxRuntimeInstaller.extract(download, root, listener)) return "解包失败"
             }
             FileUtils.writeString(marker(context, entry.id), entry.version)
             return null
         } catch (e: Exception) {
             Log.e(TAG, "install ${entry.id}", e)
-            return e.message ?: "Install failed"
+            return e.message ?: "安装失败"
         } finally {
             download.delete()
         }

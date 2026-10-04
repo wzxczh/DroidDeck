@@ -42,7 +42,7 @@ collect_steam_logs() {
   [ -f "$HOME/.steam/steam/logs/steamwebhelper.log" ] && cp "$HOME/.steam/steam/logs/steamwebhelper.log" "$BL_DEBUG_DIR/steam/" 2>/dev/null
   # NOT copied, ever: loginusers.vdf, config.vdf and the ssfn* files, which hold the credentials
   # themselves rather than a mention of them.
-  echo "== steam logs copied to $BL_DEBUG_DIR/steam"
+  echo "== 已复制 Steam 日志到 $BL_DEBUG_DIR/steam"
 }
 # A session that is killed never reaches the copy below, and those are the sessions worth reading.
 trap 'collect_steam_logs 2>/dev/null || true' TERM INT HUP
@@ -67,9 +67,9 @@ if [ -n "${BL_VK_DRIVER:-}" ]; then
     export VK_DRIVER_FILES="$BL_VK_DRIVER"
     # Loaders older than 1.3.207 only know the old name; both are harmless together.
     export VK_ICD_FILENAMES="$BL_VK_DRIVER"
-    echo "== vulkan driver: imported $bl_icd_lib (via $BL_VK_DRIVER)"
+    echo "== vulkan 驱动：已导入 $bl_icd_lib（经由 $BL_VK_DRIVER）"
   else
-    echo "== vulkan driver: IGNORING $BL_VK_DRIVER (manifest or ${bl_icd_lib:-library} unreadable); using the runtime's own"
+    echo "== vulkan 驱动：忽略 $BL_VK_DRIVER（manifest 或 ${bl_icd_lib:-library} 不可读）；使用运行时自带的驱动"
   fi
   unset bl_icd_lib
 fi
@@ -129,11 +129,11 @@ if [ -z "${BL_INSIDE:-}" ]; then
   # The desktop (DroidDeck's hosted package) is its own nested compositor, labwc, drawing straight
   # into the app's: no gamescope in between.
   if [ "$mode" = lxqt ]; then
-    step "starting the desktop"
-    [ -x /usr/local/bin/droiddeck-desktop ] || { echo "== the desktop package is not installed"; exit 66; }
+    step "正在启动桌面"
+    [ -x /usr/local/bin/droiddeck-desktop ] || { echo "== 桌面包尚未安装"; exit 66; }
     cores=$(program_cores)
     if [ -n "$cores" ]; then
-      echo "== desktop cores: $cores (the desktop and every program started from it)"
+      echo "== 桌面核心：$cores（桌面及其上启动的所有程序）"
       exec taskset -c "$cores" /usr/local/bin/droiddeck-desktop
     fi
     exec /usr/local/bin/droiddeck-desktop
@@ -169,7 +169,7 @@ if [ -z "${BL_INSIDE:-}" ]; then
     echo no_display > "$MANGOHUD_CONFIGFILE"
     export MANGOHUD_CONFIGFILE STEAM_USE_MANGOAPP=1 STEAM_MANGOAPP_PRESETS_SUPPORTED=1 STEAM_MANGOAPP_HORIZONTAL_SUPPORTED=1
     args+=(--mangoapp)
-    echo "== gamescope: mangoapp on ($(command -v mangoapp), config $MANGOHUD_CONFIGFILE)"
+    echo "== gamescope: mangoapp 已启用（$(command -v mangoapp)，配置 $MANGOHUD_CONFIGFILE）"
   fi
   export BL_INSIDE=1
   exec gamescope "${args[@]}" -- "$0" "$mode" "$@"
@@ -194,7 +194,7 @@ reap_orphans() {
       [ "${2:-}" = "$PPID" ] && left="$left $pid"
     done
     [ -n "$left" ] || return 0
-    echo "== leaving behind:$left"
+    echo "== 残留进程：$left"
     kill -9 $left 2>/dev/null
     sleep 0.2
   done
@@ -209,7 +209,7 @@ case $mode in
     shift
     cores=$(program_cores)
     if [ -n "$cores" ]; then
-      echo "== program cores: $cores"
+      echo "== 程序核心：$cores"
       taskset -cp "$cores" $$ >/dev/null 2>&1 || true
     fi
     # Player 1 on the controller in an emulator that has no profile of its own yet.
@@ -230,9 +230,9 @@ case $mode in
     esac
     ;;
   steam)
-    step "checking the Steam client (first run downloads it, ~1-2 min with nothing on screen)"
+    step "正在检查 Steam 客户端（首次运行需下载，约 1-2 分钟，屏幕可能无提示）"
     bannerlator-steam-install || exit $?
-    step "Steam client ready"
+    step "Steam 客户端就绪"
     steam_root=$XDG_DATA_HOME/Steam
     # Register the card library (bound at /mnt/bannerlator-sd) with the client - internal storage is
     # its main library already - and the ARM64 Proton that lets it launch the Windows ones.
@@ -246,11 +246,11 @@ case $mode in
       : > "$_bl_left"
       while read -r _bl_extra || [ -n "$_bl_extra" ]; do
         case ${_bl_extra# } in ""|"#"*) continue ;; esac
-        step "installing Proton '$_bl_extra' (large download, several minutes)"
+        step "正在安装 Proton '$_bl_extra'（下载量大，需数分钟）"
         if bannerlator-proton-extra "$steam_root" $_bl_extra; then
-          step "installed Proton '$_bl_extra'"
+          step "已安装 Proton '$_bl_extra'"
         else
-          step "Proton '$_bl_extra' failed; will retry next session"
+          step "Proton '$_bl_extra' 安装失败；下次会话重试"
           echo "$_bl_extra" >> "$_bl_left"
         fi
       done < "$HOME/.bl-proton-extra"
@@ -264,7 +264,7 @@ case $mode in
     if [ -s "$HOME/.bl-steam-urls" ]; then
       while read -r _bl_url || [ -n "$_bl_url" ]; do
         case ${_bl_url# } in steam://*) ;; *) continue ;; esac
-        step "asking the client for $_bl_url"
+        step "请求客户端打开 $_bl_url"
         set -- "$@" "$_bl_url"
       done < "$HOME/.bl-steam-urls"
       rm -f "$HOME/.bl-steam-urls"
@@ -275,7 +275,7 @@ case $mode in
     # there is. BL_CLIENT_CPUS overrides it. Re-applied on a beat because steamwebhelper spawns
     # children continuously and each one inherits Steam's choice, not ours.
     if [ -n "${BL_CLIENT_CPUS:-}" ]; then
-      step "client cores: $BL_CLIENT_CPUS"
+      step "客户端核心：$BL_CLIENT_CPUS"
       (
         for _ in $(seq 1 720); do
           for _p in $(pgrep -f 'steamwebhelper|steamrtarm64/steam|gamescope' 2>/dev/null); do
@@ -286,14 +286,14 @@ case $mode in
       ) &
     fi
 
-    step "registering the app's game library with Steam"
+    step "正在向 Steam 注册应用的游戏库"
     bannerlator-steam-library "$steam_root" || true
-    step "setting up the ARM64 Proton compatibility tool"
+    step "正在配置 ARM64 Proton 兼容性工具"
     bannerlator-steam-compat "$steam_root" || true
     # The user's own games, as non-Steam shortcuts under that tool; the list is written by the app
     # each session (empty = the app's earlier entries are removed, the client's own are kept).
     if [ -n "${BL_ADDED_GAMES:-}" ]; then
-      step "adding the app's own games to the client's library"
+      step "正在把应用自带游戏添加到客户端游戏库"
       bannerlator-steam-shortcuts "$steam_root" "$BL_ADDED_GAMES" || true
     fi
     # Steam runs a game's shared redistributables inside its prefix on first launch; marking
@@ -302,7 +302,7 @@ case $mode in
     # The compatibility tool runs Valve's arm64 Proton, which the client fetches like any depot.
     # Asked for on the command line the first time, so a Windows title has it before it is needed.
     if [ ! -f "$steam_root/steamapps/appmanifest_4427310.acf" ]; then
-      step "asking the client to fetch the ARM64 Proton"
+      step "请求客户端下载 ARM64 Proton"
       set -- "$@" steam://install/4427310
       # Ported from Bannerlator (bannerlator-session, device-proven 2026-09-22). The client decides
       # a title's compatibility tool when the title is installed and keeps that decision for the
@@ -319,7 +319,7 @@ case $mode in
           if grep -q '"StateFlags"[[:space:]]*"4"' "$_bl_acf" 2>/dev/null; then
             sleep 10
             bannerlator-steam-compat "$steam_root" >/dev/null 2>&1 || true
-            step "compatibility layer installed: restarting the Steam client once"
+            step "兼容性工具已安装：正在重启一次 Steam 客户端"
             : > "$HOME/.bl-restart-once"
             "$steam_root/steamrtarm64/steam" -shutdown >/dev/null 2>&1 || true
             exit 0
@@ -355,7 +355,7 @@ case $mode in
               for _bl_try in 1 2 3; do
                 sleep 10
                 [ -f "$_bl_acf" ] && exit 0
-                step "signed in: asking the client again for the ARM64 Proton (try $_bl_try of 3)"
+                step "已登录：再次请求客户端获取 ARM64 Proton（第 $_bl_try 次，共 3 次）"
                 "$steam_root/steamrtarm64/steam" steam://install/4427310 >/dev/null 2>&1 || true
                 sleep 50
               done
@@ -395,7 +395,7 @@ case $mode in
         case $want in 0|1) ;; *) continue ;; esac
         [ "$want" = "$last" ] && continue
         if xprop -root -f GAMESCOPE_FORCE_WINDOWS_FULLSCREEN 32c -set GAMESCOPE_FORCE_WINDOWS_FULLSCREEN "$want" 2>/dev/null; then
-          echo "== stretch games to fill the screen: $want (live)"
+          echo "== 拉伸游戏填满屏幕：$want（实时生效）"
           last=$want
         fi
       done
@@ -415,7 +415,7 @@ case $mode in
         if [ "$prev" = 769 ] && [ "$app" != 769 ]; then
           nap 1
           xprop -root -f GAMESCOPE_RESTORE_FOCUS_WINDOW 32c -set GAMESCOPE_RESTORE_FOCUS_WINDOW 1 2>/dev/null \
-            && echo "== resume: asked gamescope to restore the game window (app $app)"
+            && echo "== 恢复：已请求 gamescope 还原游戏窗口（应用 $app）"
         fi
         prev=$app
       done
@@ -442,7 +442,7 @@ case $mode in
         steam://*) _bl_url=$_bl_app ;;
         *) _bl_url=steam://rungameid/$_bl_app ;;
       esac
-      echo "== autolaunch $_bl_url"
+      echo "== 自动启动 $_bl_url"
       set -- "$@" "$_bl_url"
     fi
     # The client builds Settings > Internet and its connection indicator on NetworkManager, which
@@ -479,12 +479,12 @@ BUSCONF
       if [ -S /run/dbus/system_bus_socket ]; then
         bannerlator-netmanager &
         netmanager=$!
-        echo "== network: system bus up, NetworkManager stand-in running"
+        echo "== network: 系统总线已启动，NetworkManager 替身正在运行"
       else
-        echo "== network: the system bus did not come up; the client will show no connection"
+        echo "== network: 系统总线未能启动；客户端将显示为无网络连接"
       fi
     else
-      echo "== network: no dbus-daemon or netmanager in this runtime; the client will show no connection"
+      echo "== network: 此运行时中没有 dbus-daemon 或 netmanager；客户端将显示为无网络连接"
     fi
 
     export STEAM_RUNTIME=1
@@ -518,18 +518,18 @@ BUSCONF
             decky_child=
             decky_exits=$((decky_exits + 1))
             if [ "$decky_exits" -ge 5 ]; then
-              echo "== Decky: stopped after $decky_exits loader exits (last status $decky_status)"
+              echo "== Decky: 加载器退出 $decky_exits 次后停止（最后状态 $decky_status）"
               break
             fi
             decky_delay=$((decky_exits * 3))
-            echo "== Decky: loader exited with status $decky_status; restart $((decky_exits + 1))/5 in ${decky_delay}s"
+            echo "== Decky: 加载器退出，状态 $decky_status；${decky_delay} 秒后重启 $((decky_exits + 1))/5"
             sleep "$decky_delay"
           done
         ) &
         decky_supervisor=$!
-        echo "== Decky: session supervisor started ($decky_arch)"
+        echo "== Decky: 会话监管进程已启动（$decky_arch）"
       else
-        echo "== Decky: installed loader architecture is unsupported by this guest; not starting"
+        echo "== Decky: 已安装的加载器架构不受此 guest 支持；不启动"
       fi
     fi
     # The client exits 42 when it has updated itself and wants a fresh start (steam.sh does this).
@@ -549,7 +549,7 @@ BUSCONF
       _bl_ui+=(-steamdeck -steamos3)
       # The QAM's Scaling Filter lists NVIDIA Image Scaling only when told gamescope has it (it does).
       export STEAM_GAMESCOPE_NIS_SUPPORTED=1
-      echo "== steam: Deck mode on (-steamdeck -steamos3)"
+      echo "== steam: 已开启 Deck 模式（-steamdeck -steamos3）"
     fi
     # What a killed session leaves behind. Android ends sessions without warning (backgrounding, the
     # low-memory killer), and the client then finds .crash - opening its update UI on the spinner -
@@ -562,7 +562,7 @@ BUSCONF
                 "$steam_root/config/htmlcache/SingletonSocket"; do
         if [ -e "$_f" ] || [ -L "$_f" ]; then rm -f "$_f" && _stale="$_stale ${_f##*/}"; fi
       done
-      [ -n "$_stale" ] && echo "== steam: cleared what an earlier session left:$_stale"
+      [ -n "$_stale" ] && echo "== steam: 已清理上次会话的残留：$_stale"
       unset _stale _f
     fi
     # The client branch. publicbeta is what every session has run on; steamdeck_publicbeta is the
@@ -578,7 +578,7 @@ BUSCONF
       bannerlator-steam-games watch "$steam_root" "$BL_ADDED_GAMES" &
       games_watcher=$!
     fi
-    echo "== steam args: ${_bl_ui[*]} -clientbeta $steam_channel -no-cef-sandbox -cef-force-gpu -cef-ozone-platform=x11 -cef-use-gl=angle -cef-use-angle=vulkan $*"
+    echo "== steam 启动参数：${_bl_ui[*]} -clientbeta $steam_channel -no-cef-sandbox -cef-force-gpu -cef-ozone-platform=x11 -cef-use-gl=angle -cef-use-angle=vulkan $*"
     # An update that cannot install asks for a restart (rc=42) every time; the count is capped so a
     # session can never again loop in silence, which reads as a menu opening and closing by itself.
     steam_updates=0
@@ -590,7 +590,7 @@ BUSCONF
           if [ -e "$BL_LAUNCH_DIR/steam-stop" ]; then
             rm -f "$BL_LAUNCH_DIR/steam-stop"
             : > "$HOME/.bl-stop-requested"
-            echo "== steam: the app asked for a clean exit"
+            echo "== steam: 应用请求正常退出"
             "$steam_root/steamrtarm64/steam" -shutdown >/dev/null 2>&1 || true
             exit 0
           fi
@@ -602,15 +602,15 @@ BUSCONF
     while :; do
       rm -f "$HOME/.bl-restart-once"
       if [ -f "$steam_beta" ] && [ "$(cat "$steam_beta" 2>/dev/null)" != "$steam_channel" ]; then
-        echo "== steam: client branch on disk was '$(cat "$steam_beta" 2>/dev/null)', set to '$steam_channel' to match -clientbeta"
+        echo "== steam: 磁盘上的客户端分支为 '$(cat "$steam_beta" 2>/dev/null)'，改为 '$steam_channel' 以匹配 -clientbeta"
         echo "$steam_channel" > "$steam_beta"
       fi
-      step "starting the Steam client${BL_STEAM_UI:+ ($BL_STEAM_UI UI)}"
+      step "正在启动 Steam 客户端${BL_STEAM_UI:+（$BL_STEAM_UI 界面）}"
       "$steam_root/steamrtarm64/steam" "${_bl_ui[@]}" -clientbeta "$steam_channel" \
         -no-cef-sandbox -cef-force-gpu -cef-ozone-platform=x11 \
         -cef-use-gl=angle -cef-use-angle=vulkan "$@"
       rc=$?
-      echo "== steam exited rc=$rc"
+      echo "== steam 已退出，rc=$rc"
       collect_steam_logs
       if [ -n "${BL_ADDED_GAMES:-}" ] && [ -f "$BL_ADDED_GAMES" ]; then
         bannerlator-steam-shortcuts "$steam_root" "$BL_ADDED_GAMES" || true
@@ -622,14 +622,14 @@ BUSCONF
       # The session asked for this exit (the ARM64 Proton landed): start again, without the URL
       # arguments, which were acted on. Not counted against the update cap.
       if [ -f "$HOME/.bl-restart-once" ]; then
-        echo "== steam: restarting once so the new compatibility layer is in the client's lists"
+        echo "== steam: 重启一次以让新的兼容性工具进入客户端列表"
         set --
         continue
       fi
       [ "$rc" -eq 42 ] || break
       steam_updates=$((steam_updates + 1))
       if [ "$steam_updates" -ge 3 ]; then
-        echo "== steam: asked to restart for an update $steam_updates times and it is not installing; the session stops here rather than loop"
+        echo "== steam: 已请求更新重启 $steam_updates 次但更新未安装；会话到此停止，不再循环"
         break
       fi
       # The URL arguments were acted on the first time; a restart must not repeat them.
@@ -651,16 +651,16 @@ BUSCONF
       if [ -n "${decky_supervisor:-}" ]; then
         kill "$decky_supervisor" 2>/dev/null || true
         wait "$decky_supervisor" 2>/dev/null || true
-        echo "== Decky: session supervisor stopped"
+        echo "== Decky: 会话监管进程已停止"
       fi
       _bl_jobs=$(jobs -p)
       [ -n "$_bl_jobs" ] && kill $_bl_jobs 2>/dev/null
-      echo "== steam: the client on the desktop has exited"
+      echo "== steam: 桌面上的客户端已退出"
     else
       if [ -n "${decky_supervisor:-}" ]; then
         kill "$decky_supervisor" 2>/dev/null || true
         wait "$decky_supervisor" 2>/dev/null || true
-        echo "== Decky: session supervisor stopped"
+        echo "== Decky: 会话监管进程已停止"
       fi
       _bl_jobs=$(jobs -p)
       [ -n "$_bl_jobs" ] && kill $_bl_jobs 2>/dev/null
@@ -669,7 +669,7 @@ BUSCONF
     exit "$rc"
     ;;
   *)
-    echo "bannerlator-session: unknown mode '$mode'" >&2
+    echo "bannerlator-session: 未知模式 '$mode'" >&2
     exit 64
     ;;
 esac

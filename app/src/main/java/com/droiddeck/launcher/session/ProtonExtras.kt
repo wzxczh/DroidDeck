@@ -59,70 +59,70 @@ object ProtonExtras {
     /** Downloads, verifies and registers the latest build without waiting for another session. */
     @Synchronized
     fun install(context: Context, tool: Tool, onProgress: (String, Int) -> Unit): String? {
-        if (installInProgress) return "A compatibility tool install is already running"
+        if (installInProgress) return "已有兼容性工具安装任务在运行"
         installInProgress = true
         return try { installNow(context, tool, onProgress) } finally { installInProgress = false }
     }
 
     private fun installNow(context: Context, tool: Tool, onProgress: (String, Int) -> Unit): String? {
-        if (SessionState.running) return "Stop the active session before installing compatibility tools"
-        if (!LinuxRuntime.isInstalled(context)) return "Install the Linux runtime first"
+        if (SessionState.running) return "请先停止当前会话，再安装兼容性工具"
+        if (!LinuxRuntime.isInstalled(context)) return "请先安装 Linux 运行时"
 
-        val asset = findLatestAsset(tool) ?: return "Could not find an ARM64 release for ${tool.name}"
+        val asset = findLatestAsset(tool) ?: return "找不到 ${tool.name} 的 ARM64 版本"
         val downloads = File(context.filesDir, "proton-downloads").apply { mkdirs() }
         val archive = File(downloads, "${tool.id}-${asset.name}")
         if (asset.size > 0 && archive.length() > asset.size) archive.delete()
         val missing = (asset.size - archive.length()).coerceAtLeast(0L)
         if (StatFs(LinuxRuntime.rootDir(context).path).availableBytes < NEED_BYTES + missing) {
-            return "At least 4 GB free plus the download size is required to install ${tool.name}"
+            return "安装 ${tool.name} 至少需要 4 GB 可用空间外加下载大小"
         }
 
-        onProgress("Downloading ${tool.name} ${asset.tag}", 0)
+        onProgress("正在下载 ${tool.name} ${asset.tag}", 0)
         var downloaded = false
         for (attempt in 0 until 5) {
             downloaded = Downloader.downloadFile(asset.url, archive, true) { fraction ->
-                onProgress("Downloading ${tool.name} ${asset.tag}", if (fraction < 0) -1 else (fraction * 100f).toInt().coerceIn(0, 100))
+                onProgress("正在下载 ${tool.name} ${asset.tag}", if (fraction < 0) -1 else (fraction * 100f).toInt().coerceIn(0, 100))
             }
             if (downloaded) break
             if (attempt < 4) {
-                onProgress("Retrying download · attempt ${attempt + 2} of 5", -1)
+                onProgress("正在重试下载 · 第 ${attempt + 2} 次，共 5 次", -1)
                 try { Thread.sleep(3_000) } catch (_: InterruptedException) {
                     Thread.currentThread().interrupt()
-                    return "Download interrupted"
+                    return "下载已中断"
                 }
             }
         }
-        if (!downloaded) return "Download failed; the partial file is kept so a retry can resume"
+        if (!downloaded) return "下载失败；已保留分片文件，重试可断点续传"
         if (asset.size > 0 && archive.length() != asset.size) {
             if (archive.length() > asset.size) {
                 archive.delete()
-                return "Download exceeded the release size and was deleted"
+                return "下载超过发布大小，已删除"
             }
-            return "Download was incomplete; the partial file is kept for a resumable retry"
+            return "下载不完整；已保留分片文件，重试可断点续传"
         }
 
         // One checksum has to be found and has to match: GitHub's sha256 digest, else the
         // release's own sha512 file. A download neither vouches for is not installed.
-        onProgress("Verifying download", -1)
+        onProgress("正在校验下载", -1)
         val verified = when {
             asset.sha256 != null -> asset.sha256.equals(Hashes.sha256(archive), ignoreCase = true)
             asset.sha512 != null -> {
                 val expected = Downloader.downloadString(asset.sha512)?.let { Regex("(?i)\\b[0-9a-f]{128}\\b").find(it)?.value }
-                    ?: return "Could not read the release checksum; try again"
+                    ?: return "无法读取发布校验和；请重试"
                 expected.equals(Hashes.sha512(archive), ignoreCase = true)
             }
             else -> {
                 archive.delete()
-                return "${tool.name} ${asset.tag} publishes no checksum; nothing was installed"
+                return "${tool.name} ${asset.tag} 未发布校验和；未安装任何内容"
             }
         }
         if (!verified) {
             archive.delete()
-            return "Checksum mismatch; the download was deleted"
+            return "校验和不匹配；下载文件已删除"
         }
 
-        if (SessionState.running) return "A session started during the download; stop it before installing compatibility tools"
-        onProgress("Installing ${tool.name}", -1)
+        if (SessionState.running) return "下载期间启动了会话；请先停止会话再安装兼容性工具"
+        onProgress("正在安装 ${tool.name}", -1)
         return try {
             val root = LinuxRuntime.rootDir(context)
             LinuxRuntime.writeAccounts(context)
@@ -145,13 +145,13 @@ object ProtonExtras {
             child.inputStream.bufferedReader().useLines { lines ->
                 lines.forEach { line ->
                     Log.i(TAG, line)
-                    if (line.contains("unpacking", ignoreCase = true) || line.contains("adopted", ignoreCase = true)) {
-                        onProgress("Installing ${tool.name}", -1)
+                    if (line.contains("unpacking", ignoreCase = true) || line.contains("收编")) {
+                        onProgress("正在安装 ${tool.name}", -1)
                     }
                 }
             }
             val status = child.waitFor()
-            if (status != 0) "${tool.name} installation failed (exit $status)"
+            if (status != 0) "${tool.name} 安装失败（退出码 $status）"
             else {
                 archive.delete()
                 unqueue(context, tool)
@@ -159,7 +159,7 @@ object ProtonExtras {
             }
         } catch (e: Exception) {
             Log.e(TAG, "install ${tool.id}", e)
-            e.message ?: "Could not install ${tool.name}"
+            e.message ?: "无法安装 ${tool.name}"
         }
     }
 
@@ -187,7 +187,7 @@ object ProtonExtras {
             }
             null
         } catch (e: Exception) {
-            Log.w(TAG, "release metadata for ${tool.id}", e)
+            Log.w(TAG, "${tool.id} 的发布元数据", e)
             null
         }
     }

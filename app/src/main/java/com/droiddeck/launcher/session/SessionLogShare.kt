@@ -59,6 +59,6 @@ object SessionLogShare {
             .putExtra(Intent.EXTRA_SUBJECT, zip.nameWithoutExtension)
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         send.clipData = ClipData.newRawUri(zip.name, uri)
-        return Intent.createChooser(send, "Share session logs").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return Intent.createChooser(send, "共享会话日志").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 }

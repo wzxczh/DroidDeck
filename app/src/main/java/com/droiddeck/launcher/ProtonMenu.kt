@@ -24,7 +24,7 @@ internal class ProtonMenu(private val activity: android.app.Activity, private va
         if (protonBusyId != null || SessionState.running) return
         ProtonExtras.unqueue(activity, tool)
         protonBusyId = id
-        protonStage = "Starting…"
+        protonStage = "正在开始…"
         protonPercent = -1
         Thread({
             val problem = ProtonExtras.install(activity, tool) { label, value ->
@@ -44,7 +44,7 @@ internal class ProtonMenu(private val activity: android.app.Activity, private va
         val tool = ProtonExtras.tools.firstOrNull { it.id == id } ?: return
         if (protonBusyId != null || SessionState.running) return
         protonBusyId = id
-        protonStage = "Removing ${tool.name}…"
+        protonStage = "正在移除 ${tool.name}…"
         protonPercent = -1
         Thread({
             ProtonExtras.remove(activity, tool)

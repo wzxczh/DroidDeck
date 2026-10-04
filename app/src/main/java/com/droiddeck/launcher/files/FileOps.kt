@@ -20,8 +20,8 @@ object FileOps {
     fun interface ProgressCallback { fun onProgress(copiedBytes: Long, totalBytes: Long) }
 
     fun formatBytes(bytes: Long): String {
-        if (bytes <= 0) return "0 bytes"
-        val units = arrayOf("bytes", "KB", "MB", "GB", "TB")
+        if (bytes <= 0) return "0 字节"
+        val units = arrayOf("字节", "KB", "MB", "GB", "TB")
         val group = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt().coerceIn(0, units.lastIndex)
         return String.format(Locale.ENGLISH, "%.2f", bytes / Math.pow(1024.0, group.toDouble())) + " " + units[group]
     }
@@ -78,7 +78,7 @@ object FileOps {
         if (isSymlink(src)) return true
         if (sameFile(src, dst)) return true
         if (src.isDirectory && isWithin(dst, src)) {
-            Log.e(TAG, "Refusing to copy directory into itself: $src -> $dst")
+            Log.e(TAG, "拒绝将目录复制到其自身内部：$src -> $dst")
             return false
         }
         if (src.isDirectory) {
@@ -86,7 +86,7 @@ object FileOps {
             var allOk = true
             src.list()?.forEach { name ->
                 if (!copyWithProgress(File(src, name), File(dst, name), done, total, progress)) {
-                    Log.e(TAG, "Failed to copy: ${File(src, name)}")
+                    Log.e(TAG, "复制失败：${File(src, name)}")
                     allOk = false
                 }
             }
@@ -112,7 +112,7 @@ object FileOps {
             }
             return true
         } catch (e: IOException) {
-            Log.e(TAG, "Failed to copy file: $src to $dst", e)
+            Log.e(TAG, "复制文件失败：$src -> $dst", e)
             dst.delete()
             return false
         }

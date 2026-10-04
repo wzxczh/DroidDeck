@@ -33,34 +33,34 @@ object PerfMode {
         // The fastest display mode at the panel's current size.
         parts += try {
             val display = if (Build.VERSION.SDK_INT >= 30) a.display else @Suppress("DEPRECATION") a.windowManager.defaultDisplay
-            if (display == null || Build.VERSION.SDK_INT < 23) "display mode unchanged" else {
+            if (display == null || Build.VERSION.SDK_INT < 23) "显示模式未变更" else {
                 val cur = display.mode
                 val best = display.supportedModes
                     .filter { it.physicalWidth == cur.physicalWidth && it.physicalHeight == cur.physicalHeight }
                     .maxByOrNull { it.refreshRate }
                 if (best != null && best.modeId != cur.modeId && best.refreshRate > cur.refreshRate + 0.5f) {
                     a.window.attributes = a.window.attributes.apply { preferredDisplayModeId = best.modeId }
-                    "display ${cur.refreshRate.toInt()} → ${best.refreshRate.toInt()} Hz (mode ${best.modeId})"
-                } else "display ${cur.refreshRate.toInt()} Hz"
+                    "显示 ${cur.refreshRate.toInt()} → ${best.refreshRate.toInt()} Hz（模式 ${best.modeId}）"
+                } else "显示 ${cur.refreshRate.toInt()} Hz"
             }
-        } catch (t: Throwable) { Log.w(TAG, "display mode", t); "display mode failed" }
+        } catch (t: Throwable) { Log.w(TAG, "display mode", t); "显示模式设置失败" }
 
         // GameManager: what mode the OS put us in, and that we are playing.
         parts += if (Build.VERSION.SDK_INT >= 31) {
             val gm = a.getSystemService(GameManager::class.java)
-            if (gm == null) "no GameManager" else {
+            if (gm == null) "无 GameManager" else {
                 val mode = when (gm.gameMode) {
-                    GameManager.GAME_MODE_PERFORMANCE -> "performance"
-                    GameManager.GAME_MODE_BATTERY -> "battery"
-                    GameManager.GAME_MODE_STANDARD -> "standard"
-                    else -> "unsupported"
+                    GameManager.GAME_MODE_PERFORMANCE -> "性能"
+                    GameManager.GAME_MODE_BATTERY -> "省电"
+                    GameManager.GAME_MODE_STANDARD -> "标准"
+                    else -> "不支持"
                 }
                 if (Build.VERSION.SDK_INT >= 33) {
-                    try { gm.setGameState(GameState(false, GameState.MODE_GAMEPLAY_INTERRUPTIBLE)) } catch (t: Throwable) { Log.w(TAG, "game state", t) }
+                    try { gm.setGameState(GameState(false, GameState.MODE_GAMEPLAY_INTERRUPTIBLE)) } catch (t: Throwable) { Log.w(TAG, "游戏状态", t) }
                 }
-                "game mode $mode"
+                "游戏模式 $mode"
             }
-        } else "game mode needs Android 12"
+        } else "游戏模式需要 Android 12"
 
         return parts.joinToString(" · ")
     }

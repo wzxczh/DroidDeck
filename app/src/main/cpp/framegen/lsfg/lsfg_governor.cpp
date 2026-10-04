@@ -146,11 +146,11 @@ uint32_t ProbeGovernor::cap(uint32_t requested, float sourceRate, float loopRate
         // Logged, sparingly. This is a REFUSAL TO EVEN MEASURE, and it was
         // silent: on device it looked identical to "measured and declined".
         if ((refusalLog_++ % 600u) == 0u)
-            GOV_LOGI("thermal status %d - not probing (accepted=%u)", thermal_, accepted_);
+            GOV_LOGI("温度状态 %d — 不进行探测（已接受=%u）", thermal_, accepted_);
         const bool decayDue = !haveThermalDecay_
             || phaseSeconds(lastThermalDecay_, now) >= kThermalDecaySeconds;
         if (accepted_ > 0 && decayDue) {
-            GOV_LOGI("thermal status %d - dropping to %u generations", thermal_, accepted_ - 1);
+            GOV_LOGI("温度状态 %d — 降至 %u 个生成帧", thermal_, accepted_ - 1);
             accepted_--;
             lastThermalDecay_ = now;
             haveThermalDecay_ = true;
@@ -186,7 +186,7 @@ uint32_t ProbeGovernor::cap(uint32_t requested, float sourceRate, float loopRate
                 // Also previously silent. "Baseline completed but we did not
                 // probe" is a decision worth seeing in a log.
                 if ((refusalLog_++ % 600u) == 0u)
-                    GOV_LOGI("not probing: accepted=%u max=%u requested=%u thermal=%d",
+                    GOV_LOGI("不进行探测：已接受=%u max=%u 请求=%u 温度=%d",
                              accepted_, maxGenerations_, requested, thermal_);
                 enterBaseline(now);   // nothing to try; measure again later
             }
@@ -206,13 +206,13 @@ uint32_t ProbeGovernor::cap(uint32_t requested, float sourceRate, float loopRate
             if (outputImproved && sourceHeld) {
                 accepted_ = std::min(accepted_ + 1, maxGenerations_);
                 backoffStep_ = 0;
-                GOV_LOGI("probe kept: %u generations (output %.1f -> %.1f, source %.1f -> %.1f)",
+                GOV_LOGI("保留探测： %u 个生成帧（输出 %.1f -> %.1f，源 %.1f -> %.1f）",
                          accepted_, (double)baselineLoop_, (double)probeLoop,
                          (double)baselineSource_, (double)probeSource);
                 enterBaseline(now);
             } else {
-                GOV_LOGI("probe rejected at %u+1 (output %.1f -> %.1f, source %.1f -> %.1f) - "
-                         "backing off %.0fs", accepted_,
+                GOV_LOGI("在 %u+1 处拒绝探测（输出 %.1f -> %.1f，源 %.1f -> %.1f）— "
+                         "退避 %.0fs", accepted_,
                          (double)baselineLoop_, (double)probeLoop,
                          (double)baselineSource_, (double)probeSource,
                          (double)kBackoffSeconds[backoffStep_]);

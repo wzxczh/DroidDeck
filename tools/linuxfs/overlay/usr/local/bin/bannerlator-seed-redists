@@ -54,5 +54,5 @@ for reg in "$steam_root"/steamapps/compatdata/*/pfx/system.reg \
   [ "$(cat "$seeded" 2>/dev/null)" = "$stamp" ] && continue
   printf '%s\n' "$block" >>"$reg" || continue
   printf '%s\n' "$stamp" >"$seeded"
-  echo "== seeded redist markers into $reg"
+  echo "== 已写入 redistributable 标记到 $reg"
 done

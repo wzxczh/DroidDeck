@@ -40,11 +40,11 @@ internal class DeckyMenu(private val activity: android.app.Activity, private val
 
     fun installDecky(release: DeckyManager.Release) {
         if (deckyStage != null || SessionState.running) return
-        deckyStage = "Starting…"; deckyPercent = -1
+        deckyStage = "正在开始…"; deckyPercent = -1
         Thread({
             val problem = runCatching {
                 DeckyManager.install(activity, release) { label, value -> ui.post { deckyStage = label; deckyPercent = value } }
-            }.getOrElse { error -> "Decky install failed: ${error.message ?: error.javaClass.simpleName}" }
+            }.getOrElse { error -> "Decky 安装失败：${error.message ?: error.javaClass.simpleName}" }
             ui.post {
                 deckyStage = null; deckyPercent = -1; deckyInstalled = DeckyManager.installed(activity)
                 if (problem != null) android.widget.Toast.makeText(activity, problem, android.widget.Toast.LENGTH_LONG).show()

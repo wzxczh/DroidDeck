@@ -64,10 +64,10 @@ fun PhantomProcessGatePage(
         val compact = maxWidth < 620.dp && maxHeight < 500.dp
         SettingsPage(
             host = rememberMenuHost(),
-            title = "One Android setting to change",
+            title = "只需修改一项 Android 设置",
             eyebrow = "Steam",
-            lede = if (compact) null else "Android stops apps that start lots of background processes, and Steam starts dozens. " +
-                "Until this is changed, games close with no error.",
+            lede = if (compact) null else "Android 会阻止启动大量后台进程的应用，而 Steam 会启动几十个进程。" +
+                "在修改此设置之前，游戏会没有任何提示地关闭。",
             onBack = onDismiss,
             scrollContent = true,
             compactLayout = compact,
@@ -123,7 +123,7 @@ private fun FixGroup(
     onCancel: () -> Unit,
 ) {
     val pairing = stage is Stage.Waiting || stage is Stage.CodeNeeded || stage is Stage.Working
-    SettingsGroup(if (hasToggle) "Developer options" else "Fix it for me", compact = compact) {
+    SettingsGroup(if (hasToggle) "开发者选项" else "自动修复", compact = compact) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(if (compact) 10.dp else 14.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -131,14 +131,14 @@ private fun FixGroup(
             when {
                 pairing -> PairingProgress(stage, onCancel)
                 hasToggle -> {
-                    Body("Turn on “Disable child process restrictions”, then come back. Keep Developer options on afterwards: turning them off turns the switch back off.")
-                    PrimaryButton("Open Developer options", compact = compact, onClick = onOpenDeveloperOptions)
+                    Body("开启“停用子进程限制”后返回本页。请保持开发者选项开启：关闭开发者选项会把该开关一并关闭。")
+                    PrimaryButton("打开开发者选项", compact = compact, onClick = onOpenDeveloperOptions)
                 }
                 else -> {
-                    Body("This Android version has no switch for it, so DroidDeck changes it over Wireless debugging on this device. About a minute, no computer needed.")
+                    Body("此 Android 版本没有该开关，DroidDeck 将通过本设备的无线调试来修改。大约需要一分钟，无需电脑。")
                     (stage as? Stage.Failed)?.let { Body(it.error, error = true) }
                     PrimaryButton(
-                        if (stage is Stage.Failed) "Try again" else "Fix it for me",
+                        if (stage is Stage.Failed) "重试" else "自动修复",
                         compact = compact,
                         enabled = environment.onWifi && environment.notifications,
                         onClick = onFixWithWirelessDebugging,
@@ -147,11 +147,11 @@ private fun FixGroup(
             }
             if (!hasToggle && !pairing) {
                 if (!environment.onWifi) {
-                    Body("Wireless debugging needs Wi-Fi. Connect to any network first; it doesn't need internet.", warn = true)
+                    Body("无线调试需要 Wi-Fi。请先连接任意网络，无需可上网。", warn = true)
                 }
                 if (!environment.notifications) {
-                    Body("The pairing code is entered in a notification. Allow notifications for DroidDeck, or use Other ways.", warn = true)
-                    SecondaryButton("Allow notifications", compact = compact, onClick = onOpenNotificationSettings)
+                    Body("配对码需要在通知中输入。请允许 DroidDeck 发送通知，或使用“其他方式”。", warn = true)
+                    SecondaryButton("允许通知", compact = compact, onClick = onOpenNotificationSettings)
                 }
             }
         }
@@ -161,9 +161,9 @@ private fun FixGroup(
 @Composable
 private fun PairingProgress(stage: Stage, onCancel: () -> Unit) {
     val steps = listOf(
-        "Open Settings → Developer options → Wireless debugging and turn it on",
-        "Tap “Pair device with pairing code”",
-        "Type the code into the DroidDeck notification",
+        "打开“设置 → 开发者选项 → 无线调试”并开启",
+        "点按“使用配对码配对设备”",
+        "在 DroidDeck 的通知中输入配对码",
     )
     val active = when (stage) {
         Stage.Waiting -> 1
@@ -184,8 +184,8 @@ private fun PairingProgress(stage: Stage, onCancel: () -> Unit) {
         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
         Text(
             when (stage) {
-                Stage.Waiting -> "Waiting for the pairing pop-up…"
-                is Stage.CodeNeeded -> stage.error ?: "Pop-up found. Enter its code in the notification."
+                Stage.Waiting -> "正在等待配对弹窗…"
+                is Stage.CodeNeeded -> stage.error ?: "已找到配对弹窗，请在通知中输入其中的配对码。"
                 is Stage.Working -> stage.step
                 else -> ""
             },
@@ -193,16 +193,16 @@ private fun PairingProgress(stage: Stage, onCancel: () -> Unit) {
             color = if (stage is Stage.CodeNeeded && stage.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f),
         )
-        SecondaryButton("Cancel", compact = true, onClick = onCancel)
+        SecondaryButton("取消", compact = true, onClick = onCancel)
     }
 }
 
 @Composable
 private fun StatusGroup(status: PhantomProcessStatus, compact: Boolean) {
-    SettingsGroup("Status", compact = compact) {
+    SettingsGroup("状态", compact = compact) {
         Column(Modifier.fillMaxWidth().padding(if (compact) 10.dp else 14.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(PhantomProcessLimit.title(status), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
-            Body("Checking every 2 seconds. This page closes when it's off.")
+            Body("每 2 秒检查一次，关闭后本页面会自动关闭。")
         }
     }
 }
@@ -217,12 +217,12 @@ private fun OtherWays(
     onCopyCommand: () -> Unit,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
-    SettingsGroup("Other ways", compact = compact) {
+    SettingsGroup("其他方式", compact = compact) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().clickable { open = !open }.padding(horizontal = 14.dp, vertical = 10.dp),
         ) {
-            Body(if (hasToggle) "Wireless debugging, manual address, computer ADB" else "Manual address, computer ADB, Developer options", modifier = Modifier.weight(1f))
+            Body(if (hasToggle) "无线调试、手动地址、电脑 ADB" else "手动地址、电脑 ADB、开发者选项", modifier = Modifier.weight(1f))
             Text(if (open) "▴" else "▾", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (open) Column(
@@ -230,20 +230,20 @@ private fun OtherWays(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (hasToggle) {
-                SecondaryButton("Use Wireless debugging instead", compact = true, onClick = onFixWithWirelessDebugging)
+                SecondaryButton("改用无线调试", compact = true, onClick = onFixWithWirelessDebugging)
             } else {
-                Body("Some ROMs add the switch anyway. Look for “child process” in Developer options.")
-                SecondaryButton("Open Developer options", compact = true, onClick = onOpenDeveloperOptions)
+                Body("部分 ROM 也带有该开关，可在开发者选项中搜索“子进程”。")
+                SecondaryButton("打开开发者选项", compact = true, onClick = onOpenDeveloperOptions)
             }
-            Body("If the notification doesn't work, enter the pop-up's address and code yourself.")
-            SecondaryButton("Enter address manually", compact = true, onClick = onEnterAddressManually)
-            Body("From a computer with ADB:")
+            Body("如果通知无法使用，请自行输入弹窗中的地址和配对码。")
+            SecondaryButton("手动输入地址", compact = true, onClick = onEnterAddressManually)
+            Body("在装有 ADB 的电脑上执行：")
             Text(
                 PhantomProcessLimit.adbCommand(),
                 style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace, fontSize = 11.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            SecondaryButton("Copy command", compact = true, onClick = onCopyCommand)
+            SecondaryButton("复制命令", compact = true, onClick = onCopyCommand)
         }
     }
 }
@@ -271,16 +271,16 @@ fun DeveloperDisplayChoiceDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Open Developer options") },
+        title = { Text("打开开发者选项") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                Text("Choose which display to open Android Settings on.")
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = onMainScreen) { Text("Main screen") }
+                Text("选择在哪个屏幕上打开 Android“设置”。")
+                TextButton(modifier = Modifier.fillMaxWidth(), onClick = onMainScreen) { Text("主屏幕") }
                 displays.forEach { (id, label) ->
                     TextButton(modifier = Modifier.fillMaxWidth(), onClick = { onSecondaryScreen(id) }) { Text(label) }
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }

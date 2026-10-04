@@ -38,7 +38,7 @@ class PadMotion(private val context: Context, private val rotation: () -> Int) :
         val gyroscope = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         val accelerometer = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         if (gyroscope == null && accelerometer == null) {
-            Log.i(TAG, "pad motion: this device has no gyro or accelerometer")
+            Log.i(TAG, "手柄体感：本设备没有陀螺仪或加速度计")
             return
         }
         val worker = HandlerThread("pad-motion", android.os.Process.THREAD_PRIORITY_DISPLAY).apply { start() }
@@ -47,7 +47,7 @@ class PadMotion(private val context: Context, private val rotation: () -> Int) :
         active = true
         gyroscope?.let { sensors.registerListener(this, it, SAMPLING_US, handler) }
         accelerometer?.let { sensors.registerListener(this, it, SAMPLING_US, handler) }
-        Log.i(TAG, "pad motion: gyro ${gyroscope?.name ?: "none"}, accelerometer ${accelerometer?.name ?: "none"}")
+        Log.i(TAG, "手柄体感：陀螺仪 ${gyroscope?.name ?: "无"}，加速度计 ${accelerometer?.name ?: "无"}")
     }
 
     fun stop() {

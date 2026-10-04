@@ -102,7 +102,7 @@ public final class LinuxRuntimeInstaller {
             if (version.isEmpty() || url.isEmpty() || sha256.isEmpty()) return null;
             return new Release(version, url, sha256, json.optLong("size", 0L));
         } catch (Exception e) {
-            Log.w(TAG, "catalog: " + e);
+            Log.w(TAG, "目录读取失败：" + e);
             return null;
         }
     }
@@ -195,14 +195,14 @@ public final class LinuxRuntimeInstaller {
                 }
             });
             if (!ok) {
-                Log.w(TAG, "download failed");
+                Log.w(TAG, "下载失败");
                 return false;
             }
 
             if (listener != null) listener.onProgress("Verifying", -1);
             String actual = Hashes.sha256(archive);
             if (!release.sha256.equalsIgnoreCase(actual)) {
-                Log.w(TAG, "checksum mismatch: wanted " + release.sha256 + ", got " + actual);
+                Log.w(TAG, "校验和不匹配：期望 " + release.sha256 + "，实际 " + actual);
                 return false;
             }
 
@@ -237,7 +237,7 @@ public final class LinuxRuntimeInstaller {
                 File keptTo = new File(staging, USER_DATA);
                 FileUtils.delete(keptTo);
                 if (!keptFrom.renameTo(keptTo)) {
-                    Log.w(TAG, "could not carry " + USER_DATA + " across the update; rolling back");
+                    Log.w(TAG, "无法在更新中保留 " + USER_DATA + "，正在回滚");
                     FileUtils.delete(staging);
                     old.renameTo(root);
                     return false;
@@ -253,7 +253,7 @@ public final class LinuxRuntimeInstaller {
             FileUtils.delete(old);
             return LinuxRuntime.isInstalled(context);
         } catch (Exception e) {
-            Log.e(TAG, "install", e);
+            Log.e(TAG, "安装失败", e);
             return false;
         } finally {
             archive.delete();
@@ -266,10 +266,10 @@ public final class LinuxRuntimeInstaller {
         File home = new File(target, USER_DATA);
         if (target.isDirectory() && stagedHome.isDirectory() && (!home.exists() || isEmptyDir(home))) {
             FileUtils.delete(home);
-            if (stagedHome.renameTo(home)) Log.w(TAG, "recovered " + USER_DATA + " from an interrupted update");
+            if (stagedHome.renameTo(home)) Log.w(TAG, "已从被中断的更新中恢复 " + USER_DATA);
         }
         if (!root.isDirectory() && old.isDirectory() && old.renameTo(root)) {
-            Log.w(TAG, "restored the previous runtime after an interrupted update");
+            Log.w(TAG, "更新被中断后已还原先前的运行时");
         }
     }
 
@@ -310,7 +310,7 @@ public final class LinuxRuntimeInstaller {
                 // Refuse anything that would land outside the runtime directory.
                 File file = ArchivePaths.inside(destination, entry.getName());
                 if (file == null) {
-                    Log.w(TAG, "skipping entry outside the rootfs: " + entry.getName());
+                    Log.w(TAG, "跳过位于 rootfs 之外的条目：" + entry.getName());
                     continue;
                 }
                 if (entry.isDirectory()) {
@@ -330,7 +330,7 @@ public final class LinuxRuntimeInstaller {
                     // file from outside the rootfs into it.
                     File target = ArchivePaths.inside(destination, entry.getLinkName());
                     if (target == null) {
-                        Log.w(TAG, "skipping hard link outside the rootfs: " + entry.getLinkName());
+                        Log.w(TAG, "跳过指向 rootfs 之外的硬链接：" + entry.getLinkName());
                         continue;
                     }
                     file.delete();
@@ -357,7 +357,7 @@ public final class LinuxRuntimeInstaller {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "extract", e);
+            Log.e(TAG, "解压失败", e);
             return false;
         }
     }

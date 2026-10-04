@@ -5,11 +5,11 @@ import android.view.Display
 
 /** The control surface shown on a secondary Android display during a Linux session. */
 enum class SecondScreenMode(val id: String, val label: String) {
-    NONE("none", "None"),
-    KEYBOARD_TRACKPAD("keyboard-trackpad", "Keyboard + trackpad"),
-    TERMINAL("terminal", "Terminal"),
+    NONE("none", "无"),
+    KEYBOARD_TRACKPAD("keyboard-trackpad", "键盘 + 触控板"),
+    TERMINAL("terminal", "终端"),
     /** The Steam Deck controller's back grips and trackpads; offered while the pad is one. */
-    DECK_CONTROLS("deck-controls", "Deck grips + trackpads"),
+    DECK_CONTROLS("deck-controls", "Deck 背键 + 触控板"),
 }
 
 data class SecondScreenDisplay(val id: Int, val label: String)

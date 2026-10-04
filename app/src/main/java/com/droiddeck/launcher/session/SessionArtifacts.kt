@@ -48,11 +48,11 @@ object SessionArtifacts {
             // A session the system killed leaves its trace here and nowhere else.
             SessionLogCapture.dumpCrashBuffer(File(dir, "crash.log"))
             scrubFolder(dir)
-            try { File(dir, SCRUBBED_MARKER).writeText("scrubbed ${now()}\n") } catch (e: Exception) {}
+            try { File(dir, SCRUBBED_MARKER).writeText("已清理 ${now()}\n") } catch (e: Exception) {}
             SessionEvents.record("session.artifacts_collected", mapOf("reason" to reason), dir)
-            File(dir, COMPLETE_MARKER).writeText("collected: $reason at ${now()}\n")
+            File(dir, COMPLETE_MARKER).writeText("已收集：$reason，于 ${now()}\n")
         } catch (e: Exception) {
-            Log.w(TAG, "collecting session artifacts", e)
+            Log.w(TAG, "收集会话产物", e)
         }
     }
 
@@ -73,9 +73,9 @@ object SessionArtifacts {
         dirs.forEach { dir ->
             scrubFolder(dir)
             File(dir, "steam").takeIf { it.isDirectory }?.let { scrubFolder(it) }
-            try { File(dir, SCRUBBED_MARKER).writeText("scrubbed ${now()}\n") } catch (e: Exception) {}
+            try { File(dir, SCRUBBED_MARKER).writeText("已清理 ${now()}\n") } catch (e: Exception) {}
         }
-        Log.i(TAG, "scrubbed ${dirs.size} older session folder(s)")
+        Log.i(TAG, "已清理 ${dirs.size} 个较早的会话文件夹")
     }
 
     /**
@@ -92,7 +92,7 @@ object SessionArtifacts {
                 tmp.bufferedWriter().use { w -> LogRedactor.scrubTo(f, w) }
                 if (tmp.length() != f.length() || tmp.readBytes().contentEquals(f.readBytes()).not()) tmp.renameTo(f) else tmp.delete()
             } catch (e: Exception) {
-                Log.w(TAG, "could not scrub ${f.name}", e)
+                Log.w(TAG, "无法清理 ${f.name}", e)
             }
         }
     }
@@ -108,10 +108,10 @@ object SessionArtifacts {
                     src.forEachLine { line -> w.write(LogRedactor.redact(line)); w.newLine() }
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "could not scrub ${src.name}", e)
+                Log.w(TAG, "无法清理 ${src.name}", e)
             }
         }
-        Log.i(TAG, "collected ${out.listFiles()?.size ?: 0} Steam log(s), scrubbed, into $out")
+        Log.i(TAG, "已收集 ${out.listFiles()?.size ?: 0} 个 Steam 日志并清理，存入 $out")
     }
 
     /**
@@ -134,14 +134,14 @@ object SessionArtifacts {
             val newest = i == abandoned.lastIndex
             try {
                 File(dir, "ended-without-teardown.txt").writeText(
-                    "This session's process ended without running its own teardown - killed by\n" +
-                        "Android, a native crash, or the device going down - so the files below were\n" +
-                        "gathered when the app next started, at ${now()}.\n" +
-                        "The logs written during the session (session.log, app.log, wayland.log,\n" +
-                        "audio.log, device.txt) were on disk already and are as they were left.\n" +
-                        (if (newest) "" else "Steam's logs are not included: a later session has overwritten them.\n") +
-                        "crash.log holds Android's crash buffer as of the next app start - if this\n" +
-                        "session died of a crash, the entry is in there unless the device rebooted.\n"
+                    "本会话的进程在未执行自身清理的情况下结束——被 Android 结束、\n" +
+                        "发生原生崩溃，或设备关机——所以下面的文件是在应用下次启动时、\n" +
+                        "于 ${now()} 收集的。\n" +
+                        "会话期间写入的日志（session.log、app.log、wayland.log、\n" +
+                        "audio.log、device.txt）已在磁盘上，保持当时的状态不变。\n" +
+                        (if (newest) "" else "未包含 Steam 的日志：后续会话已将其覆盖。\n") +
+                        "crash.log 是应用下次启动时 Android 崩溃缓冲区的内容——若本次\n" +
+                        "会话死于崩溃，对应条目就在其中（除非设备已重启）。\n"
                 )
                 if (newest) {
                     copySteamLogs(context, dir)
@@ -149,10 +149,10 @@ object SessionArtifacts {
                 SessionLogCapture.dumpCrashBuffer(File(dir, "crash.log"))
                 SessionEvents.record("session.artifacts_recovered", mapOf("newest" to newest), dir)
                 scrubFolder(dir)
-                File(dir, COMPLETE_MARKER).writeText("collected: late, at next app start, ${now()}\n")
-                Log.i(TAG, "finished the abandoned session folder $dir")
+                File(dir, COMPLETE_MARKER).writeText("已收集：延迟处理，于下次应用启动，${now()}\n")
+                Log.i(TAG, "已处理被遗弃的会话文件夹 $dir")
             } catch (e: Exception) {
-                Log.w(TAG, "could not finish $dir", e)
+                Log.w(TAG, "无法完成 $dir", e)
             }
         }
     }

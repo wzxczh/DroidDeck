@@ -26,8 +26,8 @@ object GameStorage {
             val removable = try { Environment.isExternalStorageRemovable(dir) } catch (e: Exception) { false }
             if (!removable) return@mapNotNull null
             val volume = try { sm?.getStorageVolume(dir) } catch (e: Exception) { null }
-            val name = volume?.getDescription(context)?.takeIf { it.isNotBlank() && !it.equals("android", true) } ?: "SD card"
-            Option("$name · ${free(dir)} free", File(dir, "steam").absolutePath)
+            val name = volume?.getDescription(context)?.takeIf { it.isNotBlank() && !it.equals("android", true) } ?: "SD 卡"
+            Option("$name · ${free(dir)} 可用", File(dir, "steam").absolutePath)
         }
     }
 
@@ -44,12 +44,12 @@ object GameStorage {
     fun prepare(path: String): String? {
         val root = File(path)
         val steamapps = File(root, "steamapps")
-        if (!steamapps.isDirectory && !steamapps.mkdirs()) return "cannot create folders in $path"
+        if (!steamapps.isDirectory && !steamapps.mkdirs()) return "无法在 $path 中创建文件夹"
         val probe = File(steamapps, ".writable")
         return try {
-            if (!probe.createNewFile() && !probe.isFile) "cannot write in $path" else { probe.delete(); null }
+            if (!probe.createNewFile() && !probe.isFile) "无法写入 $path" else { probe.delete(); null }
         } catch (e: Exception) {
-            "cannot write in $path (${e.message})"
+            "无法写入 $path（${e.message}）"
         }
     }
 
@@ -66,5 +66,5 @@ object GameStorage {
     /** The label the client shows for a chosen folder: its last name, or the volume's. */
     fun labelFor(context: Context, path: String): String =
         options(context).firstOrNull { it.path == path }?.label?.substringBefore(" ·")
-            ?: File(path).name.ifEmpty { "Folder" }
+            ?: File(path).name.ifEmpty { "文件夹" }
 }

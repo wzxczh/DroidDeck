@@ -28,7 +28,7 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
     /** The latest Banners-Turnip release as each driver menu offers it (see [refreshReleaseRows]). */
     var linuxDownloads by mutableStateOf<List<com.droiddeck.launcher.ui.DownloadRow>>(emptyList())
     var androidDownloads by mutableStateOf<List<com.droiddeck.launcher.ui.DownloadRow>>(emptyList())
-    var releaseStatus by mutableStateOf("Not checked yet - tap refresh to look for new drivers")
+    var releaseStatus by mutableStateOf("尚未检查 - 点按刷新查找新驱动")
     var releaseChecking by mutableStateOf(false)
     var canRestoreBundled by mutableStateOf(false)
     /** Asset name -> download percent, while it downloads. */
@@ -42,7 +42,7 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
         val lm = LinuxVulkanDriverManager(activity)
         fun origin(id: String) = if (TurnipReleases.isDownloaded(activity, id)) DriverRow.DOWNLOADED else DriverRow.IMPORTED
         linuxRows = LinuxVulkanDriver.optionValues(activity).map { id ->
-            if (id.isEmpty()) DriverRow("", "Runtime default", "the Turnip built into the runtime", false)
+            if (id.isEmpty()) DriverRow("", "运行时默认", "运行时内置的 Turnip", false)
             else DriverRow(
                 id, lm.getDriverName(id),
                 listOfNotNull(
@@ -58,8 +58,8 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
         val auto = td.autoId()
         androidRows = buildList {
             add(DriverRow(
-                TurnipDriver.AUTO, "Auto - picked by GPU",
-                if (auto == "system") "system Vulkan: no bundled build for this GPU" else "${td.displayName(auto)} (bundled)",
+                TurnipDriver.AUTO, "自动 - 由 GPU 选择",
+                if (auto == "system") "系统 Vulkan：此 GPU 没有内置构建" else "${td.displayName(auto)}（内置）",
                 false,
             ))
             for (id in td.visibleBundled()) add(DriverRow(id, td.displayName(id), td.driverVersion(id), true, DriverRow.BUNDLED))
@@ -84,12 +84,12 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
             } catch (e: IllegalArgumentException) {
                 e.message
             } catch (e: Exception) {
-                Log.w(TAG, "driver import", e)
-                "Import failed: ${e.message}"
+                Log.w(TAG, "驱动导入", e)
+                "导入失败：${e.message}"
             }
             ui.post {
                 android.widget.Toast.makeText(
-                    activity, problem ?: "Imported ${name ?: "driver"}",
+                    activity, problem ?: "已导入 ${name ?: "驱动"}",
                     if (problem != null) android.widget.Toast.LENGTH_LONG else android.widget.Toast.LENGTH_SHORT,
                 ).show()
                 refreshDrivers()
@@ -114,7 +114,7 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
             if (SessionPrefs.androidDriver(activity) == id) SessionPrefs.setAndroidDriver(activity, TurnipDriver.AUTO)
         }
         TurnipReleases.forget(activity, id)
-        android.widget.Toast.makeText(activity, "Deleted ${id}", android.widget.Toast.LENGTH_SHORT).show()
+        android.widget.Toast.makeText(activity, "已删除 ${id}", android.widget.Toast.LENGTH_SHORT).show()
         refreshDrivers()
     }
 
@@ -133,20 +133,20 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
         linuxDownloads = rows(linux = true)
         androidDownloads = rows(linux = false)
         if (!releaseChecking) releaseStatus = when (check) {
-            null -> "Not checked yet - tap refresh to look for new drivers"
-            else -> "Latest: " + check.latest.joinToString(" · ") { "${it.first} ${it.second}" } +
-                (if (check.failed.isEmpty()) "" else " · ${check.failed.joinToString()} unreachable") +
-                " · checked ${ago(check.checkedAt)}"
+            null -> "尚未检查 - 点按刷新查找新驱动"
+            else -> "最新版本：" + check.latest.joinToString(" · ") { "${it.first} ${it.second}" } +
+                (if (check.failed.isEmpty()) "" else " · ${check.failed.joinToString()} 无法访问") +
+                " · 检查于 ${ago(check.checkedAt)}"
         }
     }
 
     private fun ago(t: Long): String {
         val m = ((System.currentTimeMillis() - t) / 60_000).coerceAtLeast(0)
         return when {
-            m < 1 -> "just now"
-            m < 60 -> "$m min ago"
-            m < 48 * 60 -> "${m / 60} h ago"
-            else -> "${m / (24 * 60)} days ago"
+            m < 1 -> "刚刚"
+            m < 60 -> "$m 分钟前"
+            m < 48 * 60 -> "${m / 60} 小时前"
+            else -> "${m / (24 * 60)} 天前"
         }
     }
 
@@ -154,15 +154,15 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
     fun checkLatestTurnip() {
         if (releaseChecking) return
         releaseChecking = true
-        releaseStatus = "Checking Banners-Turnip and WinNative…"
+        releaseStatus = "正在检查 Banners-Turnip 和 WinNative…"
         Thread({
             val problem = try { TurnipReleases.refresh(activity); null } catch (e: Exception) {
-                Log.w(TAG, "latest Turnip check", e); e.message ?: "check failed"
+                Log.w(TAG, "latest Turnip check", e); e.message ?: "检查失败"
             }
             ui.post {
                 releaseChecking = false
                 refreshReleaseRows()
-                if (problem != null) releaseStatus = "Couldn't check: $problem"
+                if (problem != null) releaseStatus = "无法检查：$problem"
             }
         }, "turnip-release-check").start()
     }
@@ -187,15 +187,15 @@ internal class DriverMenus(private val activity: Activity, private val ui: Handl
             } catch (e: IllegalArgumentException) {
                 e.message
             } catch (e: Exception) {
-                Log.w(TAG, "release driver download", e)
-                "Download failed: ${e.message}"
+                Log.w(TAG, "发布版驱动下载", e)
+                "下载失败：${e.message}"
             } finally {
                 file?.let { com.droiddeck.launcher.core.FileUtils.delete(it) }
             }
             ui.post {
                 releaseProgress.remove(assetName)
                 android.widget.Toast.makeText(
-                    activity, problem ?: "Installed ${asset.name.removeSuffix(".zip")} - pick it in the menu",
+                    activity, problem ?: "已安装 ${asset.name.removeSuffix(".zip")} - 请在菜单中选择",
                     android.widget.Toast.LENGTH_LONG,
                 ).show()
                 refreshDrivers()

@@ -101,7 +101,7 @@ bool Engine::init(VkDevice device, VkPhysicalDevice physicalDevice, const std::s
     if (device == VK_NULL_HANDLE || physicalDevice == VK_NULL_HANDLE || cachePath.empty())
         return false;
     if (!lsfgVkdReady()) {
-        LSFG_LOGW("dispatch not initialised; frame generation unavailable");
+        LSFG_LOGW("调度入口未初始化；帧生成不可用");
         return false;
     }
 
@@ -110,11 +110,11 @@ bool Engine::init(VkDevice device, VkPhysicalDevice physicalDevice, const std::s
 
     shaders_ = std::make_unique<LsfgShaders>(device_, cachePath_, spirvTarget);
     if (!shaders_->IsValid()) {
-        LSFG_LOGW("shader cache at %s did not yield all modules", cachePath.c_str());
+        LSFG_LOGW("%s 处的着色器缓存未产出全部模块", cachePath.c_str());
         shaders_.reset();
         return false;
     }
-    LSFG_LOGI("frame generation shaders ready");
+    LSFG_LOGI("帧生成着色器就绪");
     return true;
 }
 
@@ -172,7 +172,7 @@ bool Engine::prepare(uint32_t width, uint32_t height, VkFormat format) {
     if (!chain_->Valid()) {
         // A device that cannot build the chain reports unsupported once and
         // stops trying, rather than thrashing allocations every frame.
-        LSFG_LOGW("chain build failed at %ux%u; frame generation unavailable", width, height);
+        LSFG_LOGW("在 %ux%u 下构建处理链失败；帧生成不可用", width, height);
         chain_.reset();
         unavailable_ = true;
         return false;
@@ -191,7 +191,7 @@ bool Engine::prepare(uint32_t width, uint32_t height, VkFormat format) {
     generating_ = false;
     pacer_.Reset();
     governor_.reset();
-    LSFG_LOGI("chain built at %ux%u, flow %ux%u scale %.2f (preset %.2f, guest %ux%u)",
+    LSFG_LOGI("已构建处理链 %ux%u，光流 %ux%u 缩放 %.2f（预设 %.2f，guest %ux%u）",
               width, height, (unsigned)(width * scale), (unsigned)(height * scale),
               (double)scale, (double)flowScale_,
               peakGuestExtent_.width, peakGuestExtent_.height);
@@ -233,7 +233,7 @@ uint32_t Engine::plan(uint32_t capacity, uint64_t sourceFrames) {
         primeHistory_ = true;
         generating_ = false;
         if ((primeLogCount_++ % 60) == 0)
-            LSFG_LOGI("priming the input ring (last copied frame %llu, now at %llu)",
+            LSFG_LOGI("正在预热输入环（上一复制帧 %llu，当前 %llu）",
                       (unsigned long long)(haveCopied_ ? lastCopiedCount_ : 0),
                       (unsigned long long)frameCount_);
     }
@@ -241,16 +241,16 @@ uint32_t Engine::plan(uint32_t capacity, uint64_t sourceFrames) {
     if ((planCalls_++ % kTelemetryInterval) == 0) {
         const LsfgPacerStats stats = pacer_.Stats();
         const float wanted = stats.source_rate * (float)(plan_.generations + 1);
-        LSFG_LOGI("presented=%.1f fps (measured at the swapchain)", (double)presentedRate_);
-        LSFG_LOGI("pace gen=%zu max=%zu cap=%u guest=%.1f loop=%.1f refresh=%.1f target=%.0f "
+        LSFG_LOGI("呈现=%.1f fps（在 swapchain 处测量）", (double)presentedRate_);
+        LSFG_LOGI("配速 gen=%zu max=%zu cap=%u guest=%.1f loop=%.1f refresh=%.1f target=%.0f "
                   "slots=%.2f drawn=%llu needs=%.1fHz%s%s",
                   plan_.generations, pacer_.MaxGenerations(), capacity,
                   (double)stats.source_rate, (double)stats.loop_rate, (double)stats.refresh_rate,
                   (double)stats.target_rate, (double)stats.slots,
                   (unsigned long long)stats.last_drawn, (double)wanted,
                   (stats.refresh_rate > 0.0f && wanted > stats.refresh_rate + 1.0f)
-                      ? " PANEL-BOUND" : "",
-                  stats.rates_settled ? (warm_ ? "" : " cold") : " sampling");
+                      ? " 受面板限制" : "",
+                  stats.rates_settled ? (warm_ ? "" : " 冷启动") : " 采样中");
     }
 
     return generating_ ? (uint32_t)plan_.generations : 0;

@@ -7,14 +7,14 @@ object ControllerPrefs {
     const val OFF = "off"
 
     val tints = listOf(
-        STEAM_BLUE to "Steam blue",
-        0xFF66C0F4.toInt() to "Sky",
-        0xFFE8EEF4.toInt() to "White",
-        0xFFC77DFF.toInt() to "Violet",
-        0xFF3DDC84.toInt() to "Green",
-        0xFFFFA726.toInt() to "Amber",
-        0xFFFF5252.toInt() to "Red",
-        0xFFFF6FB5.toInt() to "Pink",
+        STEAM_BLUE to "Steam 蓝",
+        0xFF66C0F4.toInt() to "天蓝",
+        0xFFE8EEF4.toInt() to "白色",
+        0xFFC77DFF.toInt() to "紫色",
+        0xFF3DDC84.toInt() to "绿色",
+        0xFFFFA726.toInt() to "琥珀",
+        0xFFFF5252.toInt() to "红色",
+        0xFFFF6FB5.toInt() to "粉色",
     )
 
     val opacities = listOf(40, 60, 80, 100)
@@ -22,17 +22,17 @@ object ControllerPrefs {
     val sizes = listOf(80, 90, 100, 110, 125)
 
     val mappable = listOf(
-        "a" to "A button", "b" to "B button", "x" to "X button", "y" to "Y button",
-        "lb" to "Left bumper", "rb" to "Right bumper", "lt" to "Left trigger", "rt" to "Right trigger",
-        "select" to "View button", "start" to "Menu button",
+        "a" to "A 键", "b" to "B 键", "x" to "X 键", "y" to "Y 键",
+        "lb" to "左肩键", "rb" to "右肩键", "lt" to "左扳机", "rt" to "右扳机",
+        "select" to "View 键", "start" to "菜单键",
     )
 
     val targets = listOf(
         "a" to "A", "b" to "B", "x" to "X", "y" to "Y",
         "lb" to "LB", "rb" to "RB", "lt" to "LT", "rt" to "RT",
-        "l3" to "L3", "r3" to "R3", "select" to "View", "start" to "Menu", "guide" to "Steam",
-        "up" to "D-pad up", "down" to "D-pad down", "left" to "D-pad left", "right" to "D-pad right",
-        OFF to "Hidden",
+        "l3" to "L3", "r3" to "R3", "select" to "View", "start" to "菜单", "guide" to "Steam",
+        "up" to "方向键上", "down" to "方向键下", "left" to "方向键左", "right" to "方向键右",
+        OFF to "隐藏",
     )
 
     class Settings(

@@ -80,12 +80,12 @@ static void tell_app(void) {
     }
     if (enabled == g_told_enabled && ti == g_told_ti && !memcmp(rect, g_told_rect, sizeof(rect))) return;
     if (enabled && (!g_told_enabled || ti != g_told_ti))
-        banner_log("text-input", "text input enabled by %s (cursor rect %d,%d %dx%d)", ti_program(ti),
+        banner_log("text-input", "%s 启用了文本输入（光标矩形 %d,%d %dx%d）", ti_program(ti),
                    rect[0], rect[1], rect[2], rect[3]);
     else if (enabled)
-        banner_log("text-input", "cursor rect from %s: %d,%d %dx%d", ti_program(ti), rect[0], rect[1], rect[2], rect[3]);
+        banner_log("text-input", "%s 的光标矩形：%d,%d %dx%d", ti_program(ti), rect[0], rect[1], rect[2], rect[3]);
     else
-        banner_log("text-input", "text input disabled%s%s", g_told_ti ? " by " : "", g_told_ti ? ti_program(g_told_ti) : "");
+        banner_log("text-input", "文本输入已停用%s%s", g_told_ti ? "，由 " : "", g_told_ti ? ti_program(g_told_ti) : "");
     g_told_enabled = enabled;
     g_told_ti = ti;
     memcpy(g_told_rect, rect, sizeof(rect));
@@ -235,13 +235,13 @@ static int32_t utf8_offset(const char *s, size_t len, int chars) {
 void text_input_host_commit(const char *utf8, size_t len) {
     struct text_input *ti = active_input();
     if (!ti) {
-        banner_log("text-input", "typed text (%zu chars) dropped: no program accepts text input", utf8_chars(utf8, len));
+        banner_log("text-input", "输入的文本（%zu 字符）已丢弃：没有程序接受文本输入", utf8_chars(utf8, len));
         return;
     }
     if (ti->has_preedit) { zwp_text_input_v3_send_preedit_string(ti->res, "", 0, 0); ti->has_preedit = 0; }
     zwp_text_input_v3_send_commit_string(ti->res, utf8);
     zwp_text_input_v3_send_done(ti->res, ti->serial);
-    banner_log("text-input", "committed %zu chars to %s", utf8_chars(utf8, len), ti_program(ti));
+    banner_log("text-input", "%zu 个字符已提交给 %s", utf8_chars(utf8, len), ti_program(ti));
 }
 
 void text_input_host_preedit(const char *utf8, size_t len, int cursor_begin, int cursor_end) {
@@ -266,7 +266,7 @@ void text_input_host_delete(int before, int after) {
     }
     for (int i = 0; i < before; i++) { banner_inject_key(KEY_BACKSPACE, 1); banner_inject_key(KEY_BACKSPACE, 0); }
     for (int i = 0; i < after; i++) { banner_inject_key(KEY_DELETE, 1); banner_inject_key(KEY_DELETE, 0); }
-    banner_log("text-input", "deleted %d before / %d after the caret (as key presses)", before, after);
+    banner_log("text-input", "已删除光标前 %d 个、光标后 %d 个字符（以按键方式）", before, after);
 }
 
 void text_input_init(struct wl_display *display) {

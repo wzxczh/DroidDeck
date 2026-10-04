@@ -23,7 +23,7 @@ class RumbleComponent : SessionPart() {
     @Volatile private var server: LocalServerSocket? = null
 
     override fun start() {
-        val s = try { LocalServerSocket(NAME) } catch (e: Exception) { Log.w(TAG, "rumble: no listener ($e)"); return }
+        val s = try { LocalServerSocket(NAME) } catch (e: Exception) { Log.w(TAG, "震动：无监听端（$e）"); return }
         server = s
         Thread({
             while (server === s) {
@@ -40,7 +40,7 @@ class RumbleComponent : SessionPart() {
                 }
             }
         }, "rumble").apply { isDaemon = true; start() }
-        Log.i(TAG, "rumble: listening on @$NAME")
+        Log.i(TAG, "震动：正在 @$NAME 监听")
     }
 
     override fun stop() {
@@ -63,7 +63,7 @@ class RumbleComponent : SessionPart() {
             if (vibrator.hasAmplitudeControl()) vibrator.vibrate(VibrationEffect.createOneShot(duration, amplitude))
             else vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
         } catch (e: Exception) {
-            Log.w(TAG, "rumble: $e")
+            Log.w(TAG, "震动：$e")
         }
     }
 

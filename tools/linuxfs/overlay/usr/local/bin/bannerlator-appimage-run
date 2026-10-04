@@ -5,7 +5,7 @@
 # start (APPIMAGE_EXTRACT_AND_RUN) would cost the whole image in /tmp each time.
 #   bannerlator-appimage-run /opt/appimages/user/<id> [args...]
 set -u
-dir=${1:?usage: bannerlator-appimage-run <imported AppImage directory> [args...]}
+dir=${1:?用法: bannerlator-appimage-run <导入的 AppImage 目录> [args...]}
 shift
 export APPDIR=$dir/app
 # APPIMAGE is left unset on purpose: with it an app believes it runs from an image file and offers
@@ -14,7 +14,7 @@ export APPDIR=$dir/app
 unset APPIMAGE
 export ARGV0=$(cat "$dir/name" 2>/dev/null || basename "$dir")
 if [ ! -x "$APPDIR/AppRun" ]; then
-  echo "bannerlator-appimage-run: $APPDIR/AppRun is missing; import the AppImage again" >&2
+  echo "bannerlator-appimage-run: 缺少 $APPDIR/AppRun; 请重新导入该 AppImage" >&2
   exit 127
 fi
 # Browsers sandbox their own children with namespaces and a setuid helper, neither of which proot

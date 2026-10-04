@@ -25,19 +25,19 @@ int vk_loader_open(const char *driver_path, const char *library_name,
             native_lib_dir, driver_path, library_name, NULL, NULL);
         free(tmpdir);
         __android_log_print(g_handle ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, TAG,
-                            "adrenotools Turnip handle=%p (%s / %s)", g_handle,
+                            "adrenotools Turnip 句柄=%p（%s / %s）", g_handle,
                             driver_path, library_name);
     }
     if (!g_handle) {
         g_handle = dlopen("libvulkan.so", RTLD_LOCAL | RTLD_NOW);
         __android_log_print(ANDROID_LOG_WARN, TAG,
-                            "no adrenotools driver -> system libvulkan handle=%p "
-                            "(dmabuf import likely unsupported)", g_handle);
+                            "没有 adrenotools 驱动 -> 系统 libvulkan 句柄=%p"
+                            "（dmabuf 导入大概率不受支持）", g_handle);
     }
     if (!g_handle) return -1;
     g_gip = (PFN_vkGetInstanceProcAddr)dlsym(g_handle, "vkGetInstanceProcAddr");
     if (!g_gip) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "no vkGetInstanceProcAddr");
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "找不到 vkGetInstanceProcAddr");
         return -1;
     }
 #define X(n) g_vk.n = (PFN_vk##n)g_gip(NULL, "vk" #n);

@@ -93,13 +93,13 @@ class PerfHud(context: Context) {
         val stats = try { WaylandCompositor.nativeFrameGenStats() } catch (t: Throwable) { null }
         val problem = try { WaylandCompositor.nativeFrameGenProblem() } catch (t: Throwable) { -1 }
         return when {
-            problem == 1 -> "$name: unsupported"
-            problem == 2 -> "$name: engine failed"
+            problem == 1 -> "$name：不支持"
+            problem == 2 -> "$name：引擎失败"
             stats != null && stats[3] > 1f -> {
                 val source = if (stats[2] > 1f) stats[2] else base
                 String.format(Locale.US, "%s %d×  %.0f → %.0f fps", name, multiplier, source, stats[3])
             }
-            else -> String.format(Locale.US, "%s %d×  %s · FG starting", name, multiplier, fps(base))
+            else -> String.format(Locale.US, "%s %d×  %s · 帧生成启动中", name, multiplier, fps(base))
         }
     }
 

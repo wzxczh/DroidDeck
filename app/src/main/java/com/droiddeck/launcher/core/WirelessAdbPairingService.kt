@@ -35,7 +35,7 @@ class WirelessAdbPairingService : Service() {
     private var pairingHost: String? = null
     private var pairingPort: Int? = null
     @Volatile private var working = false
-    private val timeout = Runnable { finish(Stage.Failed("Timed out waiting for the pairing pop-up. Try again from DroidDeck.")) }
+    private val timeout = Runnable { finish(Stage.Failed("等待配对弹窗超时，请在 DroidDeck 中重试。")) }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -75,13 +75,13 @@ class WirelessAdbPairingService : Service() {
             override fun onServiceLost(serviceInfo: NsdServiceInfo) = Unit
             override fun onDiscoveryStopped(serviceType: String) = Unit
             override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                main.post { finish(Stage.Failed("Could not look for the pairing pop-up ($errorCode). Check that Wi-Fi is on.")) }
+                main.post { finish(Stage.Failed("无法搜索配对弹窗（$errorCode），请检查 Wi-Fi 是否开启。")) }
             }
             override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) = Unit
         }
         runCatching { manager.discoverServices("$PAIRING_TYPE.", NsdManager.PROTOCOL_DNS_SD, listener) }
             .onSuccess { nsd = manager; discovery = listener }
-            .onFailure { finish(Stage.Failed("Could not look for the pairing pop-up: ${it.localizedMessage}")) }
+            .onFailure { finish(Stage.Failed("无法搜索配对弹窗：${it.localizedMessage}")) }
     }
 
     private fun resolveListener() = object : NsdManager.ResolveListener {
@@ -107,34 +107,34 @@ class WirelessAdbPairingService : Service() {
             return
         }
         if (code.length != 6) {
-            show(Stage.CodeNeeded("Enter all 6 digits of the code"))
+            show(Stage.CodeNeeded("请输入完整的 6 位配对码"))
             return
         }
         working = true
-        show(Stage.Working("Pairing…"))
+        show(Stage.Working("正在配对…"))
         Thread({
             val paired = runCatching { kotlinx.coroutines.runBlocking { WirelessAdbFix.pair(this@WirelessAdbPairingService, WirelessAdbFix.LOOPBACK, port, code) } }
             if (paired.isFailure) {
                 main.post {
                     working = false
                     pairingPort = null
-                    show(Stage.CodeNeeded("That code didn't work. Open the pairing pop-up again and enter its new code."))
+                    show(Stage.CodeNeeded("配对码无效，请重新打开配对弹窗并输入新的配对码。"))
                 }
                 return@Thread
             }
             main.post {
                 stopDiscovery()
-                show(Stage.Working("Paired. Connecting…"))
+                show(Stage.Working("配对成功，正在连接…"))
             }
             val result = runCatching {
                 val connectPort = WirelessAdbFix.localConnectPort(this)
-                    ?: error("Paired, but the Wireless debugging port was not found. Keep Wireless debugging on and try again.")
-                main.post { show(Stage.Working("Applying the setting…")) }
+                    ?: error("已配对，但未找到无线调试端口。请保持无线调试开启后重试。")
+                main.post { show(Stage.Working("正在应用设置…")) }
                 WirelessAdbFix.setChildProcessLimit(this, WirelessAdbFix.LOOPBACK, connectPort, false)
             }
             main.post {
                 working = false
-                finish(result.exceptionOrNull()?.let { Stage.Failed(it.localizedMessage ?: "Wireless debugging command failed") } ?: Stage.Done)
+                finish(result.exceptionOrNull()?.let { Stage.Failed(it.localizedMessage ?: "无线调试命令执行失败") } ?: Stage.Done)
             }
         }, "wireless-adb-pairing").start()
     }
@@ -174,9 +174,9 @@ class WirelessAdbPairingService : Service() {
 
     private fun notification(stage: Stage): Notification {
         val manager = getSystemService(NotificationManager::class.java)
-        manager?.createNotificationChannel(NotificationChannel(CHANNEL_ID, "Wireless debugging setup",
+        manager?.createNotificationChannel(NotificationChannel(CHANNEL_ID, "无线调试设置",
             NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "Asks for the Wireless debugging pairing code while Settings is open"
+            description = "在“设置”界面打开时请求无线调试配对码"
             setShowBadge(false)
             setSound(null, null)
             enableVibration(false)
@@ -193,41 +193,41 @@ class WirelessAdbPairingService : Service() {
             .setCategory(Notification.CATEGORY_STATUS)
         when (stage) {
             Stage.Waiting, Stage.Idle -> builder
-                .setContentTitle("Pair Wireless debugging")
-                .setContentText("Turn on Wireless debugging, then tap “Pair device with pairing code”.")
+                .setContentTitle("配对无线调试")
+                .setContentText("开启无线调试，然后点按“使用配对码配对设备”。")
                 .setStyle(Notification.BigTextStyle().bigText(
-                    "Turn on Wireless debugging, then tap “Pair device with pairing code”. Stay in Settings: the code goes in this notification."))
+                    "开启无线调试，然后点按“使用配对码配对设备”。请停留在“设置”界面：配对码会显示在此通知中。"))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .addAction(Notification.Action.Builder(null, "Cancel", cancel).build())
+                .addAction(Notification.Action.Builder(null, "取消", cancel).build())
             is Stage.CodeNeeded -> {
                 val reply = PendingIntent.getService(this, 2,
                     Intent(this, WirelessAdbPairingService::class.java).setAction(ACTION_CODE),
                     if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                     else PendingIntent.FLAG_UPDATE_CURRENT)
-                val input = RemoteInput.Builder(KEY_CODE).setLabel("6-digit pairing code").build()
-                val text = stage.error ?: "Tap Enter code and type the 6 digits shown in Settings."
+                val input = RemoteInput.Builder(KEY_CODE).setLabel("6 位配对码").build()
+                val text = stage.error ?: "点按“输入配对码”，输入“设置”中显示的 6 位数字。"
                 builder
-                    .setContentTitle(if (stage.error == null) "Enter the Wi-Fi pairing code" else "Try the code again")
+                    .setContentTitle(if (stage.error == null) "输入 Wi-Fi 配对码" else "请重试配对码")
                     .setContentText(text)
                     .setStyle(Notification.BigTextStyle().bigText(text))
                     .setOngoing(true)
-                    .addAction(Notification.Action.Builder(null, "Enter code", reply).addRemoteInput(input).build())
-                    .addAction(Notification.Action.Builder(null, "Cancel", cancel).build())
+                    .addAction(Notification.Action.Builder(null, "输入配对码", reply).addRemoteInput(input).build())
+                    .addAction(Notification.Action.Builder(null, "取消", cancel).build())
             }
             is Stage.Working -> builder
-                .setContentTitle("Setting up Steam")
+                .setContentTitle("正在配置 Steam")
                 .setContentText(stage.step)
                 .setProgress(0, 0, true)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
             Stage.Done -> builder
-                .setContentTitle("Steam is ready")
-                .setContentText("Tap to go back to DroidDeck. You can turn Wireless debugging off now.")
-                .setStyle(Notification.BigTextStyle().bigText("Tap to go back to DroidDeck. You can turn Wireless debugging off now."))
+                .setContentTitle("Steam 已就绪")
+                .setContentText("点按可返回 DroidDeck，现在可以关闭无线调试了。")
+                .setStyle(Notification.BigTextStyle().bigText("点按可返回 DroidDeck，现在可以关闭无线调试了。"))
                 .setAutoCancel(true)
             is Stage.Failed -> builder
-                .setContentTitle("Wireless debugging setup stopped")
+                .setContentTitle("无线调试设置已停止")
                 .setContentText(stage.error)
                 .setStyle(Notification.BigTextStyle().bigText(stage.error))
                 .setAutoCancel(true)

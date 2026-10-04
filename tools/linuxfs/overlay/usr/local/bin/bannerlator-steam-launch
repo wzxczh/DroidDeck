@@ -16,12 +16,12 @@
 set -u
 ui=${1:-desktop}
 target=${2:-}
-case $ui in desktop|bigpicture) ;; *) echo "usage: $0 desktop|bigpicture [appid|steam://url]" >&2; exit 64 ;; esac
+case $ui in desktop|bigpicture) ;; *) echo "用法: $0 desktop|bigpicture [appid|steam://url]" >&2; exit 64 ;; esac
 url=
 case $target in
   "") ;;
   steam://*) url=$target ;;
-  *[!0-9]*) echo "not an app id or steam:// URL: $target" >&2; exit 64 ;;
+  *[!0-9]*) echo "不是 app id 或 steam:// URL: $target" >&2; exit 64 ;;
   *) url=steam://rungameid/$target ;;
 esac
 
@@ -35,10 +35,10 @@ if [ "${BL_DESKTOP:-}" = 1 ] && [ -n "${WLR_RENDERER:-}" ] && [ "$WLR_RENDERER" 
     # One client at a time: the running one takes the request (a second start hands its command
     # line over and exits). No game asked for = switch it to the UI that was clicked.
     [ -n "$url" ] || { [ "$ui" = bigpicture ] && url=steam://open/bigpicture || url=steam://open/main; }
-    echo "bannerlator-steam-launch: the client is running on the desktop; handing it $url" | tee -a "$log"
+    echo "bannerlator-steam-launch: 客户端正在桌面上运行; 已把 $url 交给它" | tee -a "$log"
     exec "$client" "$url"
   fi
-  echo "bannerlator-steam-launch: starting the Steam client on the desktop ($ui${url:+, $url}); log: $log"
+  echo "bannerlator-steam-launch: 正在桌面上启动 Steam 客户端 ($ui${url:+, $url}); 日志: $log"
   # BL_INSIDE: the session script's Steam start-up without gamescope in front of it. The desktop UI
   # unless Big Picture was asked for; never Deck mode (its Quick Access Menu needs gamescope).
   export BL_INSIDE=1 BL_STEAMDECK=0
@@ -50,9 +50,9 @@ fi
 # The software desktop, or outside the desktop: ask the app for a Steam session.
 dir=${BL_LAUNCH_DIR:-}
 if [ -z "$dir" ] || [ ! -d "$dir" ]; then
-  echo "bannerlator-steam-launch: not inside a DroidDeck session (BL_LAUNCH_DIR unset)" >&2
+  echo "bannerlator-steam-launch: 不在 DroidDeck 会话内 (BL_LAUNCH_DIR 未设置)" >&2
   exit 69
 fi
 # Written whole, then renamed: the app reads it on close, never half-written.
 printf 'ui=%s\nurl=%s\n' "$ui" "$url" > "$dir/steam-launch.tmp" && mv -f "$dir/steam-launch.tmp" "$dir/steam-launch"
-echo "bannerlator-steam-launch: asked the app for Steam ($ui${url:+, $url})"
+echo "bannerlator-steam-launch: 已请求应用启动 Steam ($ui${url:+, $url})"

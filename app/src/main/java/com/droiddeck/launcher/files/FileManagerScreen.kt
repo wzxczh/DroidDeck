@@ -261,11 +261,11 @@ fun FileManagerScreen(
     fun performDelete(file: File) {
         scope.launch {
             isOperationRunning = true
-            operationLabel = "Deleting..."
+            operationLabel = "删除中…"
             val ok = withContext(Dispatchers.IO) { FileOps.delete(file) }
             isOperationRunning = false
             loadDirectory(currentDir, resetScroll = false)
-            if (!ok) Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show()
+            if (!ok) Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -288,7 +288,7 @@ fun FileManagerScreen(
         operationJob = scope.launch {
             operationProgress = 0f
             operationDeterminate = true
-            operationLabel = if (cut) "Moving..." else "Copying..."
+            operationLabel = if (cut) "移动中…" else "复制中…"
             isOperationRunning = true
 
             var applyToAll: ConflictChoice? = null
@@ -325,7 +325,7 @@ fun FileManagerScreen(
 
                 // Progress is per item; with a batch the label carries the overall position.
                 operationLabel = buildString {
-                    append(if (cut) "Moving" else "Copying")
+                    append(if (cut) "移动" else "复制")
                     if (sources.size > 1) append(" ${done + 1}/${sources.size}")
                     append(" - ").append(src.name)
                 }
@@ -355,9 +355,9 @@ fun FileManagerScreen(
             loadDirectory(currentDir, resetScroll = false)
 
             val message = when {
-                failed > 0 -> "$done done, $failed failed"
-                skipped > 0 -> "$done done, $skipped skipped"
-                sources.size > 1 -> "$done items ${if (cut) "moved" else "copied"}"
+                failed > 0 -> "$done 项完成，$failed 项失败"
+                skipped > 0 -> "$done 项完成，$skipped 项跳过"
+                sources.size > 1 -> "$done 项${if (cut) "已移动" else "已复制"}"
                 else -> null
             }
             if (message != null) Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -367,32 +367,32 @@ fun FileManagerScreen(
     fun performRename(file: File, newName: String) {
         val target = File(file.parentFile, newName)
         if (target.exists()) {
-            Toast.makeText(context, "\"$newName\" already exists", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "“$newName”已存在", Toast.LENGTH_SHORT).show()
             return
         }
         scope.launch {
             isOperationRunning = true
-            operationLabel = "Renaming..."
+            operationLabel = "重命名中…"
             val ok = withContext(Dispatchers.IO) { file.renameTo(target) }
             isOperationRunning = false
             loadDirectory(currentDir, resetScroll = false)
-            if (!ok) Toast.makeText(context, "Rename failed", Toast.LENGTH_SHORT).show()
+            if (!ok) Toast.makeText(context, "重命名失败", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun createFolder(parent: File, name: String) {
         val target = File(parent, name)
         if (target.exists()) {
-            Toast.makeText(context, "\"$name\" already exists", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "“$name”已存在", Toast.LENGTH_SHORT).show()
             return
         }
         scope.launch {
             isOperationRunning = true
-            operationLabel = "Creating folder..."
+            operationLabel = "创建文件夹…"
             val ok = withContext(Dispatchers.IO) { target.mkdirs() }
             isOperationRunning = false
             loadDirectory(currentDir, resetScroll = false)
-            if (!ok) Toast.makeText(context, "Could not create folder", Toast.LENGTH_SHORT).show()
+            if (!ok) Toast.makeText(context, "无法创建文件夹", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -416,12 +416,12 @@ fun FileManagerScreen(
         var folderName by remember { mutableStateOf("") }
         OutlinedAlertDialog(
             onDismissRequest = { showNewFolderDialog = false },
-            title = { Text("New Folder") },
+            title = { Text("新建文件夹") },
             text = {
                 OutlinedTextField(
                     value = folderName,
                     onValueChange = { folderName = it },
-                    label = { Text("Folder name") },
+                    label = { Text("文件夹名称") },
                     singleLine = true,
                 )
             },
@@ -429,9 +429,9 @@ fun FileManagerScreen(
                 TextButton(onClick = {
                     showNewFolderDialog = false
                     if (folderName.isNotBlank()) createFolder(currentDir, folderName)
-                }) { Text("Create") }
+                }) { Text("创建") }
             },
-            dismissButton = { TextButton(onClick = { showNewFolderDialog = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showNewFolderDialog = false }) { Text("取消") } },
         )
     }
 
@@ -439,12 +439,12 @@ fun FileManagerScreen(
         var newName by remember(renameTarget) { mutableStateOf(renameTarget?.name ?: "") }
         OutlinedAlertDialog(
             onDismissRequest = { renameTarget = null },
-            title = { Text("Rename") },
+            title = { Text("重命名") },
             text = {
                 OutlinedTextField(
                     value = newName,
                     onValueChange = { newName = it },
-                    label = { Text("New name") },
+                    label = { Text("新名称") },
                     singleLine = true,
                 )
             },
@@ -453,9 +453,9 @@ fun FileManagerScreen(
                     val file = renameTarget
                     renameTarget = null
                     if (file != null && newName.isNotBlank()) performRename(file, newName)
-                }) { Text("Rename") }
+                }) { Text("重命名") }
             },
-            dismissButton = { TextButton(onClick = { renameTarget = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { renameTarget = null }) { Text("取消") } },
         )
     }
 
@@ -473,15 +473,15 @@ fun FileManagerScreen(
         val file = selectedEntry ?: return
         OutlinedAlertDialog(
             onDismissRequest = { selectedEntry = null },
-            title = { Text("Delete?") },
-            text = { Text("Delete \"${file.name}\" permanently?") },
+            title = { Text("删除？") },
+            text = { Text("永久删除“${file.name}”？") },
             confirmButton = {
                 TextButton(onClick = {
                     selectedEntry = null
                     performDelete(file)
-                }) { Text("Delete") }
+                }) { Text("删除") }
             },
-            dismissButton = { TextButton(onClick = { selectedEntry = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { selectedEntry = null }) { Text("取消") } },
         )
     }
 
@@ -489,10 +489,10 @@ fun FileManagerScreen(
         val victims = pendingBulkDelete
         OutlinedAlertDialog(
             onDismissRequest = { pendingBulkDelete = emptyList() },
-            title = { Text("Delete ${victims.size} item${if (victims.size == 1) "" else "s"}?") },
+            title = { Text("删除 ${victims.size} 项${if (victims.size == 1) "" else ""}？") },
             text = {
                 Column {
-                    Text("This can't be undone.")
+                    Text("此操作无法撤销。")
                     Spacer(Modifier.height(6.dp))
                     // Name a few so an accidental Select-All is obvious before it's too late.
                     victims.take(5).forEach {
@@ -500,7 +500,7 @@ fun FileManagerScreen(
                     }
                     if (victims.size > 5) {
                         Text(
-                            "…and ${victims.size - 5} more",
+                            "…还有 ${victims.size - 5} 项",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                         )
@@ -516,19 +516,19 @@ fun FileManagerScreen(
                         isOperationRunning = true
                         var failed = 0
                         victims.forEachIndexed { i, f ->
-                            operationLabel = "Deleting ${i + 1}/${victims.size} - ${f.name}"
+                            operationLabel = "删除 ${i + 1}/${victims.size} - ${f.name}"
                             if (!withContext(Dispatchers.IO) { FileOps.delete(f) }) failed++
                         }
                         isOperationRunning = false
                         operationJob = null
                         loadDirectory(currentDir, resetScroll = false)
                         if (failed > 0) {
-                            Toast.makeText(context, "$failed couldn't be deleted", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "$failed 项删除失败", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                }) { Text("删除", color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { pendingBulkDelete = emptyList() }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { pendingBulkDelete = emptyList() }) { Text("取消") } },
         )
     }
 
@@ -537,12 +537,12 @@ fun FileManagerScreen(
         val isDir = conflict.isDirectory
         OutlinedAlertDialog(
             onDismissRequest = { pendingConflict = null },
-            title = { Text("\"${conflict.name}\" already exists") },
+            title = { Text("“${conflict.name}”已存在") },
             text = {
                 Column {
                     Text(
-                        if (isDir) "Merge adds and replaces files inside the existing folder."
-                        else "Overwrite replaces the existing file.",
+                        if (isDir) "合并会向现有文件夹添加并替换其中的文件。"
+                        else "覆盖会替换现有文件。",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                     )
@@ -553,15 +553,15 @@ fun FileManagerScreen(
                                 checked = conflictApplyToAll,
                                 onCheckedChange = { conflictApplyToAll = it },
                             )
-                            Text("Apply to all conflicts", fontSize = 12.sp)
+                            Text("应用到所有冲突", fontSize = 12.sp)
                         }
                     }
                     Spacer(Modifier.height(4.dp))
                     listOf(
                         (if (isDir) ConflictChoice.MERGE else ConflictChoice.OVERWRITE) to
-                            (if (isDir) "Merge" else "Overwrite"),
-                        ConflictChoice.KEEP_BOTH to "Keep both",
-                        ConflictChoice.SKIP to "Skip",
+                            (if (isDir) "合并" else "覆盖"),
+                        ConflictChoice.KEEP_BOTH to "两者都保留",
+                        ConflictChoice.SKIP to "跳过",
                     ).forEach { (choice, label) ->
                         TextButton(
                             modifier = Modifier.fillMaxWidth(),
@@ -573,7 +573,7 @@ fun FileManagerScreen(
             confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { conflictChoice = ConflictChoice.SKIP; pendingConflict = null }) {
-                    Text("Cancel")
+                    Text("取消")
                 }
             },
         )
@@ -603,7 +603,7 @@ fun FileManagerScreen(
             ) {
                 Icon(Icons.Filled.Folder, null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Select this folder")
+                Text("选择此文件夹")
             }
         }
         // ── Path bar ──
@@ -619,7 +619,7 @@ fun FileManagerScreen(
                 // Don't climb above the current drive's root.
                 if (currentDir != currentRoot && parent != null && parent.exists()) loadDirectory(parent)
             }, enabled = currentDir != currentRoot) {
-                Icon(Icons.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.Filled.ArrowBack, "返回", tint = MaterialTheme.colorScheme.primary)
             }
 
             val currentDriveLabel = describeLocation(currentDir).driveLabel
@@ -666,7 +666,7 @@ fun FileManagerScreen(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "${drive.label} is mounted but not readable right now",
+                                        "${drive.label} 已挂载但当前不可读",
                                         Toast.LENGTH_SHORT,
                                     ).show()
                                 }
@@ -680,7 +680,7 @@ fun FileManagerScreen(
 
             if (showFavorites) {
                 Text(
-                    text = "Favorites",
+                    text = "收藏夹",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -718,7 +718,7 @@ fun FileManagerScreen(
                     ) {
                         Icon(Icons.Filled.CreateNewFolder, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(5.dp))
-                        Text("New Folder", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        Text("新建文件夹", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                     }
                 }
                 IconButton(onClick = {
@@ -727,19 +727,19 @@ fun FileManagerScreen(
                 }) {
                     Icon(
                         if (gridView) Icons.Filled.ViewList else Icons.Filled.GridView,
-                        if (gridView) "List view" else "Grid view",
+                        if (gridView) "列表视图" else "网格视图",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 IconButton(onClick = { showSearch = !showSearch; if (!showSearch) searchQuery = "" }) {
-                    Icon(Icons.Filled.Search, "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Filled.Search, "搜索", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Box {
                     IconButton(onClick = { showSortMenu = true }) {
-                        Icon(Icons.Filled.Sort, "Sort", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(Icons.Filled.Sort, "排序", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     DropdownMenu(expanded = showSortMenu, onDismissRequest = { showSortMenu = false }) {
-                        listOf("name" to "Name", "date" to "Date modified", "size" to "Size")
+                        listOf("name" to "名称", "date" to "修改时间", "size" to "大小")
                             .forEach { (key, label) ->
                                 DropdownMenuItem(
                                     text = {
@@ -758,7 +758,7 @@ fun FileManagerScreen(
                             }
                         HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                         DropdownMenuItem(
-                            text = { Text(if (compactRows) "Comfortable rows" else "Compact rows") },
+                            text = { Text(if (compactRows) "宽松行" else "紧凑行") },
                             onClick = {
                                 compactRows = !compactRows
                                 browsePrefs.edit().putBoolean("fmCompactRows", compactRows).apply()
@@ -766,7 +766,7 @@ fun FileManagerScreen(
                             },
                         )
                         DropdownMenuItem(
-                            text = { Text(if (showHidden) "Hide hidden files" else "Show hidden files") },
+                            text = { Text(if (showHidden) "不显示隐藏文件" else "显示隐藏文件") },
                             onClick = {
                                 showHidden = !showHidden
                                 browsePrefs.edit().putBoolean("fmShowHidden", showHidden).apply()
@@ -781,9 +781,9 @@ fun FileManagerScreen(
             // Star toggle: open/close the dedicated Favorites list.
             IconButton(onClick = { showFavorites = !showFavorites }) {
                 if (showFavorites) {
-                    Icon(Icons.Filled.Star, "Hide favorites", tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Filled.Star, "隐藏收藏夹", tint = MaterialTheme.colorScheme.primary)
                 } else {
-                    Icon(Icons.Filled.StarBorder, "Show favorites", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Filled.StarBorder, "显示收藏夹", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -794,7 +794,7 @@ fun FileManagerScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 singleLine = true,
-                placeholder = { Text("Filter this folder", fontSize = 13.sp) },
+                placeholder = { Text("筛选此文件夹", fontSize = 13.sp) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             )
         }
@@ -821,7 +821,7 @@ fun FileManagerScreen(
                 )
                 if (freeSpace > 0) {
                     Text(
-                        "${FileOps.formatBytes(freeSpace)} free",
+                        "${FileOps.formatBytes(freeSpace)} 可用",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                         maxLines = 1,
@@ -842,7 +842,7 @@ fun FileManagerScreen(
                     .padding(horizontal = 12.dp, vertical = 6.dp),
             ) {
                 Text(
-                    "${selectedPaths.size} selected",
+                    "已选择 ${selectedPaths.size} 项",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 13.sp,
                     modifier = Modifier.weight(1f),
@@ -855,7 +855,7 @@ fun FileManagerScreen(
                         else entries.map { it.absolutePath }.toSet()
                     },
                     contentPadding = selBarPadding,
-                ) { Text(if (selectedPaths.size == entries.size) "None" else "All", fontSize = 12.sp) }
+                ) { Text(if (selectedPaths.size == entries.size) "全不选" else "全选", fontSize = 12.sp) }
                 Spacer(Modifier.width(4.dp))
                 OutlinedButton(
                     enabled = selectedPaths.isNotEmpty(),
@@ -866,7 +866,7 @@ fun FileManagerScreen(
                         selectedPaths = emptySet()
                     },
                     contentPadding = selBarPadding,
-                ) { Text("Copy", fontSize = 12.sp) }
+                ) { Text("复制", fontSize = 12.sp) }
                 Spacer(Modifier.width(4.dp))
                 OutlinedButton(
                     enabled = selectedPaths.isNotEmpty(),
@@ -877,19 +877,19 @@ fun FileManagerScreen(
                         selectedPaths = emptySet()
                     },
                     contentPadding = selBarPadding,
-                ) { Text("Cut", fontSize = 12.sp) }
+                ) { Text("剪切", fontSize = 12.sp) }
                 Spacer(Modifier.width(4.dp))
                 OutlinedButton(
                     enabled = selectedPaths.isNotEmpty(),
                     onClick = { pendingBulkDelete = entries.filter { it.absolutePath in selectedPaths } },
                     contentPadding = selBarPadding,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                ) { Text("Delete", color = MaterialTheme.colorScheme.error, fontSize = 12.sp) }
+                ) { Text("删除", color = MaterialTheme.colorScheme.error, fontSize = 12.sp) }
                 Spacer(Modifier.width(4.dp))
                 OutlinedButton(
                     onClick = { selectionMode = false; selectedPaths = emptySet() },
                     contentPadding = selBarPadding,
-                ) { Text("Done", fontSize = 12.sp) }
+                ) { Text("完成", fontSize = 12.sp) }
             }
         }
 
@@ -903,16 +903,16 @@ fun FileManagerScreen(
                     .clickable { performPaste() }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-                Icon(Icons.Filled.ContentPaste, "Paste", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                Icon(Icons.Filled.ContentPaste, "粘贴", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
                 val what = if (clipboardFiles.size == 1) clipboardFiles.first().name
-                else "${clipboardFiles.size} items"
+                else "${clipboardFiles.size} 项"
                 Text(
-                    "Paste $what${if (isCutOperation) " (move)" else ""} here",
+                    "将 $what${if (isCutOperation) "（移动）" else ""}粘贴到此处",
                     color = MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, modifier = Modifier.weight(1f),
                 )
                 TextButton(onClick = { clipboardFiles = emptyList(); isCutOperation = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    Text("取消", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
             }
         }
@@ -944,7 +944,7 @@ fun FileManagerScreen(
                             isOperationRunning = false
                             operationDeterminate = false
                             loadDirectory(currentDir, resetScroll = false)
-                        }) { Text("Cancel", fontSize = 12.sp) }
+                        }) { Text("取消", fontSize = 12.sp) }
                     }
                 }
                 Spacer(Modifier.height(4.dp))
@@ -975,7 +975,7 @@ fun FileManagerScreen(
                 showFavorites = false; openDrive(dir)
             }
         val storageItems = buildList {
-            add(locItem("Internal", Icons.Filled.Smartphone, File("/storage/emulated/0")))
+            add(locItem("内部存储", Icons.Filled.Smartphone, File("/storage/emulated/0")))
             drives.filter { it.removable }.forEach { d ->
                 add(RailItem(d.label, Icons.Filled.SdStorage, !showFavorites && currentRoot.absolutePath == d.dir.absolutePath) {
                     showFavorites = false; if (d.readable) openDrive(d.dir)
@@ -987,21 +987,21 @@ fun FileManagerScreen(
             // The ROMs folder chosen on the main screen: what the session shows as /root/ROMs.
             SessionPrefs.romsDir(context).takeIf { it.isNotEmpty() }?.let(::File)?.takeIf { it.isDirectory }
                 ?.let { add(locItem("ROMs", Icons.Filled.SportsEsports, it)) }
-            File("/storage/emulated/0/Download/DroidDeck").takeIf { it.isDirectory }?.let { add(locItem("Session logs", Icons.Filled.Description, it)) }
+            File("/storage/emulated/0/Download/DroidDeck").takeIf { it.isDirectory }?.let { add(locItem("会话日志", Icons.Filled.Description, it)) }
             File("/storage/emulated/0/Pictures").takeIf { it.isDirectory }?.let { add(locItem("Pictures", Icons.Filled.Image, it)) }
         }
         val favItems = remember(favTick) { FavoritesStore.list(context).map(::File).filter { it.exists() } }
             .map { d -> RailItem(d.name, Icons.Filled.Star, false) { showFavorites = false; openDrive(d) } }
         val locationSections = buildList {
-            add(RailSection("STORAGE", storageItems))
-            if (quickItems.isNotEmpty()) add(RailSection("QUICK", quickItems))
-            if (favItems.isNotEmpty()) add(RailSection("FAVORITES", favItems))
+            add(RailSection("存储", storageItems))
+            if (quickItems.isNotEmpty()) add(RailSection("快捷", quickItems))
+            if (favItems.isNotEmpty()) add(RailSection("收藏夹", favItems))
         }
 
         Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
             // The slim picker keeps its layout: no rail.
             if (!pickMode) {
-                CollapsibleRail(state = fmRailState, title = "Files", sections = locationSections, outlinedItems = true)
+                CollapsibleRail(state = fmRailState, title = "文件", sections = locationSections, outlinedItems = true)
             }
             Box(modifier = Modifier.weight(1f).fillMaxSize()) {
         // ── Favorites list OR file list ──
@@ -1012,7 +1012,7 @@ fun FileManagerScreen(
                 onPinCurrent = {
                     FavoritesStore.add(context, currentDir.absolutePath)
                     favTick++
-                    Toast.makeText(context, "Added \"${currentDir.name}\" to Favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "已将“${currentDir.name}”添加到收藏夹", Toast.LENGTH_SHORT).show()
                 },
                 onJump = { dir ->
                     showFavorites = false
@@ -1021,7 +1021,7 @@ fun FileManagerScreen(
                 onUnpin = { dir ->
                     FavoritesStore.remove(context, dir.absolutePath)
                     favTick++
-                    Toast.makeText(context, "Removed \"${dir.name}\" from Favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "已将“${dir.name}”移出收藏夹", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.fillMaxSize(),
             )
@@ -1095,8 +1095,8 @@ fun FileManagerScreen(
                                 showMenuFor = null
                                 Toast.makeText(
                                     context,
-                                    if (nowFav) "Added \"${file.name}\" to Favorites"
-                                    else "Removed \"${file.name}\" from Favorites",
+                                    if (nowFav) "已将“${file.name}”添加到收藏夹"
+                                    else "已将“${file.name}”移出收藏夹",
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             },
@@ -1112,7 +1112,7 @@ fun FileManagerScreen(
                             modifier = Modifier.fillParentMaxSize(),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Empty directory", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("空文件夹", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 } else {
@@ -1173,8 +1173,8 @@ fun FileManagerScreen(
                                 showMenuFor = null
                                 Toast.makeText(
                                     context,
-                                    if (nowFav) "Added \"${file.name}\" to Favorites"
-                                    else "Removed \"${file.name}\" from Favorites",
+                                    if (nowFav) "已将“${file.name}”添加到收藏夹"
+                                    else "已将“${file.name}”移出收藏夹",
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             },

@@ -1,12 +1,12 @@
-# Android Driver Package Format
+# Android 驱动包格式
 
-## Contents
-- `meta.json` that follows `Schema`
-- `<driver>.so` main driver shared library
-- `*.so` all libraries depended on by the main driver library, these must have their sonames altered if they wish to replace the system version of the library
+## 内容
+- 遵循 `Schema` 的 `meta.json`
+- `<driver>.so` 主驱动共享库
+- `*.so` 主驱动库依赖的全部库；如果它们想替换掉系统版本的库，必须修改其 soname
 
-## Example
-- `meta.json`:
+## 示例
+- `meta.json`：
 ```json
 {
   "schemaVersion": 1,
@@ -21,12 +21,12 @@
 }
 ```
 
-- `vulkan.ad0615.so`: main patched driver
-- `notadreno_utils.so`, `notdmabufheap.so`, `notgsl.so`, `notllvm-glnext.so`, `notllvm-qgl.so`: patched-soname versions of libraries specific to each driver version
-- `android.hardware.graphics.mappershim.so`, `vendor.qti.hardware.display.mapperextensionsshim.so`, `vendor.qti.hardware.display.mappershim.so`: qtimapper-shim libs
+- `vulkan.ad0615.so`：打过补丁的主驱动
+- `notadreno_utils.so`、`notdmabufheap.so`、`notgsl.so`、`notllvm-glnext.so`、`notllvm-qgl.so`：各自驱动版本专用库的 patched-soname 版本
+- `android.hardware.graphics.mappershim.so`、`vendor.qti.hardware.display.mapperextensionsshim.so`、`vendor.qti.hardware.display.mappershim.so`：qtimapper-shim 库
 
-## Creation
-I recommend running blob-patcher.py to patch a set of blobs from a device dump with mapper ver as 5, then copying in the qtimapper-shim files from the adrenotools releases page.
+## 创建
+我建议运行 blob-patcher.py，用它对来自设备转储的一组 blob 打补丁（mapper ver 设为 5），然后从 adrenotools 的 releases 页面把 qtimapper-shim 文件复制进来。
 ```bash
 $ mkdir outpkg
 $ patch.py <device dump> outpkg vulkan.adreno.so vulkan.ad0615.so 1
@@ -34,7 +34,7 @@ $ vim outpkg/meta.json
 $ cp qtimapper-shim-rel/* outpkg
 ```
 
-## Schema
+## 模式（Schema）
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",

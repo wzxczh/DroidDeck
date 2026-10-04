@@ -45,7 +45,7 @@ object FrameGen {
     fun label(engine: String, multiplier: Int): String = when (engine) {
         ENGINE_WINFG -> "Win-FG $multiplier×"
         ENGINE_LSFG -> "LSFG $multiplier×"
-        else -> "Off"
+        else -> "关闭"
     }
 
     /**
@@ -61,8 +61,8 @@ object FrameGen {
                 val status = LsfgNative.ensureCache(context)
                 if (status != LsfgNative.STATUS_OK) {
                     problem = if (status == LsfgNative.STATUS_NOT_INSTALLED)
-                        "LSFG needs Lossless Scaling installed from the Steam client"
-                    else "LSFG: " + LsfgNative.statusName(status)
+                        "LSFG 需要先在 Steam 客户端安装 Lossless Scaling"
+                    else "LSFG：" + LsfgNative.statusName(status)
                     Log.w(TAG, problem)
                     WaylandCompositor.nativeSetFrameGenArmed(false, 0)
                     return problem
@@ -80,7 +80,7 @@ object FrameGen {
             }
             else -> WaylandCompositor.nativeSetFrameGenArmed(false, 0)
         }
-        Log.i(TAG, "frame generation: $engine x$multiplier at ${refreshHz}Hz")
+        Log.i(TAG, "帧生成：$engine x$multiplier @ ${refreshHz}Hz")
         return problem
     }
 

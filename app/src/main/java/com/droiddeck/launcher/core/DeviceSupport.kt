@@ -19,6 +19,6 @@ object DeviceSupport {
     /** The chip as the device names it, for the card that explains the refusal. */
     fun gpuName(): String {
         val soc = if (Build.VERSION.SDK_INT >= 31) Build.SOC_MODEL.takeIf { it.isNotBlank() && it != Build.UNKNOWN } else null
-        return soc?.let { "$it (${Build.HARDWARE})" } ?: Build.HARDWARE.ifBlank { "this GPU" }
+        return soc?.let { "$it (${Build.HARDWARE})" } ?: Build.HARDWARE.ifBlank { "此 GPU" }
     }
 }

@@ -235,7 +235,7 @@ def main():
         state["manager"] = NetworkManager(bus)
 
     def lost(bus, name):
-        print("== netmanager: the system bus is gone", file=sys.stderr)
+        print("== netmanager: 系统总线已消失", file=sys.stderr)
         loop.quit()
 
     Gio.bus_own_name(Gio.BusType.SYSTEM, NAME, Gio.BusNameOwnerFlags.NONE, acquired, None, lost)

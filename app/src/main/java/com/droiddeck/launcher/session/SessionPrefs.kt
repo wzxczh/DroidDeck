@@ -15,8 +15,8 @@ object SessionPrefs {
     const val OSC_STEAM_QAM = "steam-qam"
     const val OSC_NEVER = "never"
 
-    const val BACK_MENU_THEN_QAM = "1: menu 2: QAM"
-    const val BACK_QAM_THEN_MENU = "1: QAM 2: menu"
+    const val BACK_MENU_THEN_QAM = "1：菜单 2：QAM"
+    const val BACK_QAM_THEN_MENU = "1：QAM 2：菜单"
 
     fun backActionsOrder(inverted: Boolean): String =
         if (inverted) BACK_QAM_THEN_MENU else BACK_MENU_THEN_QAM
@@ -75,9 +75,9 @@ object SessionPrefs {
 
     /** The choices the settings offer, in order. */
     val shapeChoices = listOf(
-        SHAPE_AUTO to "Auto (16:9+)",
-        SHAPE_EXACT to "Match screen",
-        SHAPE_WIDE to "Always 16:9",
+        SHAPE_AUTO to "自动 (16:9+)",
+        SHAPE_EXACT to "匹配屏幕",
+        SHAPE_WIDE to "始终 16:9",
     )
 
     /**
@@ -369,7 +369,7 @@ object SessionPrefs {
     fun setFexPreset(context: Context, id: String) {
         prefs(context).edit().putString("fexPreset", id).apply()
         runCatching { GameEnvironmentStore.publish(context) }
-            .onFailure { android.util.Log.e("GameEnvironment", "Could not update game environment", it) }
+            .onFailure { android.util.Log.e("GameEnvironment", "无法更新游戏环境", it) }
     }
 
     /** The Steam client branch forced on the command line: "publicbeta" (every session so far) or "steamdeck_publicbeta" (Armada's). */

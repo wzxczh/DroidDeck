@@ -145,7 +145,7 @@ static void handle_released(uint64_t id, int fd) {
         } else {
             if (!g_import_failed_logged) {
                 g_import_failed_logged = 1;
-                banner_log("layer", "zero-copy: DMA_BUF_IOCTL_IMPORT_SYNC_FILE failed (%s): releases wait for the display's fence here instead",
+                banner_log("layer", "zero-copy: DMA_BUF_IOCTL_IMPORT_SYNC_FILE 失败（%s）：改为在此等待显示屏的围栏再释放",
                            strerror(errno));
             }
             /* Wait it out in the event loop (a sync_file is readable once signalled). */
@@ -212,7 +212,7 @@ int ahb_swapchain_present(struct dmabuf_buffer *b, struct surface *s, int scene_
     } else if (dmabuf_fd >= 0) {
         if (!g_export_failed_logged) {
             g_export_failed_logged = 1;
-            banner_log("layer", "zero-copy: DMA_BUF_IOCTL_EXPORT_SYNC_FILE failed (%s): waiting for each frame on the CPU instead",
+            banner_log("layer", "zero-copy: DMA_BUF_IOCTL_EXPORT_SYNC_FILE 失败（%s）：改为在 CPU 上逐帧等待",
                        strerror(errno));
         }
         struct pollfd p = {.fd = dmabuf_fd, .events = POLLIN}; /* readable = the writers are done */
@@ -232,7 +232,7 @@ int ahb_swapchain_present(struct dmabuf_buffer *b, struct surface *s, int scene_
         char name[160];
         g_announced = s;
         banner_surface_describe(s, name, sizeof(name));
-        banner_log("layer", "zero-copy: presenting %s without a copy", name);
+        banner_log("layer", "zero-copy: 正在无拷贝呈现 %s", name);
     }
     return 0;
 }
@@ -282,7 +282,7 @@ static void ahb_attach(struct wl_client *c, struct wl_resource *r, struct wl_res
     struct dmabuf_buffer *b = banner_dmabuf_from_resource(buffer);
     uint64_t modifier = ((uint64_t)mod_hi << 32) | mod_lo;
     if (!b) {
-        banner_log("layer", "zero-copy: %s attached an AHardwareBuffer to a non-dma-buf wl_buffer, ignored", banner_client_name(c));
+        banner_log("layer", "zero-copy: %s 把 AHardwareBuffer 附加到了非 dma-buf 的 wl_buffer，已忽略", banner_client_name(c));
         close(sock);
         return;
     }
@@ -298,8 +298,8 @@ static void ahb_attach(struct wl_client *c, struct wl_resource *r, struct wl_res
     int rc = pr > 0 ? AHardwareBuffer_recvHandleFromUnixSocket(sock, &ahb) : -1;
     close(sock);
     if (rc != 0 || !ahb) {
-        banner_log("layer", "zero-copy: receiving %s's AHardwareBuffer failed (%s)", banner_client_name(c),
-                   pr > 0 ? "recvHandleFromUnixSocket" : "nothing on the socket");
+        banner_log("layer", "zero-copy: 接收 %s 的 AHardwareBuffer 失败（%s）", banner_client_name(c),
+                   pr > 0 ? "recvHandleFromUnixSocket" : "套接字上没有数据");
         return;
     }
     AHardwareBuffer_Desc d;
@@ -307,7 +307,7 @@ static void ahb_attach(struct wl_client *c, struct wl_resource *r, struct wl_res
     int bw, bh;
     banner_dmabuf_size(b, &bw, &bh);
     if ((int)d.width != bw || (int)d.height != bh || (int)width != bw || (int)height != bh) {
-        banner_log("layer", "zero-copy: %s's AHardwareBuffer is %ux%u but its wl_buffer %dx%d, ignored",
+        banner_log("layer", "zero-copy: %s 的 AHardwareBuffer 为 %ux%u，但其 wl_buffer 为 %dx%d，已忽略",
                    banner_client_name(c), d.width, d.height, bw, bh);
         AHardwareBuffer_release(ahb);
         return;
@@ -335,9 +335,9 @@ static void ahb_attach(struct wl_client *c, struct wl_resource *r, struct wl_res
     if (g_last_chain.client != c || g_last_chain.w != bw || g_last_chain.h != bh ||
         g_last_chain.image_count != image_count || g_last_chain.modifier != modifier || g_last_chain.format != d.format) {
         g_last_chain = (struct chain_seen){c, bw, bh, image_count, modifier, d.format};
-        banner_log("layer", "zero-copy: AHB swapchain from %s (%u images, %dx%d, %s, %s, stride %u px)", banner_client_name(c),
+        banner_log("layer", "zero-copy: 来自 %s 的 AHB 交换链（%u 张图像，%dx%d，%s，%s，步长 %u px）", banner_client_name(c),
                    image_count, bw, bh, banner_ahb_format_name(d.format), modifier == MOD_QCOM_COMPRESSED ? "UBWC (QCOM_COMPRESSED)"
-                                       : modifier == 0 ? "linear" : "unknown modifier", ab->stride);
+                                       : modifier == 0 ? "线性" : "未知修饰符", ab->stride);
     }
 }
 
@@ -363,8 +363,8 @@ static void bind_ahb(struct wl_client *c, void *data, uint32_t ver, uint32_t id)
     /* One line per program, not per surface-format query (each binds its own). */
     if (last_named != c) {
         last_named = c;
-        banner_log("layer", "zero-copy: %s bound banner_ahb_v1 version %u (%s)", banner_client_name(c), ver,
-                   ver >= 2 ? "follows the live switch" : "version 1: decides from its launch environment only");
+        banner_log("layer", "zero-copy: %s 绑定了 banner_ahb_v1 版本 %u（%s）", banner_client_name(c), ver,
+                   ver >= 2 ? "跟随实时开关" : "版本 1：只根据启动环境决定");
     }
 }
 
@@ -372,8 +372,8 @@ void ahb_swapchain_set_mode(int on, int live) {
     on = on ? 1 : 0;
     g_zero_copy = on;
     if (!g_advertised) {
-        if (live) banner_log("layer", "zero-copy switched %s from the drawer, but no display layer is available on this device: no change",
-                             on ? "on" : "off");
+        if (live) banner_log("layer", "zero-copy 已从抽屉切换为%s，但本设备没有可用的显示图层：未更改",
+                             on ? "开" : "关");
         return;
     }
     if (g_mode_sent == on) return;
@@ -390,14 +390,14 @@ void ahb_swapchain_set_mode(int on, int live) {
     memset(&g_last_chain, 0, sizeof(g_last_chain));
     g_announced = NULL;
     if (live)
-        banner_log("layer", "zero-copy switched %s from the drawer: %d bound program%s told to rebuild their swapchains%s",
-                   on ? "on" : "off", told, told == 1 ? "" : "s",
-                   on ? "; frames go on the display layer once the new gralloc swapchain is up"
-                      : "; gralloc frames still in flight stay on the layer (or take the copy path) until then");
+        banner_log("layer", "zero-copy 已从抽屉切换为%s：已通知 %d 个绑定程序%s重建其交换链%s",
+                   on ? "开" : "关", told, told == 1 ? "" : "",
+                   on ? "；新的 gralloc 交换链建立后，帧即上显示图层"
+                      : "；在此之前仍在处理的 gralloc 帧留在图层上（或走拷贝路径）");
     else
-        banner_log("layer", "zero-copy: %s at launch (%s)", on ? "on" : "off",
-                   on ? "BANNER_WAYLAND_ZERO_COPY=1: games present their own gralloc buffers on the display layer"
-                      : "the drawer's Zero-copy presentation switch turns it on live");
+        banner_log("layer", "zero-copy: 启动时为%s（%s）", on ? "开" : "关",
+                   on ? "BANNER_WAYLAND_ZERO_COPY=1：游戏把自己的 gralloc 缓冲呈现到显示图层"
+                      : "抽屉中的零拷贝呈现开关可实时开启");
     if (live) wl_display_flush_clients(banner_get_display());
     banner_request_redraw();
 }
@@ -406,21 +406,21 @@ void ahb_swapchain_init(struct wl_display *display) {
     wl_list_init(&g_bufs);
     wl_list_init(&g_clients);
     if (!sc_layer_available()) {
-        banner_log("layer", "zero-copy: no display layer on this device (see the line above): banner_ahb_v1 not advertised");
+        banner_log("layer", "zero-copy: 本设备没有显示图层（见上一行）：未公布 banner_ahb_v1");
         return;
     }
     g_loop = wl_display_get_event_loop(display);
     if (pipe2(g_rel_pipe, O_CLOEXEC | O_NONBLOCK) != 0) {
-        banner_log("error", "zero-copy: release pipe creation failed (%s); zero-copy presents disabled", strerror(errno));
+        banner_log("error", "zero-copy: 释放管道创建失败（%s）；已禁用零拷贝呈现", strerror(errno));
         g_rel_pipe[0] = g_rel_pipe[1] = -1;
         return;
     }
     wl_event_loop_add_fd(g_loop, g_rel_pipe[0], WL_EVENT_READABLE, on_release_pipe, NULL);
     if (!wl_global_create(display, &banner_ahb_v1_interface, 2, NULL, bind_ahb)) {
-        banner_log("error", "zero-copy: banner_ahb_v1 global creation failed");
+        banner_log("error", "zero-copy: banner_ahb_v1 全局对象创建失败");
         return;
     }
     g_advertised = 1;
-    banner_log("layer", "zero-copy: banner_ahb_v1 version 2 advertised (games built for it present their own gralloc buffers while the switch is on)");
+    banner_log("layer", "zero-copy: 已公布 banner_ahb_v1 版本 2（支持它的游戏在开关开启时自行呈现 gralloc 缓冲）");
     ahb_swapchain_set_mode(g_zero_copy, 0);
 }

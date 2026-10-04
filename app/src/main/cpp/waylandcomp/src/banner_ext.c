@@ -118,7 +118,7 @@ void banner_ext_init(struct wl_display *display) {
         pthread_mutex_unlock(&g_mu);
         if (queued) { char c = 1; ssize_t n = write(g_wake[1], &c, 1); (void)n; }
     } else
-        __android_log_print(ANDROID_LOG_ERROR, "BannerWayland", "host queue pipe failed");
+        __android_log_print(ANDROID_LOG_ERROR, "BannerWayland", "宿主队列管道创建失败");
     clipboard_init(display);
     text_input_init(display);
     toplevel_icon_init(display);

@@ -72,7 +72,7 @@ object SessionEvents {
                 }
             }
         } catch (e: Exception) {
-            Log.w(TAG, "writing ${target.name}", e)
+            Log.w(TAG, "写入 ${target.name} 失败", e)
         }
     }
 

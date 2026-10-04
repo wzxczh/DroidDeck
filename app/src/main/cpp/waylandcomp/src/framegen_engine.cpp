@@ -107,7 +107,7 @@ const void *fge_probe(PFN_vkGetInstanceProcAddr gipa, VkInstance inst, VkPhysica
     g_probed = true;
     if (!g_caps.features.deviceGatesPass()) {
         lsfg::explain(g_caps);
-        ELOG("device gates for the LSFG chain fail: %s", g_caps.reason);
+        ELOG("LSFG 链的设备门槛未通过：%s", g_caps.reason);
         return nullptr;
     }
     // Same chain VulkanRendererContext::createLogicalDevice hangs on its device.
@@ -132,7 +132,7 @@ void fge_device_ready(PFN_vkGetInstanceProcAddr gipa, VkInstance inst, VkPhysica
     g_caps.featuresEnabled = features_enabled != 0;
     lsfg::explain(g_caps);
     g_ready = true;
-    ELOG("device ready: lsfg caps '%s', storage on ring format %d", g_caps.reason,
+    ELOG("设备就绪：lsfg 能力 '%s'，生成环格式可作存储=%d", g_caps.reason,
          (int)g_caps.storageOnSwapchainFormat);
 }
 
@@ -155,32 +155,32 @@ int fge_start(int kind, const char *cache_path) {
     if (kind == 1) {
         auto e = std::make_unique<winfg::Engine>();
         if (!e->init(g_table, g_pd, g_dev, g_qfam, g_queue)) {
-            ELOGE("winfg-native: engine init failed");
+            ELOGE("winfg-native: 引擎初始化失败");
             return -1;
         }
         g_winfg = std::move(e);
         g_kind = 1;
 #if defined(WINFG_UPSTREAM) && defined(WINFG_CHAIN_HASH)
-        std::snprintf(g_build, sizeof(g_build), "chain %s, src %s", WINFG_UPSTREAM, WINFG_CHAIN_HASH);
+        std::snprintf(g_build, sizeof(g_build), "链 %s，源 %s", WINFG_UPSTREAM, WINFG_CHAIN_HASH);
 #else
-        std::snprintf(g_build, sizeof(g_build), "embedded chain");
+        std::snprintf(g_build, sizeof(g_build), "内嵌链");
 #endif
         return 0;
     }
     if (!cache_path || !*cache_path) return -1;
     if (!lsfgVkdInit(g_table)) {
-        ELOGE("lsfg-native: dispatch incomplete");
+        ELOGE("lsfg-native: 分发表不完整");
         return -1;
     }
     auto e = std::make_unique<lsfg::Engine>();
     if (!e->init(g_dev, g_pd, cache_path, g_caps.features.spirvTarget)) {
-        ELOGE("lsfg-native: engine init failed (cache %s, spirv target 0x%x)", cache_path,
+        ELOGE("lsfg-native: 引擎初始化失败（缓存 %s，spirv 目标 0x%x）", cache_path,
               g_caps.features.spirvTarget);
         return -1;
     }
     g_lsfg = std::move(e);
     g_kind = 0;
-    std::snprintf(g_build, sizeof(g_build), "spirv target 0x%x, cache %s",
+    std::snprintf(g_build, sizeof(g_build), "spirv 目标 0x%x，缓存 %s",
                   g_caps.features.spirvTarget, cache_path);
     return 0;
 }

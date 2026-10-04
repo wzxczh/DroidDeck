@@ -26,28 +26,28 @@ object Themes {
 
     val all: List<Palette> = listOf(
         Palette(
-            GRAPHITE, "Graphite", "Graphite surfaces, with the logo's own orb blue for everything selected, focused or pressed.",
+            GRAPHITE, "石墨", "石墨色表面；选中、聚焦或按下状态使用 Logo 自带的球形蓝。",
             background = Color(0xFF0A0B0D), surface = Color(0xFF121417), surfaceVariant = Color(0xFF1A1D22), line = Color(0xFF262A31), line2 = Color(0xFF343A43),
             onBackground = Color(0xFFF2F4F7), onSurfaceVariant = Color(0xFF9AA3AF),
             primary = Color(0xFF1A9FFF), primary2 = Color(0xFF1487DB), onPrimary = Color(0xFF03111F), signal = Color(0xFF1A9FFF),
             good = Color(0xFF4CD37F),
         ),
         Palette(
-            PAPER, "Paper on black", "White is the primary, the icon's blue is the signal for rules, rings and dots.",
+            PAPER, "黑底纸白", "白色为主色，图标的蓝色作为线条、圆环与圆点的信号色。",
             background = Color(0xFF000000), surface = Color(0xFF0F0F10), surfaceVariant = Color(0xFF191A1C), line = Color(0xFF262729), line2 = Color(0xFF343638),
             onBackground = Color(0xFFF9F9F9), onSurfaceVariant = Color(0xFF8E9196),
             primary = Color(0xFFF9F9F9), primary2 = Color(0xFFD9DADD), onPrimary = Color(0xFF000000), signal = Color(0xFF136CE0),
             good = Color(0xFF4CD37F),
         ),
         Palette(
-            ICON_BLUE, "Icon blue", "Black ground, white type, the blue for everything selected, focused or pressed.",
+            ICON_BLUE, "图标蓝", "黑色背景、白色文字，选中、聚焦或按下状态使用蓝色。",
             background = Color(0xFF050608), surface = Color(0xFF0E1116), surfaceVariant = Color(0xFF161B23), line = Color(0xFF1F2630), line2 = Color(0xFF2A3340),
             onBackground = Color(0xFFF2F4F7), onSurfaceVariant = Color(0xFF8A93A0),
             primary = Color(0xFF136CE0), primary2 = Color(0xFF0B4FB0), onPrimary = Color(0xFFFFFFFF), signal = Color(0xFF136CE0),
             good = Color(0xFF4CD37F),
         ),
         Palette(
-            ELECTRIC, "Electric navy", "The blue brighter, on surfaces that lean navy instead of grey.",
+            ELECTRIC, "电光藏蓝", "更亮的蓝色，用于偏藏蓝而非灰色的表面。",
             background = Color(0xFF070A10), surface = Color(0xFF0F1522), surfaceVariant = Color(0xFF16203A), line = Color(0xFF1E2A47), line2 = Color(0xFF2A3A5E),
             onBackground = Color(0xFFEEF3FF), onSurfaceVariant = Color(0xFF8B9AB8),
             primary = Color(0xFF2E86FF), primary2 = Color(0xFF136CE0), onPrimary = Color(0xFFFFFFFF), signal = Color(0xFF2E86FF),

@@ -1,30 +1,30 @@
-### Adreno Tools 
-A library for applying rootless Adreno GPU driver modifications/replacements. Currently supports loading custom GPU drivers such as [turnip](https://docs.mesa3d.org/android.html#building-using-the-android-ndk),  enabling BCn textures and redirecting file operations to allow accessing shader dumps and modification of the [driver config file](https://gist.github.com/bylaws/04130932e2634d1c6a2a9729e3940d60) without root.
+### Adreno Tools
+一个用于在无 root 情况下应用 Adreno GPU 驱动修改/替换的库。目前支持加载自定义 GPU 驱动（例如 [turnip](https://docs.mesa3d.org/android.html#building-using-the-android-ndk)）、启用 BCn 纹理，并重定向文件操作，从而允许在无 root 的情况下访问 shader 转储并修改[驱动配置文件](https://gist.github.com/bylaws/04130932e2634d1c6a2a9729e3940d60)。
 
-#### Documentation
-API is documented in the `include/adrenotools` headers.
+#### 文档
+API 记录在 `include/adrenotools` 头文件中。
 
-#### Support
+#### 支持范围
 Android 9+
 Arm64
 
-Please create an issue if support for anything else is desired.
+如需支持其他平台，请提交 issue。
 
-### FAQ
+### 常见问题
 
-#### Is there an example project?
+#### 有示例项目吗？
 
-There is a simple bare-bones project [AdrenoToolsTest](https://github.com/darksylinc/AdrenoToolsTest) demonstrating how to get libadrenotools working.
+有一个简单的极简项目 [AdrenoToolsTest](https://github.com/darksylinc/AdrenoToolsTest)，演示如何让 libadrenotools 正常工作。
 
-#### How do I use this to update the drivers on my phone? Where's the apk?
+#### 我该如何用它更新手机上的驱动？apk 在哪里？
 
-You don't. This library is **not** for installing into Android and is **not** for end users.
-This library is aimed at other developers.
+你不能。这个库**不是**用来安装进 Android 的，也**不是**面向最终用户的。
+这个库面向的是其他开发者。
 
-Each individual app must explicitly make use of libadrenotools in order to load custom drivers into an app / game.
+每个应用都必须显式地使用 libadrenotools，才能把自定义驱动加载进应用/游戏。
 
-#### How do I use this library to make \<favourite game\> use newer drivers?
+#### 我该如何用这个库让 \<最喜欢的游戏\> 用上更新的驱动？
 
-See previous question. It's up to the game developer to add support & use this library.
+见上一个问题。是否添加支持并使用这个库，取决于游戏开发者。
 
-You could contact them to so they add support for it; but that's out of our power.
+你可以联系他们请其添加支持；但这超出了我们的能力范围。

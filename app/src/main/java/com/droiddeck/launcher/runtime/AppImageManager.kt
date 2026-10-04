@@ -44,22 +44,22 @@ object AppImageManager {
      * An AppImage is an ELF program (its runtime) with "AI" and the format version at byte 8.
      */
     internal fun problem(file: File): String? {
-        if (!file.isFile) return "The file is gone"
+        if (!file.isFile) return "文件不存在"
         val head = ByteArray(20)
         try {
-            RandomAccessFile(file, "r").use { if (it.read(head) < head.size) return "The file is too small to be an AppImage" }
+            RandomAccessFile(file, "r").use { if (it.read(head) < head.size) return "文件太小，不可能是 AppImage" }
         } catch (e: Exception) {
-            return "The file cannot be read: ${e.message}"
+            return "无法读取文件：${e.message}"
         }
         if (head[0] != 0x7f.toByte() || head[1] != 'E'.code.toByte() || head[2] != 'L'.code.toByte() || head[3] != 'F'.code.toByte()) {
-            return "This is not an AppImage (it is not a Linux program)"
+            return "这不是一个 AppImage（not an AppImage）——它不是 Linux 程序"
         }
         val machine = (head[18].toInt() and 0xff) or ((head[19].toInt() and 0xff) shl 8)
         return when {
-            machine == ELF_X86_64 -> "This AppImage is built for x86_64 PCs. DroidDeck runs ARM64 (aarch64) AppImages - look for an \"aarch64\" or \"arm64\" download."
-            machine != ELF_AARCH64 -> "This AppImage is not built for ARM64 (aarch64)"
-            head[8] != 'A'.code.toByte() || head[9] != 'I'.code.toByte() -> "This is an ARM64 program but not an AppImage"
-            head[10].toInt() != 2 -> "Only type 2 AppImages can be imported (this one is type ${head[10].toInt()})"
+            machine == ELF_X86_64 -> "此 AppImage 面向 x86_64 PC，DroidDeck 只能运行 ARM64（aarch64）AppImage——请寻找 \"aarch64\" 或 \"arm64\" 下载。"
+            machine != ELF_AARCH64 -> "此 AppImage 不是为 ARM64（aarch64）构建的"
+            head[8] != 'A'.code.toByte() || head[9] != 'I'.code.toByte() -> "这是一个 ARM64 程序，但不是 AppImage（not an AppImage）"
+            head[10].toInt() != 2 -> "只能导入 type 2 类型的 AppImage（此文件为 type ${head[10].toInt()}）"
             else -> null
         }
     }
@@ -76,12 +76,12 @@ object AppImageManager {
 
     /** Imports [file]; null on success, else what went wrong. [onProgress] gets a stage line. */
     fun import(context: Context, file: File, onProgress: (String) -> Unit): String? {
-        if (!LinuxRuntime.isInstalled(context)) return "Install the Linux runtime first"
+        if (!LinuxRuntime.isInstalled(context)) return "请先安装 Linux 运行时"
         problem(file)?.let { return it }
         val base = root(context).apply { mkdirs() }
         // Room for the image while it is extracted, and the extracted tree (about the same again).
         if (StatFs(base.path).availableBytes < file.length() * 3) {
-            return "Not enough free space: importing needs about ${FileUtils.sizeToString(file.length() * 3)}"
+            return "可用空间不足：导入约需 ${FileUtils.sizeToString(file.length() * 3)}"
         }
         val id = idFor(file.name, base.list()?.toSet() ?: emptySet())
         val dir = File(base, id)
@@ -90,10 +90,10 @@ object AppImageManager {
             dir.mkdirs()
             // Copied in, not run where it lies: shared storage is mounted noexec, and proot's loader
             // maps a program executable.
-            onProgress("Copying ${file.name}")
+            onProgress("正在复制 ${file.name}")
             file.inputStream().use { input -> image.outputStream().use { FileUtils.copy(input, it) } }
             image.setExecutable(true, false)
-            onProgress("Extracting ${file.name}")
+            onProgress("正在解包 ${file.name}")
             val guestDir = "$GUEST_DIR/$id"
             val out = StringBuilder()
             val status = GuestCommand.run(context, listOf(
@@ -103,7 +103,7 @@ object AppImageManager {
             ), logName = "appimage-import") { line -> if (out.length < 2000) out.appendLine(line) }
             if (status != 0 || !File(dir, "app").isDirectory) {
                 FileUtils.delete(dir)
-                return "The AppImage could not be extracted" + (out.lines().lastOrNull { it.isNotBlank() }?.let { ": $it" } ?: "")
+                return "无法解包该 AppImage" + (out.lines().lastOrNull { it.isNotBlank() }?.let { ": $it" } ?: "")
             }
             image.delete()
             describe(dir, file)
@@ -112,7 +112,7 @@ object AppImageManager {
         } catch (e: Exception) {
             Log.e(TAG, "import ${file.name}", e)
             FileUtils.delete(dir)
-            return e.message ?: "Import failed"
+            return e.message ?: "导入失败"
         } finally {
             image.delete()
         }

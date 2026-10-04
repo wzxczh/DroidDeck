@@ -6,7 +6,7 @@
 # app's rail: full screen over the desktop until it exits, then the desktop is back.
 #   droiddeck-gpu <program> [args...]
 set -u
-[ $# -gt 0 ] || { echo "usage: droiddeck-gpu <program> [args...]" >&2; exit 64; }
+[ $# -gt 0 ] || { echo "用法: droiddeck-gpu <program> [args...]" >&2; exit 64; }
 if [ -n "${BL_DEBUG_DIR:-}" ]; then
   exec >>"$BL_DEBUG_DIR/desktop.log" 2>&1
 fi
@@ -19,7 +19,7 @@ elif [ "${BL_REFRESH:-0}" -gt 0 ]; then
   args+=(-r "$BL_REFRESH")
 fi
 [ "${BL_HDR:-0}" = 1 ] && args+=(--hdr-enabled)
-echo "== droiddeck-gpu $(date -u +%H:%M:%S): $* (gamescope ${width}x${height} on wayland-0)"
+echo "== droiddeck-gpu $(date -u +%H:%M:%S): $* (gamescope ${width}x${height} 于 wayland-0)"
 # gamescope is a client of the app's compositor, beside labwc; the program inside it reaches it
 # through gamescope's own Xwayland, as in a Steam session.
 export WAYLAND_DISPLAY=wayland-0
@@ -28,5 +28,5 @@ export GDK_BACKEND=x11 QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11
 export APPIMAGE_EXTRACT_AND_RUN=1
 gamescope "${args[@]}" -- "$@"
 rc=$?
-echo "== droiddeck-gpu $(date -u +%H:%M:%S): exited $rc"
+echo "== droiddeck-gpu $(date -u +%H:%M:%S): 已退出，rc=$rc"
 exit $rc

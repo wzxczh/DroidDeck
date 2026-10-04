@@ -307,7 +307,7 @@ public class FakeInputWriter {
     private static RingSlot createFileRingSlotLocked(int slot, File ringFile) {
         File ringDir = ringFile.getParentFile();
         if (ringDir == null || (!ringDir.exists() && !ringDir.mkdirs())) {
-            Log.e(TAG, "Failed to create fake input ring directory for slot " + slot);
+            Log.e(TAG, "无法为槽位 " + slot + " 创建虚拟输入环目录");
             return null;
         }
 
@@ -326,10 +326,10 @@ public class FakeInputWriter {
             ringSlot.ringRaf = raf;
             ringSlot.ringChannel = channel;
             ringSlot.exportPath = getCanonicalOrAbsolutePath(ringFile);
-            Log.i(TAG, "Created fake input file ring for slot " + slot + ": " + ringSlot.exportPath);
+            Log.i(TAG, "已为槽位 " + slot + " 创建虚拟输入文件环：" + ringSlot.exportPath);
             return ringSlot;
         } catch (IOException e) {
-            Log.e(TAG, "Failed to create fake input file ring for slot " + slot + ": " + e.getMessage());
+            Log.e(TAG, "为槽位 " + slot + " 创建虚拟输入文件环失败：" + e.getMessage());
             if (channel != null) {
                 try {
                     channel.close();
@@ -371,7 +371,7 @@ public class FakeInputWriter {
                 clearSnapshotLocked(ringSlot.data);
                 ringSlot.data.putLong(RING_GENERATION_OFFSET, ringSlot.generation);
                 ringSlot.active = true;
-                Log.d(TAG, "Activated fake input ring for slot " + this.slot
+                Log.d(TAG, "已激活槽位 " + this.slot + " 的虚拟输入环"
                         + " generation=" + ringSlot.generation);
             }
         }
@@ -392,7 +392,7 @@ public class FakeInputWriter {
                 ringSlot.data.putLong(RING_WRITE_SEQ_OFFSET, 0L);
                 clearSnapshotLocked(ringSlot.data);
                 ringSlot.data.putLong(RING_GENERATION_OFFSET, ringSlot.generation);
-                Log.i(TAG, "Deactivated fake input ring for slot " + this.slot
+                Log.i(TAG, "已停用槽位 " + this.slot + " 的虚拟输入环"
                         + " generation=" + ringSlot.generation);
             }
             ringSlot.active = false;
@@ -562,14 +562,14 @@ public class FakeInputWriter {
                 if (eventFile.exists()) {
                     eventFile.delete();
                 }
-                Log.e(TAG, "Failed to open fake input mmap ring: " + eventFile.getAbsolutePath());
+                Log.e(TAG, "打开虚拟输入 mmap 环失败：" + eventFile.getAbsolutePath());
                 return false;
             }
             isOpen = true;
-            Log.i(TAG, "Opened fake input: " + eventFile.getAbsolutePath());
+            Log.i(TAG, "已打开虚拟输入：" + eventFile.getAbsolutePath());
             return true;
         } catch (IOException e) {
-            Log.e(TAG, "Failed to open: " + e.getMessage());
+            Log.e(TAG, "打开失败：" + e.getMessage());
             return false;
         }
     }
@@ -642,15 +642,15 @@ public class FakeInputWriter {
             writeEvent(EV_SYN, SYN_REPORT, 0);
             buffer.flip();
             if (!flushBuffer())
-                Log.e(TAG, "Reset write error: fake input mmap ring unavailable");
+                Log.e(TAG, "复位写入失败：虚拟输入 mmap 环不可用");
         }
-        Log.i(TAG, "Reset fake input to neutral state: " + eventFile.getAbsolutePath());
+        Log.i(TAG, "已将虚拟输入复位到中立状态：" + eventFile.getAbsolutePath());
     }
 
     public synchronized void softRelease() {
         reset();
         close();
-        Log.i(TAG, "Soft released fake input: " + eventFile.getAbsolutePath());
+        Log.i(TAG, "已软释放虚拟输入：" + eventFile.getAbsolutePath());
     }
 
     /**
@@ -663,7 +663,7 @@ public class FakeInputWriter {
         deactivateRingSlot();
         if (eventFile != null && eventFile.exists()) {
             boolean deleted = eventFile.delete();
-            Log.i(TAG, "Deleted fake input discovery node: " + eventFile.getAbsolutePath() + " (" + deleted + ")");
+            Log.i(TAG, "已删除虚拟输入发现节点：" + eventFile.getAbsolutePath() + "（" + deleted + "）");
         }
     }
 
@@ -697,7 +697,7 @@ public class FakeInputWriter {
         forceResend = pendingFullResend;
         pendingFullResend = false;
         if (forceResend) {
-            Log.d(TAG, "Re-emitting full gamepad state after failed publish for slot " + slot);
+            Log.d(TAG, "发布失败后为槽位 " + slot + " 重新发送完整手柄状态");
         }
 
         buffer.clear();
@@ -772,7 +772,7 @@ public class FakeInputWriter {
             writeEvent(EV_SYN, SYN_REPORT, 0);
             buffer.flip();
             if (!flushBuffer()) {
-                Log.e(TAG, "Gamepad write error: fake input mmap ring unavailable");
+                Log.e(TAG, "手柄写入失败：虚拟输入 mmap 环不可用");
                 // Couldn't publish; re-assert the whole state on the next frame.
                 pendingFullResend = true;
             }

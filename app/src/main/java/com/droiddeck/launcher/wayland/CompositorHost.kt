@@ -70,7 +70,7 @@ object CompositorHost {
         // rebound and the swapchain rebuilt; the caller re-arms once that has settled, and every
         // engine-side object is made again for the new size.
         WaylandCompositor.nativeSetFrameGenArmed(false, 0)
-        WaylandCompositor.nativeLog("screen", "surface resized: rebinding the window, frame generation re-armed after")
+        WaylandCompositor.nativeLog("screen", "呈现表面尺寸变化：重新绑定窗口，稍后重新启用帧生成")
         WaylandCompositor.nativeSetSurface(null)
         attached = surface
         WaylandCompositor.nativeSetSurface(surface)
@@ -86,7 +86,7 @@ object CompositorHost {
     fun rearmFrameGen(rearm: () -> Unit) {
         if (!started) return
         WaylandCompositor.nativeSetFrameGenArmed(false, 0)
-        WaylandCompositor.nativeLog("screen", "presenting window changed: frame generation re-armed")
+        WaylandCompositor.nativeLog("screen", "呈现窗口变化：已重新启用帧生成")
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(rearm, 600)
     }
 

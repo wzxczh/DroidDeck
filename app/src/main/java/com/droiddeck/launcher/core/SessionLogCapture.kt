@@ -36,8 +36,8 @@ object SessionLogCapture {
         stop()
         try {
             val out = target.bufferedWriter()
-            out.write("The app's own log for this session (logcat, this process only).\n")
-            out.write("Lines the app wrote before the session folder existed are in logcat only.\n\n")
+            out.write("本次会话中应用自身的日志（logcat，仅本进程）。\n")
+            out.write("会话目录建立之前应用写出的行只存在于 logcat 中。\n\n")
             out.flush()
             writer = out
             this.target = target
@@ -56,12 +56,12 @@ object SessionLogCapture {
                 }
             }
             if (pid == -1) {
-                out.write("logcat could not be started; this ROM may not hand an app its own entries.\n")
+                out.write("无法启动 logcat；该 ROM 可能不允许应用读取自己的日志。\n")
                 out.flush()
             }
-            Log.i(TAG, "app log -> $target (logcat pid $pid)")
+            Log.i(TAG, "应用日志 -> $target（logcat pid $pid）")
         } catch (e: Exception) {
-            Log.w(TAG, "could not start the app log", e)
+            Log.w(TAG, "无法启动应用日志收集", e)
         }
     }
 
@@ -79,7 +79,7 @@ object SessionLogCapture {
             try {
                 Process.killProcess(pid)
             } catch (e: Exception) {
-                Log.w(TAG, "logcat would not stop", e)
+                Log.w(TAG, "logcat 无法停止", e)
             }
             pid = -1
         }
@@ -110,18 +110,18 @@ object SessionLogCapture {
             val finished = pid != -1 && done.await(10, java.util.concurrent.TimeUnit.SECONDS)
             val body = synchronized(lines) { lines.toString() }
             target.writeText(
-                "Android's crash buffer, as it stood when this session ended.\n" +
-                    "Not only this app: anything on the device that crashed is in here, which is the\n" +
-                    "point - a session killed by the system leaves its trace here and nowhere else.\n\n" +
+                "Android 崩溃缓冲区，截止本次会话结束时的内容。\n" +
+                    "不只本应用：设备上任何崩溃的进程都在这里，这正是要点——\n" +
+                    "被系统杀死的会话只在这里留下痕迹，别处没有。\n\n" +
                     when {
                         body.isNotEmpty() -> body
-                        pid == -1 -> "(logcat could not be started at all)\n"
-                        !finished -> "(logcat did not finish within 10 s; nothing captured)\n"
-                        else -> "(the crash buffer is empty - nothing on the device has crashed recently)\n"
+                        pid == -1 -> "（logcat 完全无法启动）\n"
+                        !finished -> "（logcat 未能在 10 秒内结束，未捕获到内容）\n"
+                        else -> "（崩溃缓冲区为空——设备近期没有崩溃）\n"
                     }
             )
         } catch (e: Exception) {
-            Log.w(TAG, "could not dump the crash buffer", e)
+            Log.w(TAG, "无法导出崩溃缓冲区", e)
         }
     }
 }

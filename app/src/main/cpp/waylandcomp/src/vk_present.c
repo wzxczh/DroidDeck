@@ -276,7 +276,7 @@ int vkp_apply_window_request(void) {
     g_window = w;
     g_swap_retry_at_ns = 0;
     g_swap_fail_logged = 0;
-    banner_log("gpu", w ? "screen surface attached" : "screen surface gone: presenting paused");
+    banner_log("gpu", w ? "屏幕表面已附加" : "屏幕表面已移除：呈现暂停");
     return 1;
 }
 
@@ -299,19 +299,19 @@ void vk_present_set_scale_mode(int mode, int alignment) {
 
 static const char *mode_name(int m) {
     switch (m) {
-    case VKP_MODE_OFF: return "off (letterbox)";
-    case VKP_MODE_FIT: return "fit";
-    case VKP_MODE_STRETCH: return "stretch";
-    case VKP_MODE_FILL: return "fill";
-    case VKP_MODE_INTEGER: return "integer";
+    case VKP_MODE_OFF: return "关闭（黑边）";
+    case VKP_MODE_FIT: return "适应";
+    case VKP_MODE_STRETCH: return "拉伸";
+    case VKP_MODE_FILL: return "填充";
+    case VKP_MODE_INTEGER: return "整数";
     default: return "?";
     }
 }
 static const char *align_name(int a) {
     switch (a) {
-    case VKP_ALIGN_TOP: return "top";
-    case VKP_ALIGN_BOTTOM: return "bottom";
-    default: return "center";
+    case VKP_ALIGN_TOP: return "顶部";
+    case VKP_ALIGN_BOTTOM: return "底部";
+    default: return "居中";
     }
 }
 
@@ -353,7 +353,7 @@ static void update_map(int scene_w, int scene_h) {
         g_map.off_y = (float)(g_map.ry + (int)((g_map.rh - scene_h * aspect) * 0.5f));
     }
     g_map.valid = 1;
-    banner_log("screen", "%s, %s: %dx%d scene shown %dx%d at %d,%d on the %dx%d output",
+    banner_log("screen", "%s，%s：%dx%d 场景以 %dx%d 显示在 %d,%d，位于 %dx%d 输出上",
                mode_name(mode), align_name(align), scene_w, scene_h,
                (int)(scene_w * g_map.kx + 0.5f), (int)(scene_h * g_map.ky + 0.5f),
                (int)g_map.off_x, (int)g_map.off_y, W, H);
@@ -385,7 +385,7 @@ static int dev_init(void) {
 
     /* Load Turnip (adrenotools) and its entry points - NOT the system driver. */
     if (vk_loader_open(g_driver_path, g_library_name, g_native_lib_dir) != 0) {
-        LOGE("present: vk_loader_open failed"); g_dev_state = -1; return -1;
+        LOGE("present: vk_loader_open 失败"); g_dev_state = -1; return -1;
     }
 
     const char *inst_exts[3] = {VK_KHR_SURFACE_EXTENSION_NAME,
@@ -407,9 +407,9 @@ static int dev_init(void) {
                 }
         }
         free(ie);
-        banner_log("color", "compositor instance %s VK_EXT_swapchain_colorspace (an HDR10 swapchain for frame "
-                   "generation %s)", g_colorspace_ext ? "enables" : "has no",
-                   g_colorspace_ext ? "is possible where the screen surface offers one" : "is not possible: tone-mapped instead");
+        banner_log("color", "合成器实例 %s VK_EXT_swapchain_colorspace（用于帧生成的 HDR10 交换链 "
+                   "%s）", g_colorspace_ext ? "启用" : "没有",
+                   g_colorspace_ext ? "在屏幕表面提供时可行" : "不可行：改为色调映射");
     }
     /* 1.3 like the X11 renderer's instance: the frame-generation probe (framegen_engine.cpp)
      * queries VkPhysicalDeviceVulkan12Features, and a 1.1 instance may be answered as 1.1. */
@@ -421,13 +421,13 @@ static int dev_init(void) {
                                 .enabledExtensionCount = n_inst_exts,
                                 .ppEnabledExtensionNames = inst_exts};
     if (g_vk.CreateInstance(&ici, NULL, &g_inst) != VK_SUCCESS) {
-        LOGE("present: vkCreateInstance failed"); g_dev_state = -1; return -1;
+        LOGE("present: vkCreateInstance 失败"); g_dev_state = -1; return -1;
     }
     vk_loader_load_instance(g_inst);
 
     uint32_t npd = 0;
     g_vk.EnumeratePhysicalDevices(g_inst, &npd, NULL);
-    if (!npd) { LOGE("present: no physical devices"); g_dev_state = -1; return -1; }
+    if (!npd) { LOGE("present: 没有物理设备"); g_dev_state = -1; return -1; }
     VkPhysicalDevice pds[8]; if (npd > 8) npd = 8;
     g_vk.EnumeratePhysicalDevices(g_inst, &npd, pds);
     g_pd = VK_NULL_HANDLE;
@@ -439,14 +439,14 @@ static int dev_init(void) {
         for (uint32_t q = 0; q < nq; q++)
             if (qs[q].queueFlags & VK_QUEUE_GRAPHICS_BIT) { g_pd = pds[i]; g_qfam = q; break; }
     }
-    if (g_pd == VK_NULL_HANDLE) { LOGE("present: no graphics queue"); g_dev_state = -1; return -1; }
+    if (g_pd == VK_NULL_HANDLE) { LOGE("present: 没有图形队列"); g_dev_state = -1; return -1; }
     {
         VkPhysicalDeviceProperties props;
         g_vk.GetPhysicalDeviceProperties(g_pd, &props);
         snprintf(g_gpu_name, sizeof(g_gpu_name), "%s", props.deviceName);
-        banner_log("gpu", "compositor renders on %s with %s", props.deviceName,
-                   g_library_name ? g_library_name : "the system Vulkan driver");
-        if (g_driver_path) banner_log("gpu", "driver folder %s", g_driver_path);
+        banner_log("gpu", "合成器在 %s 上使用 %s 渲染", props.deviceName,
+                   g_library_name ? g_library_name : "系统 Vulkan 驱动");
+        if (g_driver_path) banner_log("gpu", "驱动目录 %s", g_driver_path);
     }
     g_vk.GetPhysicalDeviceMemoryProperties(g_pd, &g_memprops);
 
@@ -461,7 +461,7 @@ static int dev_init(void) {
     g_vk.EnumerateDeviceExtensionProperties(g_pd, NULL, &ne, exts);
     for (unsigned i = 0; i < 5; i++)
         if (!has_ext(exts, ne, dev_exts[i]))
-            LOGE("present: driver MISSING %s (dmabuf import will fail)", dev_exts[i]);
+            LOGE("present: 驱动缺少 %s（dmabuf 导入将失败）", dev_exts[i]);
     /* HDR sessions only: the HDR10 swapchain (frame generation) can carry the game's metadata. */
     int want_hdr_md = 0;
     if (banner_color_requested()) {
@@ -487,14 +487,14 @@ static int dev_init(void) {
                               .enabledExtensionCount = n_dev_exts, .ppEnabledExtensionNames = dev_exts};
     VkResult dr = g_vk.CreateDevice(g_pd, &dci, NULL, &g_dev);
     if (dr != VK_SUCCESS && fg_features) {
-        banner_log("framegen", "the driver refused the LSFG feature set (%s); device created without it",
+        banner_log("framegen", "驱动拒绝了 LSFG 特性集（%s）；已在没有它的情况下创建设备",
                    vk_result_name(dr));
         dci.pNext = NULL;
         fg_features = NULL;
         dr = g_vk.CreateDevice(g_pd, &dci, NULL, &g_dev);
     }
     if (dr != VK_SUCCESS) {
-        LOGE("present: vkCreateDevice failed"); g_dev_state = -1; return -1;
+        LOGE("present: vkCreateDevice 失败"); g_dev_state = -1; return -1;
     }
     vk_loader_load_device(g_dev);
     g_vk.GetDeviceQueue(g_dev, g_qfam, 0, &g_queue);
@@ -506,15 +506,15 @@ static int dev_init(void) {
             g_wait_sem = VK_NULL_HANDLE;
         }
     }
-    banner_log("perf", "layer buffers: the display's release fences are waited for %s",
-               g_import_sem_fd ? "on the GPU (VK_KHR_external_semaphore_fd)"
-                               : "on the CPU (this driver has no VK_KHR_external_semaphore_fd)");
+    banner_log("perf", "图层缓冲：显示屏的释放围栏在%s等待",
+               g_import_sem_fd ? "GPU 上（VK_KHR_external_semaphore_fd）"
+                               : "CPU 上（该驱动没有 VK_KHR_external_semaphore_fd）");
     if (want_hdr_md)
         g_set_hdr_metadata = (PFN_vkSetHdrMetadataEXT)g_vk.GetDeviceProcAddr(g_dev, "vkSetHdrMetadataEXT");
     if (banner_color_requested())
-        banner_log("color", "compositor device %s VK_EXT_hdr_metadata (the HDR10 swapchain for frame generation %s)",
-                   g_set_hdr_metadata ? "enables" : "has no",
-                   g_set_hdr_metadata ? "carries the game's mastering metadata" : "goes without the game's metadata");
+        banner_log("color", "合成器设备 %s VK_EXT_hdr_metadata（用于帧生成的 HDR10 交换链 %s）",
+                   g_set_hdr_metadata ? "启用" : "没有",
+                   g_set_hdr_metadata ? "携带游戏的母版元数据" : "不带游戏的元数据");
 
     VkCommandPoolCreateInfo pci = {.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
                                    .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
@@ -557,7 +557,7 @@ static int swap_init(void) {
     g_swap_retry_at_ns = now + 500000000LL;
     if (!g_swap_fail_logged) {
         g_swap_fail_logged = 1;
-        LOGE("present: no swapchain on the screen surface; retrying every 0.5 s");
+        LOGE("present: 屏幕表面上没有交换链；每 0.5 秒重试");
     }
     return -1;
 }
@@ -641,8 +641,8 @@ static void log_surface_formats(const VkSurfaceFormatKHR *f, uint32_t n) {
                                        vk_colorspace_short(f[i].colorSpace));
             else hdr_cut++;
         }
-    banner_log("color", "screen surface lists %u format/colour-space pairs (%s); HDR-capable: %s%s", n, per,
-               hdr_n ? hdr : "none", hdr_cut ? " (+more)" : "");
+    banner_log("color", "屏幕表面列出 %u 组格式/色彩空间（%s）；支持 HDR：%s%s", n, per,
+               hdr_n ? hdr : "无", hdr_cut ? "（还有更多）" : "");
 }
 
 static int swap_init_locked(void) {
@@ -650,11 +650,11 @@ static int swap_init_locked(void) {
     VkAndroidSurfaceCreateInfoKHR aci = {
         .sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR, .window = g_window};
     if (g_vk.CreateAndroidSurfaceKHR(g_inst, &aci, NULL, &g_surface) != VK_SUCCESS) {
-        SWLOGE("present: create android surface failed"); return -1;
+        SWLOGE("present: 创建 Android surface 失败"); return -1;
     }
     VkBool32 sup = VK_FALSE;
     g_vk.GetPhysicalDeviceSurfaceSupportKHR(g_pd, g_qfam, g_surface, &sup);
-    if (!sup) { SWLOGE("present: queue can't present to the window"); return -1; }
+    if (!sup) { SWLOGE("present: 队列无法呈现到该窗口"); return -1; }
 
     VkSurfaceCapabilitiesKHR caps;
     g_vk.GetPhysicalDeviceSurfaceCapabilitiesKHR(g_pd, g_surface, &caps);
@@ -672,9 +672,9 @@ static int swap_init_locked(void) {
     uint32_t nfmt = 0;
     g_vk.GetPhysicalDeviceSurfaceFormatsKHR(g_pd, g_surface, &nfmt, NULL);
     VkSurfaceFormatKHR *fmts = nfmt ? calloc(nfmt, sizeof(*fmts)) : NULL;
-    if (!fmts) { SWLOGE("present: the surface lists no formats"); return -1; }
+    if (!fmts) { SWLOGE("present: 表面未列出任何格式"); return -1; }
     if (g_vk.GetPhysicalDeviceSurfaceFormatsKHR(g_pd, g_surface, &nfmt, fmts) < 0 || !nfmt) {
-        free(fmts); SWLOGE("present: vkGetPhysicalDeviceSurfaceFormatsKHR failed"); return -1;
+        free(fmts); SWLOGE("present: vkGetPhysicalDeviceSurfaceFormatsKHR 失败"); return -1;
     }
     VkSurfaceFormatKHR chosen = fmts[0];
     const VkSurfaceFormatKHR sdr_choice = fmts[0];
@@ -702,14 +702,14 @@ static int swap_init_locked(void) {
             g_swap_is_hdr = 1;
             char fname[24];
             vk_format_short(chosen.format, fname, sizeof(fname));
-            banner_log("color", "screen swapchain built as HDR10 (format %d %s, HDR10_ST2084): frame-generated HDR "
-                       "frames reach the display as PQ BT.2020%s", (int)chosen.format, fname,
-                       vk_format_bits(chosen.format) <= 8 ? " - an 8-bit swapchain: banding possible in smooth gradients"
+            banner_log("color", "屏幕交换链按 HDR10 构建（格式 %d %s，HDR10_ST2084）：帧生成的 HDR "
+                       "帧以 PQ BT.2020 到达显示屏%s", (int)chosen.format, fname,
+                       vk_format_bits(chosen.format) <= 8 ? " - 8 位交换链：平滑渐变可能出现色带"
                                                           : "");
         } else {
             g_swap_hdr_unavailable = 1;
-            banner_log("color", "the screen surface lists no HDR10 swapchain format among its %u format/colour-space "
-                       "pairs (see the line above): frames with frame generation are tone-mapped to SDR instead",
+            banner_log("color", "屏幕表面的 %u 组格式/色彩空间 "
+                       "（见上一行）中没有 HDR10 交换链格式：带帧生成的帧改为色调映射为 SDR",
                        nfmt);
         }
     }
@@ -748,8 +748,8 @@ static int swap_init_locked(void) {
     if (cr != VK_SUCCESS && g_swap_is_hdr) {
         /* The surface listed the HDR10 pair but refused the swapchain: say so, never ask again this
          * surface, and build the ordinary one now (frames tone-mapped) - never a black screen. */
-        banner_log("color", "the driver refused the HDR10 swapchain (%s): frames with frame generation are "
-                   "tone-mapped to SDR instead", vk_result_name(cr));
+        banner_log("color", "驱动拒绝了 HDR10 交换链（%s）：带帧生成的帧 "
+                   "改为色调映射为 SDR", vk_result_name(cr));
         g_swap_is_hdr = 0;
         g_swap_hdr_unavailable = 1;
         g_swapchain = VK_NULL_HANDLE;
@@ -760,15 +760,15 @@ static int swap_init_locked(void) {
     }
     if (cr != VK_SUCCESS) {
         g_swapchain = VK_NULL_HANDLE;
-        SWLOGE("present: vkCreateSwapchainKHR failed (%d)", (int)cr);
+        SWLOGE("present: vkCreateSwapchainKHR 失败（%d）", (int)cr);
         return -1;
     }
     g_vk.GetSwapchainImagesKHR(g_dev, g_swapchain, &g_nimg, NULL);
     g_images = calloc(g_nimg, sizeof(VkImage));
     g_vk.GetSwapchainImagesKHR(g_dev, g_swapchain, &g_nimg, g_images);
 
-    banner_log("gpu", "screen output %ux%u, %u buffers, vsync%s", g_extent.width, g_extent.height, g_nimg,
-               g_swap_extra ? " (frame generation: several presents per frame)" : "");
+    banner_log("gpu", "屏幕输出 %ux%u，%u 个缓冲，垂直同步%s", g_extent.width, g_extent.height, g_nimg,
+               g_swap_extra ? "（帧生成：每帧多次呈现）" : "");
     return 0;
 }
 
@@ -833,7 +833,7 @@ static void init_black_image(void) {
         g_vk.WaitForFences(g_dev, 1, &g_fence, VK_TRUE, 1000000000ULL) == VK_SUCCESS)
         g_black_state = 1;
     else
-        banner_log("gpu", "letterbox black image unavailable: the whole output is cleared every copy-path frame");
+        banner_log("gpu", "黑边黑色图像不可用：走拷贝路径的每一帧都会清空整个输出");
 }
 
 /* Blit the black image over everything of swapchain image `img` (in TRANSFER_DST_OPTIMAL) OUTSIDE the
@@ -915,12 +915,12 @@ int vkp_dmabuf_modifiers(uint32_t drm_format, uint64_t *out, int max) {
     for (uint32_t i = 0; i < list.drmFormatModifierCount; i++) {
         uint64_t m = props[i].drmFormatModifier;
         const char *why = NULL;
-        if (m != VKP_MOD_LINEAR && m != VKP_MOD_QCOM_COMPRESSED) why = "unknown layout";
-        else if (props[i].drmFormatModifierPlaneCount != 1) why = "not single-plane";
-        else if (!(props[i].drmFormatModifierTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT)) why = "no blit source";
-        else if (!modifier_importable(fmt, m, VK_IMAGE_USAGE_TRANSFER_SRC_BIT)) why = "not importable as a dma-buf";
+        if (m != VKP_MOD_LINEAR && m != VKP_MOD_QCOM_COMPRESSED) why = "未知布局";
+        else if (props[i].drmFormatModifierPlaneCount != 1) why = "非单平面";
+        else if (!(props[i].drmFormatModifierTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT)) why = "不能作为 blit 源";
+        else if (!modifier_importable(fmt, m, VK_IMAGE_USAGE_TRANSFER_SRC_BIT)) why = "无法作为 dma-buf 导入";
         if (why) {
-            LOGI("dmabuf: %c%c%c%c %s reported by the driver but not advertised: %s",
+            LOGI("dmabuf: 驱动报告了 %c%c%c%c %s 却未公布：%s",
                  drm_format & 0xff, (drm_format >> 8) & 0xff, (drm_format >> 16) & 0xff,
                  (drm_format >> 24) & 0xff, vkp_modifier_name(m), why);
             continue;
@@ -971,7 +971,7 @@ struct vkp_image *vkp_image_import_dmabuf(int fd, uint32_t drm_format, uint64_t 
         LOGE("%s: vkCreateImage(%s, %dx%d, pitch %u, offset %u) -> %s%s", as_blit_dst ? "layer" : "dmabuf",
              vkp_modifier_name(modifier), w, h, stride, offset, vk_result_name(cr),
              (!as_blit_dst && modifier == VKP_MOD_QCOM_COMPRESSED)
-                 ? ": the game's UBWC layout was refused; BANNER_WAYLAND_UBWC=0 forces linear buffers" : "");
+                 ? "：游戏的 UBWC 布局被拒绝；BANNER_WAYLAND_UBWC=0 强制线性缓冲" : "");
         free(img); return NULL;
     }
 
@@ -989,7 +989,7 @@ struct vkp_image *vkp_image_import_dmabuf(int fd, uint32_t drm_format, uint64_t 
     int idx = -1;
     for (int i = 0; i < 32; i++) if (bits & (1u << i)) { idx = i; break; }
     if (idx < 0) {
-        LOGE("%s: no memory type can import the %s dma-buf (image types %#x, fd types %#x)",
+        LOGE("%s：没有内存类型能导入 %s dma-buf（图像类型 %#x，fd 类型 %#x）",
              as_blit_dst ? "layer" : "dmabuf", vkp_modifier_name(modifier), req.memoryTypeBits, allowed);
         g_vk.DestroyImage(g_dev, img->image, NULL); close(dupfd); free(img); return NULL;
     }
@@ -1003,13 +1003,13 @@ struct vkp_image *vkp_image_import_dmabuf(int fd, uint32_t drm_format, uint64_t 
                                 .allocationSize = req.size, .memoryTypeIndex = (uint32_t)idx};
     VkResult mr = g_vk.AllocateMemory(g_dev, &mai, NULL, &img->mem);
     if (mr != VK_SUCCESS) {
-        LOGE("%s: importing the %s dma-buf (%dx%d, %llu bytes) -> %s", as_blit_dst ? "layer" : "dmabuf",
+        LOGE("%s：导入 %s dma-buf（%dx%d，%llu 字节）-> %s", as_blit_dst ? "layer" : "dmabuf",
              vkp_modifier_name(modifier), w, h, (unsigned long long)req.size, vk_result_name(mr));
         g_vk.DestroyImage(g_dev, img->image, NULL); close(dupfd); free(img); return NULL;
     }
     VkResult br = g_vk.BindImageMemory(g_dev, img->image, img->mem, 0);
     if (br != VK_SUCCESS) {
-        LOGE("%s: vkBindImageMemory(%s dma-buf) -> %s", as_blit_dst ? "layer" : "dmabuf",
+        LOGE("%s：vkBindImageMemory(%s dma-buf) -> %s", as_blit_dst ? "layer" : "dmabuf",
              vkp_modifier_name(modifier), vk_result_name(br));
         g_vk.FreeMemory(g_dev, img->mem, NULL); g_vk.DestroyImage(g_dev, img->image, NULL);
         free(img); return NULL;
@@ -1171,7 +1171,7 @@ static int ensure_scene_image(int w, int h) {
                  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, /* the HDR encode pass writes it (frame generation) */
         .sharingMode = VK_SHARING_MODE_EXCLUSIVE, .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED};
     VkResult r = g_vk.CreateImage(g_dev, &ici, NULL, &g_scene.img);
-    if (r != VK_SUCCESS) { LOGE("effects: scene image %dx%d: vkCreateImage %s", w, h, vk_result_name(r)); g_scene.img = VK_NULL_HANDLE; return -1; }
+    if (r != VK_SUCCESS) { LOGE("effects: 场景图像 %dx%d：vkCreateImage %s", w, h, vk_result_name(r)); g_scene.img = VK_NULL_HANDLE; return -1; }
     VkMemoryRequirements req;
     g_vk.GetImageMemoryRequirements(g_dev, g_scene.img, &req);
     int idx = memory_type(req.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -1179,10 +1179,10 @@ static int ensure_scene_image(int w, int h) {
     VkMemoryAllocateInfo mai = {.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, .allocationSize = req.size,
                                 .memoryTypeIndex = (uint32_t)(idx < 0 ? 0 : idx)};
     r = g_vk.AllocateMemory(g_dev, &mai, NULL, &g_scene.mem);
-    if (r != VK_SUCCESS) { LOGE("effects: scene image %dx%d: vkAllocateMemory %s", w, h, vk_result_name(r)); destroy_scene_image(); return -1; }
+    if (r != VK_SUCCESS) { LOGE("effects: 场景图像 %dx%d：vkAllocateMemory %s", w, h, vk_result_name(r)); destroy_scene_image(); return -1; }
     g_vk.BindImageMemory(g_dev, g_scene.img, g_scene.mem, 0);
     g_scene.w = w; g_scene.h = h;
-    banner_log("effects", "scene image %dx%d for the effect chain", w, h);
+    banner_log("effects", "效果链的场景图像 %dx%d", w, h);
     return 0;
 }
 
@@ -1200,7 +1200,7 @@ static int ensure_img(struct vkp_img_slot *s, int w, int h, VkFormat fmt, VkImag
         .tiling = VK_IMAGE_TILING_OPTIMAL, .usage = usage, .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED};
     VkResult r = g_vk.CreateImage(g_dev, &ici, NULL, &s->img);
-    if (r != VK_SUCCESS) { LOGE("color: %s image %dx%d: vkCreateImage %s", what, w, h, vk_result_name(r)); s->img = VK_NULL_HANDLE; return -1; }
+    if (r != VK_SUCCESS) { LOGE("color: %s 图像 %dx%d：vkCreateImage %s", what, w, h, vk_result_name(r)); s->img = VK_NULL_HANDLE; return -1; }
     VkMemoryRequirements req;
     g_vk.GetImageMemoryRequirements(g_dev, s->img, &req);
     int idx = memory_type(req.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -1209,7 +1209,7 @@ static int ensure_img(struct vkp_img_slot *s, int w, int h, VkFormat fmt, VkImag
                                 .memoryTypeIndex = (uint32_t)(idx < 0 ? 0 : idx)};
     r = g_vk.AllocateMemory(g_dev, &mai, NULL, &s->mem);
     if (r != VK_SUCCESS) {
-        LOGE("color: %s image %dx%d: vkAllocateMemory %s", what, w, h, vk_result_name(r));
+        LOGE("color: %s 图像 %dx%d：vkAllocateMemory %s", what, w, h, vk_result_name(r));
         g_vk.DestroyImage(g_dev, s->img, NULL);
         memset(s, 0, sizeof(*s));
         return -1;
@@ -1218,7 +1218,7 @@ static int ensure_img(struct vkp_img_slot *s, int w, int h, VkFormat fmt, VkImag
     s->w = w; s->h = h; s->fmt = fmt;
     char fname[24];
     vk_format_short(fmt, fname, sizeof(fname));
-    banner_log("color", "%s image %dx%d (%s)", what, w, h, fname);
+    banner_log("color", "%s 图像 %dx%d（%s）", what, w, h, fname);
     return 0;
 }
 
@@ -1233,7 +1233,7 @@ static int compose_hdr(VkCommandBuffer cmd, const struct vkp_draw *draws, int n,
     if (ensure_img(&g_mixed, scene_w, scene_h, HDR_FMT,
                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                   "HDR composition (mixed)") != 0)
+                   "HDR 合成（混合）") != 0)
         return -1;
     VkImageSubresourceRange range = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
     VkImageMemoryBarrier b = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
@@ -1272,8 +1272,8 @@ static int compose_hdr(VkCommandBuffer cmd, const struct vkp_draw *draws, int n,
         }
         if (i >= lowest_hdr && !truncated_said) {
             truncated_said = 1;
-            banner_log("color", "HDR composition: more than %d windows are stacked over the HDR game - the lowest "
-                       "ones are treated as SDR", HDRC_MAX_RECTS);
+            banner_log("color", "HDR 合成：叠在 HDR 游戏之上的窗口超过 %d 个 - 最底层的 "
+                       "被视为 SDR", HDRC_MAX_RECTS);
         }
     }
     return hdrc_encode(cmd, g_mixed.img, out, out_fmt, scene_w, scene_h, &p);
@@ -1287,8 +1287,8 @@ static void device_lost(const char *where) {
     g_dev_state = -2;
     g_base_black = 0;
     vkp_framegen_device_lost();
-    banner_log("error", "GPU device lost (VK_ERROR_DEVICE_LOST in %s): the compositor has stopped presenting; "
-               "restart the session", where);
+    banner_log("error", "GPU 设备丢失（%s 处发生 VK_ERROR_DEVICE_LOST）：合成器已停止呈现； "
+               "请重启会话", where);
     for (uint32_t i = 0; i < g_nimg; i++) blendp_forget_image(g_images[i]);
     if (g_swapchain) g_vk.DestroySwapchainKHR(g_dev, g_swapchain, NULL);
     g_swapchain = VK_NULL_HANDLE;
@@ -1385,12 +1385,12 @@ static int acquire_image(int k, int first, uint32_t *img, VkResult *ar_out) {
         if (ar == VK_SUCCESS || ar == VK_SUBOPTIMAL_KHR) { *ar_out = ar; return 0; }
         if (ar == VK_ERROR_DEVICE_LOST) { device_lost("acquire"); return -1; }
         if (ar == VK_ERROR_OUT_OF_DATE_KHR || ar == VK_ERROR_SURFACE_LOST_KHR) {
-            banner_log("gpu", "screen surface %s on acquire: rebuilding the swapchain", vk_result_name(ar));
+            banner_log("gpu", "获取时屏幕表面 %s：重建交换链", vk_result_name(ar));
             destroy_swapchain();
             if (first && attempt == 0) continue;
             return -1;
         }
-        banner_log("error", "present: acquire %d failed (%s %d)", k, vk_result_name(ar), (int)ar);
+        banner_log("error", "present: 获取 %d 失败（%s %d）", k, vk_result_name(ar), (int)ar);
         if (ar == VK_TIMEOUT || ar == VK_NOT_READY) return -1;
         destroy_swapchain(); /* anything else: start over next frame */
         return -1;
@@ -1422,7 +1422,7 @@ static void check_surface_changed(void) {
     if (caps.currentExtent.width == g_caps_extent.width && caps.currentExtent.height == g_caps_extent.height &&
         caps.currentTransform == g_surface_transform)
         return;
-    banner_log("gpu", "screen surface changed (%ux%u -> %ux%u, transform %d -> %d): rebuilding the swapchain",
+    banner_log("gpu", "屏幕表面已改变（%ux%u -> %ux%u，变换 %d -> %d）：重建交换链",
                g_caps_extent.width, g_caps_extent.height, caps.currentExtent.width, caps.currentExtent.height,
                (int)g_surface_transform, (int)caps.currentTransform);
     destroy_swapchain();
@@ -1464,7 +1464,7 @@ static int take_wait_fd(int fd) {
         static int said;
         if (!said) {
             said = 1;
-            banner_log("perf", "layer buffers: importing a release fence as a GPU wait failed; waiting for it on the CPU");
+            banner_log("perf", "图层缓冲：把释放围栏导入为 GPU 等待失败；改为在 CPU 上等待");
         }
     }
     struct pollfd p = {.fd = fd, .events = POLLIN};
@@ -1480,15 +1480,15 @@ static void send_hdr_metadata(const struct banner_color *c) {
     static int said_none, said_nodesc;
     if (!c) return;
     if (!g_set_hdr_metadata) {
-        if (!said_none) { said_none = 1; banner_log("color", "HDR10 swapchain without the game's metadata: this device "
-                                                    "has no VK_EXT_hdr_metadata (the display uses its defaults)"); }
+        if (!said_none) { said_none = 1; banner_log("color", "HDR10 交换链没有游戏的元数据：本设备 "
+                                                    "没有 VK_EXT_hdr_metadata（显示屏使用其默认值）"); }
         return;
     }
     if (!c->has_st2086 && !c->has_cta861) {
         if (said_nodesc != (int)c->identity) {
             said_nodesc = (int)c->identity;
-            banner_log("color", "HDR10 swapchain: image description #%u carries no HDR metadata (the game sent none), "
-                       "so none is set - the display uses its defaults", c->identity);
+            banner_log("color", "HDR10 交换链：图像描述 #%u 不带 HDR 元数据（游戏未发送）， "
+                       "因此不设置 - 显示屏使用其默认值", c->identity);
         }
         return;
     }
@@ -1506,7 +1506,7 @@ static void send_hdr_metadata(const struct banner_color *c) {
         md.maxFrameAverageLightLevel = c->max_fall;
     }
     g_set_hdr_metadata(g_dev, 1, &g_swapchain, &md);
-    banner_log("color", "HDR10 swapchain: the game's metadata set via VK_EXT_hdr_metadata (image description #%u: %s)",
+    banner_log("color", "HDR10 交换链：已通过 VK_EXT_hdr_metadata 设置游戏的元数据（图像描述 #%u：%s）",
                c->identity, c->text);
 }
 
@@ -1522,8 +1522,8 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
     /* Frame generation queues several presents per scene frame and needs swapchain images for
      * them: rebuild when that changes (armed, disarmed, another multiplier). */
     if (g_swapchain && vkp_framegen_extra_images() != g_swap_extra) {
-        banner_log("gpu", "frame generation now wants %d present%s per frame: rebuilding the swapchain",
-                   1 + vkp_framegen_extra_images(), vkp_framegen_extra_images() ? "s" : "");
+        banner_log("gpu", "帧生成现在每帧需要 %d 次呈现%s：重建交换链",
+                   1 + vkp_framegen_extra_images(), vkp_framegen_extra_images() ? "" : "");
         destroy_swapchain();
     }
     /* HDR frames presented here (frame generation with an HDR game) want an HDR10 swapchain - unless the
@@ -1531,9 +1531,9 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
      * swapchain (only in HDR sessions: g_colorspace_ext). */
     const int want_hdr = hf && !hf->tonemap && g_colorspace_ext && !g_swap_hdr_unavailable;
     if (g_swapchain && want_hdr != g_swap_is_hdr) {
-        banner_log("color", want_hdr ? "HDR frames with frame generation: rebuilding the screen swapchain as HDR10"
-                            : hf     ? "HDR output switched off: rebuilding the screen swapchain as SDR (frames tone-mapped)"
-                                     : "no HDR frames through the screen swapchain any more: rebuilding it as SDR");
+        banner_log("color", want_hdr ? "带帧生成的 HDR 帧：把屏幕交换链重建为 HDR10"
+                            : hf     ? "HDR 输出已关闭：把屏幕交换链重建为 SDR（帧被色调映射）"
+                                     : "屏幕交换链不再承载 HDR 帧：将其重建为 SDR");
         destroy_swapchain();
     }
     g_swap_hdr_want = want_hdr;
@@ -1562,7 +1562,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
                      ensure_img(&g_fgscene, scene_w, scene_h, FG_HDR_FMT,
                                 VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                                "HDR frame generation (scene)") == 0;
+                                "HDR 帧生成（场景）") == 0;
     {
         static int said = -1;
         if (fg && hf && g_swap_is_hdr && deep != said) {
@@ -1570,11 +1570,11 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
             char sw[24];
             vk_format_short(g_swap_fmt, sw, sizeof(sw));
             if (deep)
-                banner_log("color", "frame generation runs on the HDR picture in FP16 (RGBA16F): more than 8 bits of PQ "
-                           "through interpolation, into the HDR10 swapchain (%s)", sw);
+                banner_log("color", "帧生成以 FP16（RGBA16F）在 HDR 画面上运行：插值保留超过 8 位的 "
+                           "PQ，进入 HDR10 交换链（%s）", sw);
             else
-                banner_log("color", "frame generation runs on the HDR picture in 8 bits (the engine cannot take FP16 here), "
-                           "into the HDR10 swapchain (%s): banding possible in smooth gradients", sw);
+                banner_log("color", "帧生成以 8 位在 HDR 画面上运行（引擎在此无法使用 FP16）， "
+                           "进入 HDR10 交换链（%s）：平滑渐变可能出现色带", sw);
         }
     }
     /* An HDR scene always takes the pass: its draws are composed into one encoding first. */
@@ -1746,7 +1746,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
         if (k > 0) {
             VkResult ark;
             if (acquire_image(k, 0, &img, &ark) != 0) {
-                banner_log("framegen", "present %d/%d: no swapchain image; the frame ends early", k + 1, presents);
+                banner_log("framegen", "present %d/%d：没有交换链图像；本帧提前结束", k + 1, presents);
                 pr = VK_ERROR_OUT_OF_DATE_KHR;
                 break;
             }
@@ -1765,7 +1765,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
         VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, last ? g_fence : VK_NULL_HANDLE);
         if (qr != VK_SUCCESS) {
             if (qr == VK_ERROR_DEVICE_LOST) device_lost("submit");
-            else LOGE("present: submit %d/%d failed (%d)", k + 1, presents, (int)qr);
+            else LOGE("present: 提交 %d/%d 失败（%d）", k + 1, presents, (int)qr);
             /* The acquired image is never presented; the swapchain would be stuck with it. */
             if (g_dev_state != -2) destroy_swapchain();
             return -1;
@@ -1791,7 +1791,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
     if (fr == VK_ERROR_DEVICE_LOST || pr == VK_ERROR_DEVICE_LOST) { device_lost("present"); return -1; }
     if (pr == VK_ERROR_OUT_OF_DATE_KHR || pr == VK_ERROR_SURFACE_LOST_KHR) {
         /* The surface changed or went away under this frame: rebuild before the next one. */
-        banner_log("gpu", "screen surface %s on present: rebuilding the swapchain", vk_result_name(pr));
+        banner_log("gpu", "呈现时屏幕表面 %s：重建交换链", vk_result_name(pr));
         destroy_swapchain();
         return -1;
     } else if (pr == VK_SUBOPTIMAL_KHR || ar == VK_SUBOPTIMAL_KHR) {
@@ -1799,9 +1799,9 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
          * swap_init), so a rotated panel reports SUBOPTIMAL on every frame. Rebuilding would change
          * nothing (and a rebuild per frame would be far worse), so present as is; say so once. */
         static int said;
-        if (!said) { said = 1; banner_log("gpu", "surface reports SUBOPTIMAL (panel rotation); presenting as is"); }
+        if (!said) { said = 1; banner_log("gpu", "表面报告 SUBOPTIMAL（面板旋转）；按原样呈现"); }
     } else if (pr != VK_SUCCESS) {
-        banner_log("error", "present: vkQueuePresentKHR failed (%s %d)", vk_result_name(pr), (int)pr);
+        banner_log("error", "present: vkQueuePresentKHR 失败（%s %d）", vk_result_name(pr), (int)pr);
         destroy_swapchain();
         return -1;
     }
@@ -1943,12 +1943,12 @@ int vkp_blit_image(struct vkp_image *src, struct vkp_image *dst, int wait_fd) {
     VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, g_fence);
     if (qr != VK_SUCCESS) {
         if (qr == VK_ERROR_DEVICE_LOST) device_lost("layer blit");
-        else LOGE("layer: blit submit failed (%d)", (int)qr);
+        else LOGE("layer: blit 提交失败（%d）", (int)qr);
         return -1;
     }
     VkResult fr = timed_wait(g_fence, 1000000000ULL);
     if (fr == VK_ERROR_DEVICE_LOST) { device_lost("layer blit"); return -1; }
-    if (fr != VK_SUCCESS) { LOGE("layer: blit fence wait -> %s", vk_result_name(fr)); return -1; }
+    if (fr != VK_SUCCESS) { LOGE("layer: blit 围栏等待 -> %s", vk_result_name(fr)); return -1; }
     return 0;
 }
 
@@ -2106,7 +2106,7 @@ static int pass_begin_impl(int scene_w, int scene_h, const struct vkp_draw *draw
         if (ensure_img(&g_hdrscene, scene_w, scene_h, HDR_FMT,
                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                       "HDR composition (picture)") != 0)
+                       "HDR 合成（画面）") != 0)
             return -1;
     } else if (ensure_scene_image(scene_w, scene_h) != 0) return -1;
 
@@ -2238,12 +2238,12 @@ int vkp_pass_copy_to(struct vkp_image *dst, int wait_fd) {
     VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, g_fence);
     if (qr != VK_SUCCESS) {
         if (qr == VK_ERROR_DEVICE_LOST) device_lost("layer pass");
-        else LOGE("layer: effects pass submit failed (%d)", (int)qr);
+        else LOGE("layer: 效果通道提交失败（%d）", (int)qr);
         return -1;
     }
     VkResult fr = timed_wait(g_fence, 1000000000ULL);
     if (fr == VK_ERROR_DEVICE_LOST) { device_lost("layer pass"); return -1; }
-    if (fr != VK_SUCCESS) { LOGE("layer: effects pass fence wait -> %s", vk_result_name(fr)); return -1; }
+    if (fr != VK_SUCCESS) { LOGE("layer: 效果通道围栏等待 -> %s", vk_result_name(fr)); return -1; }
     return 0;
 }
 

@@ -89,7 +89,7 @@ void banner_on_first_frame(void) {
     (*env)->CallStaticVoidMethod(env, g_compositor_cls, g_on_first_frame);
     if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
     if (attached) (*g_jvm)->DetachCurrentThread(g_jvm);
-    __android_log_print(ANDROID_LOG_INFO, TAG, "first client frame presented -> notified app");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "首个客户端帧已呈现 -> 已通知应用");
 }
 
 /* The compositor thread stays attached once it first calls into Java: the HUD gets an upcall
@@ -179,7 +179,7 @@ void banner_on_text_input(int enabled, const char *program, int x, int y, int w,
 
 static void *comp_thread(void *arg) {
     (void)arg;
-    __android_log_print(ANDROID_LOG_INFO, TAG, "compositor thread starting");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "合成器线程启动中");
     /* Every buffer release, frame callback and layer transaction of the session goes through this one
      * thread. It is named, so `ps -T`, the logs and the drawer's Thread Priority Boost (PerfPriority
      * matches thread names) can find it, and it runs at display priority instead of whatever the
@@ -193,12 +193,12 @@ static void *comp_thread(void *arg) {
     if (before > COMPOSITOR_NICE && setpriority(PRIO_PROCESS, tid, COMPOSITOR_NICE) != 0) refused = errno ? errno : -1;
     const int after = getpriority(PRIO_PROCESS, tid);
     if (refused)
-        banner_log("perf", "compositor thread %d \"wl-compositor\": stays at nice %d, a higher priority was refused (%s)",
+        banner_log("perf", "合成器线程 %d \"wl-compositor\"：保持 nice %d，更高优先级被拒绝（%s）",
                    (int)tid, after, refused > 0 ? strerror(refused) : "?");
     else
-        banner_log("perf", "compositor thread %d \"wl-compositor\": nice %d -> %d", (int)tid, before, after);
+        banner_log("perf", "合成器线程 %d \"wl-compositor\"：nice %d -> %d", (int)tid, before, after);
     banner_wayland_run();
-    __android_log_print(ANDROID_LOG_INFO, TAG, "compositor thread exited");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "合成器线程已退出");
     if (t_attached) (*g_jvm)->DetachCurrentThread(g_jvm);
     t_env = NULL; t_attached = 0;
     return NULL;
@@ -218,7 +218,7 @@ static void start_thread(void) {
     if (pthread_create(&t, NULL, comp_thread, NULL) == 0)
         pthread_detach(t);
     else
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "pthread_create failed");
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "pthread_create 失败");
 }
 
 /* The compositor thread's tid, or 0 before it starts. The app opens a PerformanceHintManager session
@@ -260,7 +260,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeStartWithSurface(
     if (surface) {
         ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
         vk_present_set_window(win); /* backend acquires; released on nativeSetSurface(null) */
-        __android_log_print(ANDROID_LOG_INFO, TAG, "output window bound (%p)", (void *)win);
+        __android_log_print(ANDROID_LOG_INFO, TAG, "输出窗口已绑定（%p）", (void *)win);
     }
     start_thread();
 }
@@ -329,7 +329,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetZeroCopy(JNIEnv *
     int live = banner_get_display() != NULL;
     if (!live) g_zero_copy = on ? 1 : 0; /* read by ahb_swapchain_init before the queue drains */
     banner_host_zero_copy(on ? 1 : 0, live);
-    __android_log_print(ANDROID_LOG_INFO, TAG, "zero-copy layer mode %s%s", on ? "on" : "off", live ? " (live)" : "");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "零拷贝图层模式 %s%s", on ? "开" : "关", live ? "（实时）" : "");
 }
 
 /* Milliseconds since the compositor last put a game frame on the layer without a copy; -1 = never
@@ -351,7 +351,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeZeroCopyFrames(JNIEn
 JNIEXPORT void JNICALL
 Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetUbwc(JNIEnv *env, jclass clazz, jboolean on) {
     g_ubwc = on ? 1 : 0;
-    __android_log_print(ANDROID_LOG_INFO, TAG, "compressed (UBWC) game buffers %s", on ? "on" : "off");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "压缩（UBWC）游戏缓冲 %s", on ? "开" : "关");
 }
 
 /* Debug: name no DRM device in the dma-buf feedback (BANNER_WAYLAND_NO_RENDER_NODE=1), the way a
@@ -359,7 +359,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetUbwc(JNIEnv *env,
 JNIEXPORT void JNICALL
 Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetNoRenderNode(JNIEnv *env, jclass clazz, jboolean on) {
     g_no_render_node = on ? 1 : 0;
-    if (on) __android_log_print(ANDROID_LOG_INFO, TAG, "debug: advertising no DRM device (main device 0:0)");
+    if (on) __android_log_print(ANDROID_LOG_INFO, TAG, "调试：不公布 DRM 设备（主设备 0:0）");
 }
 
 /* VRR / refresh-rate matching: the rate the app is voting for the panel, mirrored onto the game's
@@ -397,7 +397,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetOutputSize(JNIEnv
 JNIEXPORT void JNICALL
 Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetScaleMode(JNIEnv *env, jclass clazz, jint mode, jint alignment) {
     vk_present_set_scale_mode(mode, alignment);
-    __android_log_print(ANDROID_LOG_INFO, TAG, "scale mode %d alignment %d", mode, alignment);
+    __android_log_print(ANDROID_LOG_INFO, TAG, "缩放模式 %d，对齐 %d", mode, alignment);
 }
 
 /* ---- screen effects (effects_chain.c): the X11 Vulkan renderer's post chain in the compositor.
@@ -608,7 +608,7 @@ Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetLookName(JNIEnv *
 JNIEXPORT void JNICALL
 Java_com_droiddeck_launcher_wayland_WaylandCompositor_nativeSetFpsLimit(JNIEnv *env, jclass clazz, jint fps) {
     g_fps_limit = fps > 0 ? fps : 0;
-    __android_log_print(ANDROID_LOG_INFO, TAG, "fps limit %d", fps);
+    __android_log_print(ANDROID_LOG_INFO, TAG, "帧率上限 %d", fps);
 }
 
 /* Swap/clear the output window (e.g. SurfaceView recreated/destroyed). */

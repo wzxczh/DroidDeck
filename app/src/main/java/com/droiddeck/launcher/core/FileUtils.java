@@ -52,7 +52,7 @@ public final class FileUtils {
             Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
             return true;
         } catch (IOException e) {
-            Log.w(TAG, "write " + file, e);
+            Log.w(TAG, "写入失败 " + file, e);
             return false;
         }
     }
@@ -69,7 +69,7 @@ public final class FileUtils {
         try {
             Os.symlink(target, linkPath);
         } catch (ErrnoException e) {
-            Log.w(TAG, "symlink " + linkPath + " -> " + target + ": " + e.getMessage());
+            Log.w(TAG, "创建符号链接失败 " + linkPath + " -> " + target + ": " + e.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public final class FileUtils {
         try {
             Os.chmod(file.getAbsolutePath(), mode);
         } catch (ErrnoException e) {
-            Log.w(TAG, "chmod " + file + ": " + e.getMessage());
+            Log.w(TAG, "修改权限失败 " + file + ": " + e.getMessage());
         }
     }
 
@@ -91,7 +91,7 @@ public final class FileUtils {
             copy(in, out);
             return true;
         } catch (IOException e) {
-            Log.w(TAG, "copy asset " + assetPath, e);
+            Log.w(TAG, "复制资源失败 " + assetPath, e);
             return false;
         }
     }

@@ -48,10 +48,10 @@ class ControllerEditorActivity : ComponentActivity() {
                             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f), RoundedCornerShape(50))
                             .padding(start = 14.dp, end = 5.dp, top = 5.dp, bottom = 5.dp),
                     ) {
-                        Text("Drag to move", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(end = 4.dp))
-                        EditorButton("Reset", false) { controls.resetLayout() }
-                        EditorButton("Cancel", false) { finish() }
-                        EditorButton("Save", true) {
+                        Text("拖动以移动", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(end = 4.dp))
+                        EditorButton("重置", false) { controls.resetLayout() }
+                        EditorButton("取消", false) { finish() }
+                        EditorButton("保存", true) {
                             controls.saveLayout()
                             finish()
                         }

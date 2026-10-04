@@ -115,7 +115,7 @@ public class LinuxVulkanDriverManager {
 
     public void removeDriver(String id) {
         if (id == null || id.isEmpty() || id.contains("/") || id.contains("..")) return;
-        Log.d(TAG, "removing imported Linux Vulkan driver " + id);
+        Log.d(TAG, "正在移除导入的 Linux Vulkan 驱动 " + id);
         FileUtils.delete(getDriverDir(id));
         // A mode still set to this id falls back to the runtime's own driver at launch (logged there).
     }
@@ -128,14 +128,14 @@ public class LinuxVulkanDriverManager {
     public String installDriver(Uri zipUri, String displayName) throws IOException {
         File tmpDir = new File(rootDir, ".tmp-" + System.currentTimeMillis());
         FileUtils.delete(tmpDir);
-        if (!tmpDir.mkdirs()) throw new IOException("cannot create " + tmpDir);
+        if (!tmpDir.mkdirs()) throw new IOException("无法创建 " + tmpDir);
         boolean keep = false;
         try {
             String soName = null;
             JSONObject zipMeta = null;
             try (InputStream is = context.getContentResolver().openInputStream(zipUri);
                  ZipInputStream zis = new ZipInputStream(is)) {
-                if (is == null) throw new IOException("cannot open " + zipUri);
+                if (is == null) throw new IOException("无法打开 " + zipUri);
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry()) != null) {
                     if (entry.isDirectory()) continue;
@@ -143,7 +143,7 @@ public class LinuxVulkanDriverManager {
                     String base = new File(entry.getName()).getName();
                     if (base.isEmpty()) continue;
                     if (base.startsWith("libvulkan_freedreno") && base.endsWith(".so")) {
-                        if (soName != null) Log.w(TAG, "zip has several libvulkan_freedreno*.so; using the first (" + soName + ")");
+                        if (soName != null) Log.w(TAG, "压缩包中有多个 libvulkan_freedreno*.so，使用第一个（" + soName + "）");
                         else {
                             Files.copy(zis, new File(tmpDir, LIB_NAME).toPath(), StandardCopyOption.REPLACE_EXISTING);
                             soName = base;
@@ -152,7 +152,7 @@ public class LinuxVulkanDriverManager {
                         try {
                             zipMeta = new JSONObject(new String(readAll(zis), StandardCharsets.UTF_8));
                         } catch (Exception e) {
-                            Log.w(TAG, "meta.json unreadable, ignoring: " + e.getMessage());
+                            Log.w(TAG, "meta.json 无法读取，已忽略：" + e.getMessage());
                         }
                     }
                     // The zip's own freedreno_icd.aarch64.json is dropped on purpose: its
@@ -160,24 +160,24 @@ public class LinuxVulkanDriverManager {
                 }
             }
             if (soName == null) {
-                throw new IllegalArgumentException("No libvulkan_freedreno*.so in this zip. An Android "
-                        + "(AdrenoTools) or -Wayland Turnip zip is not a Linux runtime driver.");
+                throw new IllegalArgumentException("此压缩包中没有 libvulkan_freedreno*.so。Android "
+                        + "（AdrenoTools）或 -Wayland 的 Turnip 压缩包不是 Linux 运行时驱动。");
             }
             File so = new File(tmpDir, LIB_NAME);
             if (!isAarch64Elf(so)) {
-                throw new IllegalArgumentException(soName + " is not a 64-bit AArch64 ELF shared library.");
+                throw new IllegalArgumentException(soName + " 不是 64 位 AArch64 ELF 共享库。");
             }
             // The one check that actually separates this from the bionic builds. Both sonames
             // are in the driver's .dynstr, so a byte scan is enough and needs no ELF parsing:
             // glibc's is versioned ("libc.so.6"), bionic's is not ("libc.so").
             if (!containsAscii(so, "libc.so.6")) {
-                throw new IllegalArgumentException(soName + " is not a glibc driver - it links Android's libc. "
-                        + "The Linux runtime needs a \"-Linux\" zip; a plain or \"-Wayland\" Turnip cannot be "
-                        + "loaded by the Steam client at all.");
+                throw new IllegalArgumentException(soName + " 不是 glibc 驱动 —— 它链接的是 Android 的 libc。"
+                        + "Linux 运行时需要 “-Linux” 压缩包；普通或 “-Wayland” 的 Turnip "
+                        + "根本无法被 Steam 客户端加载。");
             }
             String kind = zipMeta != null ? zipMeta.optString("kind", "") : "";
             if (!kind.isEmpty() && !"linux-vulkan-icd".equals(kind)) {
-                Log.w(TAG, "meta.json says kind=" + kind + ", importing anyway (the binary is glibc)");
+                Log.w(TAG, "meta.json 的 kind=" + kind + "，仍照常导入（二进制是 glibc）");
             }
 
             String name = zipMeta != null ? zipMeta.optString("name", "") : "";
@@ -198,7 +198,7 @@ public class LinuxVulkanDriverManager {
             icdBody.put("library_path", new File(dir, LIB_NAME).getAbsolutePath());
             icdBody.put("api_version", "1.1.274");
             icd.put("ICD", icdBody);
-            if (!FileUtils.writeString(new File(tmpDir, ICD_NAME), icd.toString(2))) throw new IOException("cannot write icd.json");
+            if (!FileUtils.writeString(new File(tmpDir, ICD_NAME), icd.toString(2))) throw new IOException("无法写入 icd.json");
 
             JSONObject meta = new JSONObject();
             meta.put("schemaVersion", 1);
@@ -209,14 +209,14 @@ public class LinuxVulkanDriverManager {
             meta.put("minGlibc", minGlibc);
             meta.put("sourceLibraryName", soName);
             meta.put("importedAt", System.currentTimeMillis());
-            if (!FileUtils.writeString(new File(tmpDir, META_NAME), meta.toString(2))) throw new IOException("cannot write meta.json");
+            if (!FileUtils.writeString(new File(tmpDir, META_NAME), meta.toString(2))) throw new IOException("无法写入 meta.json");
 
-            if (!tmpDir.renameTo(dir)) throw new IOException("cannot move into " + dir);
+            if (!tmpDir.renameTo(dir)) throw new IOException("无法移动到 " + dir);
             keep = true;
-            Log.i(TAG, "imported Linux Vulkan driver " + id + " (" + soName + ", minGlibc=" + minGlibc + ") -> " + dir);
+            Log.i(TAG, "已导入 Linux Vulkan 驱动 " + id + " (" + soName + ", minGlibc=" + minGlibc + ") -> " + dir);
             return id;
         } catch (org.json.JSONException e) {
-            throw new IOException("manifest write failed: " + e.getMessage());
+            throw new IOException("清单写入失败：" + e.getMessage());
         } finally {
             if (!keep) FileUtils.delete(tmpDir);
         }

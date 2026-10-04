@@ -55,7 +55,7 @@ public class DirectAudioRelayComponent extends SessionPart {
         stop();
         File binary = new File(app().getApplicationInfo().nativeLibraryDir, BINARY);
         if (!binary.isFile()) {
-            Log.w(TAG, "helper missing at " + binary + "; DirectAudio will report itself unavailable");
+            Log.w(TAG, "找不到助手程序 " + binary + "；DirectAudio 将报告为不可用");
             return;
         }
         File parent = socketPath.getParentFile();
@@ -85,8 +85,8 @@ public class DirectAudioRelayComponent extends SessionPart {
                     break;
                 }
             }
-            Log.i(TAG, micFifoPath.exists() ? "microphone pipe made by the daemon; starting helper"
-                    : "daemon did not make the microphone pipe in 3 s; helper will make it");
+            Log.i(TAG, micFifoPath.exists() ? "麦克风管道已由守护进程创建；正在启动助手"
+                    : "守护进程 3 秒内未创建麦克风管道；由助手创建");
         }
 
         StringBuilder command = new StringBuilder(binary.getAbsolutePath());
@@ -109,7 +109,7 @@ public class DirectAudioRelayComponent extends SessionPart {
                         + (micFifoPath != null ? " with the microphone" : " (no microphone)"));
                 out.flush();
             } catch (Exception e) {
-                Log.w(TAG, "could not open " + logFile, e);
+                Log.w(TAG, "无法打开 " + logFile, e);
             }
         }
         final java.io.PrintWriter log = out;
@@ -119,8 +119,8 @@ public class DirectAudioRelayComponent extends SessionPart {
                     Log.i(TAG, line);
                     if (log != null) synchronized (log) { log.println(line); log.flush(); }
                 });
-        Log.i(TAG, "started pid=" + pid + " socket=" + socketPath
-                + (micFifoPath != null ? " mic=" + micFifoPath : " (no microphone)"));
+        Log.i(TAG, "已启动 pid=" + pid + " socket=" + socketPath
+                + (micFifoPath != null ? " mic=" + micFifoPath : "（无麦克风）"));
     }
 
     @Override

@@ -102,7 +102,7 @@ object FlatpakManager {
 
     /** Puts Flatpak into the runtime and adds Flathub. Null on success, else what went wrong. */
     fun setup(context: Context, onProgress: (String, Int) -> Unit): String? {
-        if (!LinuxRuntime.isInstalled(context)) return "Install the Linux runtime first"
+        if (!LinuxRuntime.isInstalled(context)) return "请先安装 Linux 运行时"
         return exclusive("setup") {
             var failure: String? = null
             val status = runGuest(context, listOf("/bin/bash", SETUP), fakeRoot = true) { line ->
@@ -114,11 +114,11 @@ object FlatpakManager {
             }
             when {
                 failure != null -> failure
-                status != 0 -> "Flatpak setup failed (exit $status)"
-                !ready(context) -> "Flatpak setup did not finish"
+                status != 0 -> "Flatpak 设置失败（退出码 $status）"
+                !ready(context) -> "Flatpak 设置未完成"
                 else -> null
             }
-        } ?: "Another store task is running"
+        } ?: "另一个商店任务正在进行"
     }
 
     /**
@@ -126,11 +126,11 @@ object FlatpakManager {
      * an overall percentage across the steps Flatpak plans (a runtime, its extensions, the app).
      */
     private fun transaction(context: Context, verb: String, id: String?, onProgress: (String, Int) -> Unit): String? {
-        if (!ready(context)) return "Set up Flatpak first"
+        if (!ready(context)) return "请先设置 Flatpak"
         return exclusive("$verb:${id ?: "all"}") {
             var error: String? = null
             // Progress lines carry no ref; they belong to the step the last "op" line started.
-            var step = "Starting"
+            var step = "准备中"
             val argv = listOfNotNull("/usr/bin/python3", HELPER, verb, id)
             val status = runGuest(context, argv, fakeRoot = false) { line ->
                 val o = runCatching { JSONObject(line) }.getOrNull()
@@ -142,8 +142,8 @@ object FlatpakManager {
                     "warning" -> Log.w(TAG, "$verb $id: ${o.optString("message")}")
                 }
             }
-            error ?: if (status != 0) "Flatpak exited with status $status" else null
-        } ?: "Another store task is running"
+            error ?: if (status != 0) "Flatpak 退出，状态码 $status" else null
+        } ?: "另一个商店任务正在进行"
     }
 
     private fun stage(o: JSONObject): String {
@@ -151,10 +151,10 @@ object FlatpakManager {
         val name = refLabel(ref)
         val step = if (o.optInt("n") > 1) " (${o.optInt("i")}/${o.optInt("n")})" else ""
         return when (o.optString("kind")) {
-            "uninstall" -> "Removing $name$step"
-            "update" -> "Updating $name$step"
-            else -> "Installing $name$step"
-        }.let { if (ref.isEmpty()) o.optString("status").ifEmpty { "Working" } else it }
+            "uninstall" -> "正在移除 $name$step"
+            "update" -> "正在更新 $name$step"
+            else -> "正在安装 $name$step"
+        }.let { if (ref.isEmpty()) o.optString("status").ifEmpty { "处理中" } else it }
     }
 
     /** A ref in words: "app/org.supertuxproject.SuperTux/aarch64/stable" is "SuperTux". */

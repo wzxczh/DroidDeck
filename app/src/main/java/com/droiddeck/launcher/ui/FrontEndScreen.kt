@@ -108,7 +108,7 @@ class FrontEndState(
     val packagePercent: Int = -1,
     val sessionRunning: Boolean = false,
     val backActionsInverted: Boolean = false,
-    val buildLabel: String = "local",
+    val buildLabel: String = "本地",
     val oscMode: String = SessionPrefs.OSC_AUTO,
     val controller: com.droiddeck.launcher.input.ControllerPrefs.Settings? = null,
     val phantomProcessStatus: PhantomProcessStatus = PhantomProcessStatus.NOT_APPLICABLE,
@@ -164,10 +164,10 @@ class FrontEndActions(
     val onCheckLatestBuild: () -> Unit = {},
     val onRefreshPhantomStatus: () -> Unit = {},
     val onOpenDeveloperOptions: (Int?) -> Unit = {},
-    val onWirelessAdbPair: (String, Int, String, (String?) -> Unit) -> Unit = { _, _, _, done -> done("Wireless debugging is unavailable") },
+    val onWirelessAdbPair: (String, Int, String, (String?) -> Unit) -> Unit = { _, _, _, done -> done("无线调试不可用") },
     val onFindWirelessAdbPort: (String, (Int?) -> Unit) -> Unit = { _, done -> done(null) },
-    val onWirelessAdbApply: (String, Int, Boolean, (String?) -> Unit) -> Unit = { _, _, _, done -> done("Wireless debugging is unavailable") },
-    val onSetPhantomProcessLimit: (Boolean, (String?) -> Unit) -> Unit = { _, done -> done("Wireless debugging is unavailable") },
+    val onWirelessAdbApply: (String, Int, Boolean, (String?) -> Unit) -> Unit = { _, _, _, done -> done("无线调试不可用") },
+    val onSetPhantomProcessLimit: (Boolean, (String?) -> Unit) -> Unit = { _, done -> done("无线调试不可用") },
     val onCopyPhantomCommand: (Boolean) -> Unit = {},
     val onDismissPhantomGate: () -> Unit = {},
     val onStartWirelessAdbPairing: () -> Unit = {},
@@ -457,7 +457,7 @@ private fun FrontEndScreenBody(s: FrontEndState, a: FrontEndActions, page: (@Com
                 ) {
                     val onGame = frontFocus.focusedRail == null && frontFocus.last?.startsWith("game:") == true
                     ControllerHints(
-                        select = if (onGame) "Launch" else "Select",
+                        select = if (onGame) "启动" else "选择",
                         tabs = railSelection == "setup" && s.pageKey == null && frontFocus.focusedRail == null,
                     )
                 }
@@ -511,7 +511,7 @@ private fun FrontEndScreenBody(s: FrontEndState, a: FrontEndActions, page: (@Com
         if (showDeveloperDisplayChoice) {
             DeveloperDisplayChoiceDialog(
                 displays = s.secondScreenDisplays.map { display ->
-                    display.id to if (s.secondScreenDisplays.size == 1) "Bottom screen" else display.label
+                    display.id to if (s.secondScreenDisplays.size == 1) "底部屏幕" else display.label
                 },
                 onMainScreen = {
                     showDeveloperDisplayChoice = false

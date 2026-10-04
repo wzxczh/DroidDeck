@@ -15,31 +15,31 @@ import androidx.compose.ui.unit.dp
 fun RomsDialog(path: String?, onChoose: () -> Unit, onClear: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("ROMs folder") },
+        title = { Text("ROM 文件夹") },
         text = {
             Column {
                 Text(
-                    "This folder appears as /root/ROMs in each session. Internal storage is available at /root/Storage.",
+                    "此文件夹在每个会话中显示为 /root/ROMs，内部存储位于 /root/Storage。",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    path ?: "No folder chosen",
+                    path ?: "尚未选择文件夹",
                     style = MaterialTheme.typography.bodySmall,
                     color = if (path != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Applies next session. SD cards are supported.",
+                    "下次会话生效，支持 SD 卡。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
-        confirmButton = { TextButton(onClick = onChoose) { Text(if (path == null) "Choose folder" else "Change folder") } },
+        confirmButton = { TextButton(onClick = onChoose) { Text(if (path == null) "选择文件夹" else "更改文件夹") } },
         dismissButton = {
-            if (path != null) TextButton(onClick = onClear) { Text("Forget") }
-            else TextButton(onClick = onDismiss) { Text("Cancel") }
+            if (path != null) TextButton(onClick = onClear) { Text("忘记") }
+            else TextButton(onClick = onDismiss) { Text("取消") }
         },
     )
 }

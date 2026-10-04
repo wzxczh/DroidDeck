@@ -1,0 +1,12 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\sc_layer.c
+#OLD
+            banner_log("layer", "覆盖图层已拒绝：本显示屏会旋转每个图层 %d°，且游戏"
+                       "图层被缩放 %dx%d -> %dx%d；在这一组合下，第二个图层会让本次会话余下时间的整帧"
+                       "都落到 GPU 合成（实测）。游戏上方的窗口改走拷贝路径 - 画面相同，多一次 blit。",
+                       deg, sr[0], sr[1], ds[0], ds[1]);
+#NEW
+            banner_log("layer", "覆盖图层已拒绝：本显示屏会旋转每个图层 %d°，且游戏"
+                       "图层被缩放 %dx%d -> %dx%d；在这一组合下，第二个图层会让本次会话余下"
+                       "时间的整帧都落到 GPU 合成（实测）。游戏上方的窗口改走拷贝路径 "
+                       "- 画面相同，多一次 blit。",
+                       deg, sr[0], sr[1], ds[0], ds[1]);

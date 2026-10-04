@@ -36,10 +36,10 @@ object OfflineMode {
         val text = try {
             if (file.isFile) file.readText() else return null
         } catch (e: Exception) {
-            Log.w(TAG, "could not read loginusers.vdf", e); return null
+            Log.w(TAG, "无法读取 loginusers.vdf", e); return null
         }
         if (!REMEMBER.containsMatchIn(text)) return null
-        return PERSONA.find(text)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "signed in"
+        return PERSONA.find(text)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "已登录"
     }
 
     fun enabled(context: Context): Boolean = prefs(context).getBoolean(KEY, false)
@@ -98,12 +98,12 @@ object OfflineMode {
             staged.writeText(out.joinToString("\n", postfix = "\n"))
             if (!staged.renameTo(file)) {
                 staged.delete()
-                Log.w(TAG, "could not replace loginusers.vdf")
+                Log.w(TAG, "无法替换 loginusers.vdf")
                 return
             }
-            Log.i(TAG, "offline=$want (wants=$sawWants skip=$sawSkip)")
+            Log.i(TAG, "离线=$want（wants=$sawWants skip=$sawSkip）")
         } catch (e: Exception) {
-            Log.w(TAG, "could not write loginusers.vdf", e)
+            Log.w(TAG, "无法写入 loginusers.vdf", e)
         }
     }
 }

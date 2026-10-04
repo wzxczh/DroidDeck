@@ -40,12 +40,12 @@ object OrphanReaper {
             try {
                 android.os.Process.killProcess(pid)
                 killed++
-                Log.i(TAG, "killed leftover $pid ($name) - $reason")
+                Log.i(TAG, "已结束残留进程 $pid（$name）- $reason")
             } catch (e: Exception) {
-                Log.w(TAG, "could not kill $pid ($name)", e)
+                Log.w(TAG, "无法结束 $pid（$name）", e)
             }
         }
-        if (killed > 0) Log.i(TAG, "$killed leftover process(es) from an earlier session - $reason")
+        if (killed > 0) Log.i(TAG, "已清理 $killed 个来自更早会话的残留进程 - $reason")
         return killed
     }
 

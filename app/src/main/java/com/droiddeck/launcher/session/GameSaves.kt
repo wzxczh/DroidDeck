@@ -26,8 +26,8 @@ import java.util.zip.ZipOutputStream
  */
 object GameSaves {
     enum class Layout(val label: String, val rootPrefix: String, val user: String) {
-        GAMEHUB("GameHub zip", "/drive_c/", "steamuser"),
-        WINLATOR("Winlator zip", "drive_c/", "xuser"),
+        GAMEHUB("GameHub 压缩包", "/drive_c/", "steamuser"),
+        WINLATOR("Winlator 压缩包", "drive_c/", "xuser"),
     }
 
     /** A game, its prefix, and the save folders found in it. */
@@ -128,11 +128,11 @@ object GameSaves {
      * there are any, else the whole steamuser profile minus Temp and crash dumps. Returns the zip.
      */
     fun export(game: Game, layout: Layout, dir: File): Pair<File, Int> {
-        val prefix = game.prefix ?: error("${game.game.name} has not been launched yet")
+        val prefix = game.prefix ?: error("${game.game.name} 尚未启动过")
         dir.mkdirs()
         val out = File(dir, "${safe(game.game.name)}_${stamp()}.zip")
         val count = zipProfile(profile(prefix), game.saves.map { it.relPath }.ifEmpty { null }, layout, out)
-        if (count == 0) { out.delete(); error("No save files found for ${game.game.name}") }
+        if (count == 0) { out.delete(); error("未找到 ${game.game.name} 的存档文件") }
         return out to count
     }
 
@@ -163,10 +163,10 @@ object GameSaves {
      * shortcuts and anything escaping drive_c are skipped. Returns (files written, backup or null).
      */
     fun import(game: Game, zip: File): Pair<Int, File?> {
-        val prefix = game.prefix ?: error("${game.game.name} has not been launched yet")
+        val prefix = game.prefix ?: error("${game.game.name} 尚未启动过")
         val driveC = File(prefix, "drive_c")
-        if (!driveC.isDirectory) error("${game.game.name} has not been launched yet")
-        if (!looksLikeSaveZip(zip)) error("${zip.name} has no drive_c folder, so it isn't a GameHub or Winlator save zip")
+        if (!driveC.isDirectory) error("${game.game.name} 尚未启动过")
+        if (!looksLikeSaveZip(zip)) error("${zip.name} 中没有 drive_c 文件夹，不是 GameHub 或 Winlator 的存档压缩包")
 
         backupsDir().mkdirs()
         val backup = File(backupsDir(), "${safe(game.game.name)}_${stamp()}.zip")

@@ -24,7 +24,7 @@ LsfgShaders::LsfgShaders(const Device& device_, const std::string& cache_path,
     ModuleSet set;
     const DllStatus status = loadModules(cache_path, set);
     if (status != DllStatus::Ok) {
-        SHADER_LOGE("Shader cache unusable (%s)", statusName(status));
+        SHADER_LOGE("着色器缓存不可用（%s）", statusName(status));
         return;
     }
 
@@ -38,12 +38,12 @@ LsfgShaders::LsfgShaders(const Device& device_, const std::string& cache_path,
     for (Module& module : set.modules) {
         if (module.words.size() > 1 && module.words[1] > spirv_target) {
             if (set.variant != Variant::DxbcTranslated) {
-                SHADER_LOGE("shader %u: precompiled SPIR-V 0x%x is above this device's 0x%x; not lowering",
+                SHADER_LOGE("着色器 %u：预编译 SPIR-V 0x%x 高于此设备支持的 0x%x；不做降级",
                             module.id, module.words[1], spirv_target);
                 return;
             }
             if (!downgradeSpirv(module.words, spirv_target)) {
-                SHADER_LOGE("shader %u: could not lower SPIR-V 0x%x to 0x%x",
+                SHADER_LOGE("着色器 %u：无法将 SPIR-V 0x%x 降级到 0x%x",
                             module.id, module.words[1], spirv_target);
                 return;
             }
@@ -51,7 +51,7 @@ LsfgShaders::LsfgShaders(const Device& device_, const std::string& cache_path,
         }
     }
     if (lowered)
-        SHADER_LOGI("Lowered %u modules to SPIR-V 0x%x for this device", lowered, spirv_target);
+        SHADER_LOGI("已为此设备将 %u 个模块降级到 SPIR-V 0x%x", lowered, spirv_target);
 
     for (const Module& module : set.modules) {
         VkShaderModuleCreateInfo module_ci{};
@@ -61,7 +61,7 @@ LsfgShaders::LsfgShaders(const Device& device_, const std::string& cache_path,
 
         VkShaderModule handle = VK_NULL_HANDLE;
         if (vkd.CreateShaderModule(device, &module_ci, nullptr, &handle) != VK_SUCCESS) {
-            SHADER_LOGE("vkCreateShaderModule failed for shader %u", module.id);
+            SHADER_LOGE("着色器 %u 的 vkCreateShaderModule 失败", module.id);
             Release();
             return;
         }
@@ -70,10 +70,10 @@ LsfgShaders::LsfgShaders(const Device& device_, const std::string& cache_path,
 
     valid = modules.size() == kShaderCount;
     if (valid) {
-        SHADER_LOGI("Created %zu LSFG shader modules, variant=%s", modules.size(),
+        SHADER_LOGI("已创建 %zu 个 LSFG 着色器模块，variant=%s", modules.size(),
                     variantName(set.variant));
     } else {
-        SHADER_LOGE("Expected %u shader modules, got %zu", kShaderCount, modules.size());
+        SHADER_LOGE("应有 %u 个着色器模块，实际 %zu 个", kShaderCount, modules.size());
         Release();
     }
 }

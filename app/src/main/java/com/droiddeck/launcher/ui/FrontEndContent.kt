@@ -169,8 +169,8 @@ private fun Content(
     Column(modifier = modifier.verticalScroll(rememberScrollState()).padding(horizontal = padH, vertical = padV)) {
         when {
             selected == "android-apps" && s.isHomeApp -> {
-                Rise(0) { PageHeader("Android apps") { Chip("${s.androidApps.size} apps", ok = false) } }
-                if (s.androidApps.isEmpty()) Rise(3) { Note("No launchable Android apps found.") }
+                Rise(0) { PageHeader("Android 应用") { Chip("${s.androidApps.size} 个应用", ok = false) } }
+                if (s.androidApps.isEmpty()) Rise(3) { Note("未找到可启动的 Android 应用。") }
                 else Rise(3, Modifier.fillMaxWidth()) {
                     ArtGrid(s.androidApps.map { app ->
                         Tile(
@@ -188,29 +188,29 @@ private fun Content(
                 val installed = s.emulators.filter { it.installed }
                 val available = s.emulators.filter { !it.installed }
                 Rise(0) {
-                    PageHeader("Desktop") {
-                        if (s.desktopInstalled) Chip("● Desktop installed", ok = true) else Chip("Installs on first open", ok = false)
+                    PageHeader("桌面") {
+                        if (s.desktopInstalled) Chip("● 桌面已安装", ok = true) else Chip("首次打开时安装", ok = false)
                     }
                 }
                 Rise(2) { DesktopCard(s, a) }
                 if (installed.isNotEmpty()) {
-                    Rise(3) { SectionTitle("Emulators", "${installed.size} installed") }
+                    Rise(3) { SectionTitle("模拟器", "${installed.size} 个已安装") }
                     Rise(4) { EmulatorGrid(installed, first = true, onSelect = onSelect) }
                 }
                 if (s.storeEnabled) Rise(5) { InstalledAppsGrid(a) }
                 if (s.appImagesEnabled) Rise(5) { AppImagesSection(a, s.ready) }
                 if (available.isNotEmpty()) {
-                    Rise(5) { SectionTitle("Available to install", available.size.toString()) }
+                    Rise(5) { SectionTitle("可安装", available.size.toString()) }
                     Rise(6) { EmulatorGrid(available, first = installed.isEmpty(), onSelect = onSelect) }
                 }
             }
             selected.startsWith("emu:") -> {
                 val e = s.emulators.firstOrNull { "emu:${it.id}" == selected }
-                if (e == null) Note("Not installed.") else {
+                if (e == null) Note("未安装。") else {
                     val pkgId = Library.packageId(e.id)
                     val pkg = pkgId?.let { id -> s.packages?.firstOrNull { it.id == id } }
                     Rise(0) {
-                        BackLink("Desktop") { onSelect("desktop") }
+                        BackLink("桌面") { onSelect("desktop") }
                     }
                     Rise(1) {
                         Row(
@@ -221,7 +221,7 @@ private fun Content(
                             Column {
                                 Text(e.name, fontSize = if (narrow) 22.sp else 26.sp, fontWeight = FontWeight.Bold, color = colors.onBackground)
                                 Text(
-                                    e.system.replaceFirstChar { it.uppercase() } + if (e.installed) "" else " · not installed",
+                                    e.system.replaceFirstChar { it.uppercase() } + if (e.installed) "" else " · 未安装",
                                     fontSize = 14.sp, color = colors.onSurfaceVariant,
                                 )
                             }
@@ -230,70 +230,70 @@ private fun Content(
                     if (e.installed) {
                         Rise(3) {
                             Actions {
-                                PrimaryButton("Open ${e.name}", enabled = !s.busy, main = true) { a.onEmulator(e) }
+                                PrimaryButton("打开 ${e.name}", enabled = !s.busy, main = true) { a.onEmulator(e) }
                                 BusyChip(s)
-                                SecondaryButton("ROMs folder", onClick = a.onRoms)
+                                SecondaryButton("ROM 文件夹", onClick = a.onRoms)
                                 if (pkg != null) SecondaryButton(
-                                    if (pkg.kind == "appimage") "Remove" else "Hide",
+                                    if (pkg.kind == "appimage") "移除" else "隐藏",
                                     enabled = s.packageBusyId == null && !s.sessionRunning,
                                 ) { a.onRemovePackage(pkg.id) }
                             }
                         }
-                        Rise(4) { SectionTitle("Games", e.games.size.toString()) }
+                        Rise(4) { SectionTitle("游戏", e.games.size.toString()) }
                         if (e.games.isEmpty()) Rise(5) {
                             Note(
-                                if (s.romsDir == null) "Choose a ROMs folder."
-                                else if (e.id == "retroarch") "Browse to /root/ROMs in RetroArch."
-                                else "Add ${e.system} games to ROMs/${e.system.substringBefore(' ')}.",
+                                if (s.romsDir == null) "请选择 ROM 文件夹。"
+                                else if (e.id == "retroarch") "在 RetroArch 中浏览到 /root/ROMs。"
+                                else "将 ${e.system} 游戏添加到 ROMs/${e.system.substringBefore(' ')}.",
                             )
                         }
                         else Rise(5, Modifier.fillMaxWidth()) {
-                            ArtGrid(e.games.mapIndexed { index, g -> Tile(g.name, if (g.art != null) "installed" else g.hostPath.extension.uppercase().ifEmpty { "folder" }, g.art, "rom:${e.id}:$index", e.iconRes) { onSelect("rom:${e.id}:$index") } }, wide = e.games.none { it.art != null })
+                            ArtGrid(e.games.mapIndexed { index, g -> Tile(g.name, if (g.art != null) "已安装" else g.hostPath.extension.uppercase().ifEmpty { "文件夹" }, g.art, "rom:${e.id}:$index", e.iconRes) { onSelect("rom:${e.id}:$index") } }, wide = e.games.none { it.art != null })
                         }
                     } else {
                         if (pkg != null) Rise(2) {
                             Actions {
                                 PrimaryButton(
-                                    if (s.packageBusyId == pkg.id) "Installing…" else "Install ${e.name}",
+                                    if (s.packageBusyId == pkg.id) "安装中…" else "安装 ${e.name}",
                                     enabled = s.packageBusyId == null && s.ready && !s.packageCatalogLoading && !s.sessionRunning,
                                 ) { a.onInstallPackage(pkg.id) }
-                                if (s.sessionRunning) ActionChip("Stop session to install", ok = false)
-                                else if (!s.ready) ActionChip("Runtime required", ok = false)
+                                if (s.sessionRunning) ActionChip("停止会话后安装", ok = false)
+                                else if (!s.ready) ActionChip("需要运行时", ok = false)
                             }
                         }
                         Rise(3) {
                             Box(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp)) {
                                 Note(when {
-                                    s.packageCatalogLoading -> "Loading install details…"
-                                    pkg == null -> "Install details are unavailable right now. Try again when the package catalog is reachable."
-                                    !s.ready -> "Install the Linux runtime from Setup before installing desktop apps."
-                                    s.sessionRunning -> "Stop the active session before installing desktop apps."
+                                    s.packageCatalogLoading -> "正在加载安装详情…"
+                                    pkg == null -> "暂时无法获取安装详情。软件包目录可访问时请重试。"
+                                    !s.ready -> "请先在设置中安装 Linux 运行时，再安装桌面应用。"
+                                    s.sessionRunning -> "请先停止当前会话，再安装桌面应用。"
                                     pkg.notes.isNotBlank() -> pkg.notes
-                                    else -> "Install ${e.name} into the Linux desktop runtime."
+                                    else -> "将 ${e.name} 安装到 Linux 桌面运行时。"
                                 })
                             }
                         }
                         if (s.packageBusyId == pkg?.id) Rise(4) {
                             val stage = s.packageStage
                             Text(
-                                if (stage != null && s.packagePercent >= 0) "$stage · ${s.packagePercent}%" else stage ?: "Starting…",
+                                if (stage != null && s.packagePercent >= 0) "$stage · ${s.packagePercent}%" else stage ?: "启动中…",
                                 fontSize = 12.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(bottom = 6.dp),
                             )
                             if (s.packagePercent >= 0) LinearProgressIndicator(progress = { s.packagePercent / 100f }, modifier = Modifier.fillMaxWidth().height(4.dp))
                             else LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(4.dp))
                         }
-                        if (pkg?.kind == "tar") Rise(5) { Note("Hiding this package takes it off Desktop; its files stay in the Linux runtime.") }
+                        if (pkg?.kind == "tar") Rise(5) { Note("隐藏只会将其从桌面移除；文件仍保留在 Linux 运行时中。") }
                     }
                 }
             }
             selected.startsWith("rom:") -> {
                 val pair = romFor(s, selected)
-                if (pair == null) Note("That game is gone from the ROMs folder.") else {
+                if (pair == null) Note("该游戏已从 ROM 文件夹中移除。") else {
                     val (e, g) = pair
                     Rise(0) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             BackLink(e.name) { onSelect("emu:${e.id}") }
-                            Eyebrow("Desktop · ${e.system}")
+                            Eyebrow("桌面 · ${e.system}")
                         }
                     }
                     Rise(1) { Title(g.name) }
@@ -304,8 +304,8 @@ private fun Content(
                                 Spacer(Modifier.height(14.dp))
                                 Actions {
                                     Image(painterResource(e.iconRes), null, modifier = Modifier.size(40.dp))
-                                    PrimaryButton("Launch in ${e.name}", enabled = !s.busy, main = true) { a.onRom(g) }
-                                    if (s.busy) BusyChip(s) else ActionChip(g.hostPath.extension.uppercase().ifEmpty { "folder" }, ok = false)
+                                    PrimaryButton("在 ${e.name} 中启动", enabled = !s.busy, main = true) { a.onRom(g) }
+                                    if (s.busy) BusyChip(s) else ActionChip(g.hostPath.extension.uppercase().ifEmpty { "文件夹" }, ok = false)
                                 }
                             }
                             if (g.art != null && !narrow) Poster(g.art, g.name, Modifier.width(detailPosterWidth))
@@ -313,17 +313,17 @@ private fun Content(
                     }
                     val others = e.games.filter { it !== g }
                     if (others.isNotEmpty()) {
-                        Rise(3) { SectionTitle("Also in ${e.name}", null) }
+                        Rise(3) { SectionTitle("同样位于 ${e.name}", null) }
                         Rise(4, Modifier.fillMaxWidth()) {
                             ArtGrid(others.map { x ->
                                 val index = e.games.indexOf(x)
-                                Tile(x.name, if (x.art != null) "installed" else x.hostPath.extension.uppercase().ifEmpty { "folder" }, x.art, "rom:${e.id}:$index", e.iconRes) { onSelect("rom:${e.id}:$index") }
+                                Tile(x.name, if (x.art != null) "已安装" else x.hostPath.extension.uppercase().ifEmpty { "文件夹" }, x.art, "rom:${e.id}:$index", e.iconRes) { onSelect("rom:${e.id}:$index") }
                             }, wide = others.none { it.art != null })
                         }
                     }
                 }
             }
-            else -> Note("That page is gone. Pick a section on the left.")
+            else -> Note("该页面已不存在。请在左侧选择一个分区。")
         }
     }
 }
@@ -337,7 +337,7 @@ private fun DesktopCard(s: FrontEndState, a: FrontEndActions) {
     val actions: @Composable () -> Unit = {
         Actions {
             // Enabled without a runtime or the desktop: the session's loading screen installs them first.
-            PrimaryButton(if (s.desktopInstalled) "Open desktop" else "Install & open desktop", enabled = !s.busy, main = true, onClick = a.onDesktop)
+            PrimaryButton(if (s.desktopInstalled) "打开桌面" else "安装并打开桌面", enabled = !s.busy, main = true, onClick = a.onDesktop)
             Cog(onClick = a.onDesktopSettings)
             BusyChip(s)
         }
@@ -352,8 +352,8 @@ private fun DesktopCard(s: FrontEndState, a: FrontEndActions) {
                 modifier = Modifier.size(52.dp).clip(Shape14).background(colors.surfaceVariant).border(1.dp, pal.line2, Shape14),
             ) { Icon(Icons.Outlined.DesktopWindows, contentDescription = null, tint = colors.onBackground, modifier = Modifier.size(26.dp)) }
             Column(modifier = Modifier.weight(1f)) {
-                Text("Linux desktop", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
-                Text("LXQt, Firefox and your emulators", fontSize = 14.sp, color = colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text("Linux 桌面", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
+                Text("LXQt、Firefox 与你的模拟器", fontSize = 14.sp, color = colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             if (!narrow) actions()
         }
@@ -392,7 +392,7 @@ private fun EmulatorTile(e: Library.Emulator, modifier: Modifier, isFirst: Boole
     val pressed by src.collectIsPressedAsState()
     val scale by animateFloatAsState(if (pressed) 0.97f else 1f, Motion.sp(0.5f, Spring.StiffnessMedium), label = "emuScale")
     val system = e.system.replaceFirstChar { it.uppercase() }
-    val detail = if (e.installed && e.id != "retroarch") "$system · ${e.games.size} game${if (e.games.size == 1) "" else "s"}" else system
+    val detail = if (e.installed && e.id != "retroarch") "$system · ${e.games.size} 个游戏" else system
     Row(
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.paneItem("tile:emu:${e.id}").then(if (isFirst) Modifier.firstTile() else Modifier)
@@ -409,7 +409,7 @@ private fun EmulatorTile(e: Library.Emulator, modifier: Modifier, isFirst: Boole
             Text(detail, fontSize = if (e.installed) 13.sp else 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         if (!e.installed) Text(
-            "Install", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = pal.signal,
+            "安装", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = pal.signal,
             modifier = Modifier.clip(RoundedCornerShape(8.dp)).border(1.dp, pal.line2, RoundedCornerShape(8.dp)).padding(horizontal = 10.dp, vertical = 6.dp),
         )
     }

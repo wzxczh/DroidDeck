@@ -36,7 +36,7 @@ class DeckControlsPanel(
     private val onSteamMenu: () -> Unit,
     private val onQam: () -> Unit,
 ) : LinearLayout(context) {
-    private enum class Tab(val label: String) { GRIPS("Grips"), LEFT("Left pad"), RIGHT("Right pad"), BOTH("Both") }
+    private enum class Tab(val label: String) { GRIPS("背键"), LEFT("左触控板"), RIGHT("右触控板"), BOTH("双侧") }
 
     private val content = FrameLayout(context)
     private val tabViews = HashMap<Tab, TextView>()
@@ -58,7 +58,7 @@ class DeckControlsPanel(
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(12), dp(10), dp(12), dp(6))
-        addView(roundButton("×", "Close second-screen controls", onClose))
+        addView(roundButton("×", "关闭第二屏控件", onClose))
         val tabs = LinearLayout(context).apply {
             orientation = HORIZONTAL
             background = outline(CORNER_PILL, SURFACE)
@@ -81,9 +81,9 @@ class DeckControlsPanel(
             addView(tabs, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, dp(44), Gravity.CENTER))
         }
         addView(centre, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
-        addView(roundButton("STEAM", "Open Steam menu", onSteamMenu, wide = true))
+        addView(roundButton("STEAM", "打开 Steam 菜单", onSteamMenu, wide = true))
         addView(space(dp(8)))
-        addView(roundButton("•••", "Open Quick Access Menu", onQam, wide = true))
+        addView(roundButton("•••", "打开 Quick Access（QAM）菜单", onQam, wide = true))
     }
 
     private fun select(tab: Tab) {
@@ -114,9 +114,9 @@ class DeckControlsPanel(
             addView(upper, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f).apply { bottomMargin = dp(6) })
             addView(lower, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = dp(6) })
         }
-        addView(column(GripButton(context, "L4", "Left · upper", DeckControls.L4), GripButton(context, "L5", "Left · lower", DeckControls.L5)),
+        addView(column(GripButton(context, "L4", "左 · 上", DeckControls.L4), GripButton(context, "L5", "左 · 下", DeckControls.L5)),
             LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { rightMargin = dp(6) })
-        addView(column(GripButton(context, "R4", "Right · upper", DeckControls.R4), GripButton(context, "R5", "Right · lower", DeckControls.R5)),
+        addView(column(GripButton(context, "R4", "右 · 上", DeckControls.R4), GripButton(context, "R5", "右 · 下", DeckControls.R5)),
             LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { leftMargin = dp(6) })
     }
 
@@ -255,7 +255,7 @@ class DeckControlsPanel(
         HoldButton(context, label, caption, { DeckControls.setGrip(bit, it) })
 
     private class ClickBar(context: Context, right: Boolean) :
-        HoldButton(context, "Click", if (right) "Right trackpad" else "Left trackpad", { DeckControls.setClick(right, it) })
+        HoldButton(context, "点击", if (right) "右触控板" else "左触控板", { DeckControls.setClick(right, it) })
 
     /**
      * One trackpad: where the first finger is, as the Deck reports it (-1..1, y up), and a click
@@ -282,7 +282,7 @@ class DeckControlsPanel(
             canvas.drawLine(cx, cy - reach, cx, cy + reach, guide)
             captionPaint.textSize = 12 * density
             captionPaint.color = if (touching) ACCENT else TEXT_DIM
-            canvas.drawText(if (right) "RIGHT TRACKPAD" else "LEFT TRACKPAD", cx, 28 * density, captionPaint)
+            canvas.drawText(if (right) "右触控板" else "左触控板", cx, 28 * density, captionPaint)
             if (touching) {
                 val radius = 56 * density
                 glow.shader = RadialGradient(fingerX, fingerY, radius, ACCENT_GLOW, Color.TRANSPARENT, Shader.TileMode.CLAMP)

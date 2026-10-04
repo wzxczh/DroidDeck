@@ -20,7 +20,7 @@ if [ -n "${BL_INSIDE:-}" ] || [ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" ]; then
   export XDG_SESSION_TYPE=x11
   socket=(--nosocket=wayland --socket=x11)
 fi
-echo "== flatpak run ${socket[*]} $*"
+echo "== flatpak 运行 ${socket[*]} $*"
 # Apps expect a session bus (settings, portals, single-instance checks); a run mode has none.
 if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session >/dev/null 2>&1; then
   exec dbus-run-session -- flatpak run "${socket[@]}" "$@"

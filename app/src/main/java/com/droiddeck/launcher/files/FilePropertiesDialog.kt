@@ -66,7 +66,7 @@ internal fun FilePropertiesDialog(
 
     OutlinedAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Properties") },
+        title = { Text("属性") },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 // ── Basic info ──
@@ -79,14 +79,14 @@ internal fun FilePropertiesDialog(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(6.dp))
-                PropertyLine("Location", file.parent ?: "-")
+                PropertyLine("位置", file.parent ?: "-")
                 PropertyLine(
-                    "Type",
-                    if (file.isDirectory) "Folder"
-                    else file.extension.uppercase().let { if (it.isBlank()) "File" else "$it file" },
+                    "类型",
+                    if (file.isDirectory) "文件夹"
+                    else file.extension.uppercase().let { if (it.isBlank()) "文件" else "$it 文件" },
                 )
-                if (!file.isDirectory) PropertyLine("Size", FileOps.formatBytes(file.length()))
-                PropertyLine("Modified", dateFormat.format(Date(file.lastModified())))
+                if (!file.isDirectory) PropertyLine("大小", FileOps.formatBytes(file.length()))
+                PropertyLine("修改时间", dateFormat.format(Date(file.lastModified())))
 
                 Spacer(Modifier.height(10.dp))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -95,8 +95,8 @@ internal fun FilePropertiesDialog(
                 val state = attrs
                 // ── Read-only ── checked when the owner can't write (Wine's FILE_ATTRIBUTE_READONLY).
                 AttributeToggleRow(
-                    label = "Read-only",
-                    description = "Stops games (and Wine) from overwriting or deleting this file.",
+                    label = "只读",
+                    description = "防止游戏（和 Wine）覆盖或删除此文件。",
                     checked = state?.readOnly == true,
                     enabled = state != null && !busy,
                     onToggle = { want ->
@@ -108,7 +108,7 @@ internal fun FilePropertiesDialog(
                                 attrs = attrs?.copy(readOnly = want)
                                 onChanged()
                             } else {
-                                Toast.makeText(context, "Couldn't change Read-only", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "无法更改只读属性", Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
@@ -117,10 +117,10 @@ internal fun FilePropertiesDialog(
                 // ── Hidden ── Wine's DOS hidden bit in the user.DOSATTRIB xattr.
                 val hiddenSupported = state?.hiddenSupported == true
                 AttributeToggleRow(
-                    label = "Hidden",
+                    label = "隐藏",
                     description = if (state != null && !hiddenSupported)
-                        "This storage can't store the hidden flag."
-                    else "Marks the file hidden in Windows (Wine's hidden attribute).",
+                        "此存储空间无法保存隐藏标记。"
+                    else "在 Windows 中将文件标记为隐藏（Wine 的隐藏属性）。",
                     checked = state?.hidden == true,
                     enabled = state != null && hiddenSupported && !busy,
                     onToggle = { want ->
@@ -134,14 +134,14 @@ internal fun FilePropertiesDialog(
                             } else {
                                 // The write failed after all - disable the toggle rather than lie.
                                 attrs = attrs?.copy(hiddenSupported = false)
-                                Toast.makeText(context, "Couldn't change Hidden on this storage", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "无法在此存储空间上更改隐藏属性", Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
                 )
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Done") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("完成") } },
     )
 }
 

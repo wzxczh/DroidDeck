@@ -1,0 +1,7 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\vk_loader.c
+#OLD
+                            "没有 adrenotools 驱动 -> 系统 libvulkan 句柄=%p "
+                            "(dmabuf import likely unsupported)", g_handle);
+#NEW
+                            "没有 adrenotools 驱动 -> 系统 libvulkan 句柄=%p"
+                            "（dmabuf 导入大概率不受支持）", g_handle);

@@ -35,7 +35,7 @@ class BatteryComponent(val dir: File) : SessionPart() {
                 if (running) write()
             }
         }, "battery-sysfs").apply { isDaemon = true; start() }
-        Log.i(TAG, "battery: BAT0/BAT1 written to ${dir.path} every ${PERIOD_MS / 1000} s")
+        Log.i(TAG, "电池：每 ${PERIOD_MS / 1000} 秒把 BAT0/BAT1 写入 ${dir.path}")
     }
 
     override fun stop() {
@@ -116,7 +116,7 @@ class BatteryComponent(val dir: File) : SessionPart() {
                 put(File(bat, "uevent"), uevent.toString())
             }
         } catch (t: Throwable) {
-            Log.w(TAG, "battery: could not write", t)
+            Log.w(TAG, "电池：写入失败", t)
         }
     }
 

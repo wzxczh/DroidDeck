@@ -31,10 +31,10 @@ public final class LinuxVulkanDriver {
     public static final String ENV = "BL_VK_DRIVER";
 
     public static final String HELP_TEXT =
-            "The driver the Steam client, the games it launches and the desktop's programs render on, "
-            + "inside the Linux runtime. Imported \"-Linux\" Turnip zips only: these are Linux processes "
-            + "and cannot load an Android or Wayland driver. Frames still reach the screen through the "
-            + "display driver below. Takes effect at the next session start.";
+            "Steam 客户端、它启动的游戏以及桌面程序在 Linux 运行时内部所用的渲染驱动。"
+            + "只接受导入的 “-Linux” Turnip 压缩包：这些是 Linux 进程，"
+            + "无法加载 Android 或 Wayland 驱动。画面仍通过下方的显示驱动上屏。"
+            + "下次启动会话时生效。";
 
     private LinuxVulkanDriver() {}
 
@@ -51,11 +51,11 @@ public final class LinuxVulkanDriver {
      * back to the runtime's own driver for it.
      */
     public static String optionLabel(Context context, String value) {
-        if (value == null || value.isEmpty()) return "Runtime default (built into the runtime)";
+        if (value == null || value.isEmpty()) return "运行时默认（运行时自带）";
         LinuxVulkanDriverManager m = new LinuxVulkanDriverManager(context);
-        if (!m.isInstalled(value)) return value + " (imported, missing - uses the runtime default)";
+        if (!m.isInstalled(value)) return value + "（已导入，已缺失 — 使用运行时默认）";
         String ver = m.getDriverVersion(value);
-        return m.getDriverName(value) + (ver.isEmpty() ? "" : " " + ver) + " (imported)";
+        return m.getDriverName(value) + (ver.isEmpty() ? "" : " " + ver) + "（已导入）";
     }
 
     /**
@@ -67,10 +67,10 @@ public final class LinuxVulkanDriver {
         LinuxVulkanDriverManager m = new LinuxVulkanDriverManager(context);
         String icd = m.getIcdPath(value);
         if (icd == null) {
-            Log.w(TAG, "imported Linux driver \"" + value + "\" is gone; using the runtime's own driver");
+            Log.w(TAG, "导入的 Linux 驱动 \"" + value + "\" 已不存在，改用运行时自带驱动");
             return null;
         }
-        Log.i(TAG, "Linux session draws with imported driver " + value + " (" + icd + ")");
+        Log.i(TAG, "Linux 会话使用导入的驱动 " + value + "（" + icd + "）");
         return icd;
     }
 }

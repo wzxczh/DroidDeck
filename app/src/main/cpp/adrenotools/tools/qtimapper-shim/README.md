@@ -1,19 +1,19 @@
 ## QtiMapper-shim
 
-A shim that translates between the IQtiMapper(2,3,4) API used by newer Adreno graphics drivers and gralloc1, which is the only available gralloc API on sdm845.
+一个在新版 Adreno 图形驱动所使用的 IQtiMapper(2,3,4) API 与 gralloc1 之间做转换的 shim，而 gralloc1 是 sdm845 上唯一可用的 gralloc API。
 
-### Method
+### 方法
 
-Exposes the same ABI as the newer mapper blobs and stubs enough functions to force the HAL to fallback to the 2.0 mapper/mapperextension API which is then shimmed with a passthrough to gralloc1. The blobs can then be patched to load the stub libs instead, see the blob-patcher script.
-The code is fairly ugly but functional enough for the purpose, some functions are missing and will need to be implemented in the case that the driver starts using them.
+它暴露与新版 mapper blob 相同的 ABI，并 stub 足够多的函数，迫使 HAL 回退到 2.0 的 mapper/mapperextension API，随后再用一个直通到 gralloc1 的 shim 接管它。这样这些 blob 就可以被改成加载 stub 库，参见 blob-patcher 脚本。
+这段代码相当丑陋，但对这个用途来说足够可用；有些函数尚缺实现，一旦驱动开始使用它们就需要补上。
 
 
-### Building
+### 构建
 
-Chuck into a lineage tree, then:
+把它扔进一棵 lineage 源码树，然后：
 ```
 make vendor.qti.hardware.display.mappershim
 make vendor.qti.hardware.display.mapperextensionsshim
 make android.hardware.graphics.mappershim
 ```
-and grab SOs out of outputs dir
+再从 outputs 目录里取出 SO

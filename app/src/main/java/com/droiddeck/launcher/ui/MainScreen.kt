@@ -25,17 +25,17 @@ fun ChooseAppDisplayDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Launch ${app.label}") },
+        title = { Text("启动 ${app.label}") },
         text = {
             Text(
-                secondaryDisplay?.let { "Choose a screen. Secondary: ${it.label}." }
-                    ?: "The secondary display is no longer available.",
+                secondaryDisplay?.let { "请选择屏幕。副屏：${it.label}。" }
+                    ?: "副屏已不可用。",
             )
         },
-        confirmButton = { TextButton(onClick = onPrimary) { Text("Primary screen") } },
+        confirmButton = { TextButton(onClick = onPrimary) { Text("主屏") } },
         dismissButton = {
             TextButton(onClick = onSecondary, enabled = secondaryDisplay != null) {
-                Text("Secondary screen")
+                Text("副屏")
             }
         },
     )
@@ -48,7 +48,7 @@ fun ConfirmDialog(title: String, text: String, confirm: String, onConfirm: () ->
         title = { Text(title) },
         text = { Text(text) },
         confirmButton = { TextButton(onClick = { onDismiss(); onConfirm() }) { Text(confirm) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }
 
@@ -56,20 +56,20 @@ fun ConfirmDialog(title: String, text: String, confirm: String, onConfirm: () ->
 fun CreditsDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Credits") },
+        title = { Text("致谢") },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text("The412Banner: app, compositor, runtime, and Steam session.", style = MaterialTheme.typography.bodyMedium)
+                Text("The412Banner：应用、合成器、运行时与 Steam 会话。", style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(10.dp))
-                Text("maxjivi05: gamescope runtime and controller support, based on WinNative.", style = MaterialTheme.typography.bodyMedium)
+                Text("maxjivi05：gamescope 运行时与手柄支持，基于 WinNative。", style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    "GPL-3.0. Steam, Steam Deck, and Proton are Valve trademarks. Not affiliated with Valve. Third-party software remains under its authors' licenses.",
+                    "GPL-3.0。Steam、Steam Deck 与 Proton 是 Valve 的商标。与 Valve 无隶属关系。第三方软件仍遵循其作者的许可证。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("OK") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("确定") } },
     )
 }

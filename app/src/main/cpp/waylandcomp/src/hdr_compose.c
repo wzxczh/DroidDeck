@@ -190,8 +190,8 @@ static int objects_ensure(void) {
         if (!(g_out[i].pipe = make_pipe(g_out[i].rp))) goto fail;
     }
     g_ready = 1;
-    banner_log("color", "HDR composition ready on %s: scenes that mix HDR and SDR content are put into one "
-               "encoding (PQ BT.2020, or tone-mapped sRGB) instead of being shown washed out", vkp_gpu_name());
+    banner_log("color", "%s 上的 HDR 合成已就绪：混合 HDR 与 SDR 内容的场景会被放入同一"
+               "编码（PQ BT.2020，或色调映射后的 sRGB），而不再显示为发白", vkp_gpu_name());
     return 0;
 fail:
     {
@@ -200,8 +200,8 @@ fail:
         g_dev = keep;
     }
     g_ready = -1;
-    banner_log("error", "color: the HDR composition pass could not be built on this driver; HDR scenes that cannot "
-               "stay on the game's own layer are shown the old way (washed out) this session");
+    banner_log("error", "color: 无法在该驱动上构建 HDR 合成通道；无法留在游戏自身图层上的 HDR 场景"
+               "本次会话按旧方式显示（发白）");
     return -1;
 }
 

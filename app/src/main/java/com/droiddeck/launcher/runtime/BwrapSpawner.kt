@@ -45,14 +45,14 @@ object BwrapSpawner {
         val socket = try {
             LocalServerSocket(SOCKET)
         } catch (e: IOException) {
-            Log.e(TAG, "cannot listen on $SOCKET", e)
+            Log.e(TAG, "无法在 $SOCKET 上监听", e)
             return
         }
         server = socket
         FileUtils.delete(File(app.cacheDir, "bwrap"))
         Thread({
             while (true) {
-                val client = try { socket.accept() } catch (e: IOException) { Log.e(TAG, "accept", e); break }
+                val client = try { socket.accept() } catch (e: IOException) { Log.e(TAG, "接受连接失败", e); break }
                 Thread({ serve(app, client) }, "bwrap-${seq.get() + 1}").apply { isDaemon = true; start() }
             }
         }, "bwrap-server").apply { isDaemon = true; start() }
@@ -66,7 +66,7 @@ object BwrapSpawner {
             try {
                 val peer = client.peerCredentials
                 if (peer.uid != Process.myUid()) {
-                    Log.w(TAG, "refused a sandbox for uid ${peer.uid}")
+                    Log.w(TAG, "已拒绝 uid ${peer.uid} 的沙箱请求")
                     return
                 }
                 val input = DataInputStream(client.inputStream)
@@ -77,7 +77,7 @@ object BwrapSpawner {
                 val plan = plan(context, request, dir)
                 run(context, plan, client, out, id)
             } catch (e: Exception) {
-                Log.e(TAG, "sandbox $id", e)
+                Log.e(TAG, "沙箱 $id 出错", e)
                 runCatching {
                     frame(out, 'E', (e.message ?: e.toString()).toByteArray())
                     frame(out, 'X', "1".toByteArray())
@@ -165,7 +165,7 @@ object BwrapSpawner {
                     val src = op.getString("src")
                     val all = bindsFor(session, rootfs, src, dest)
                     if (!File(all.first().host).exists()) {
-                        if (!op.optBoolean("try")) Log.w(TAG, "sandbox source $src is missing; left out")
+                        if (!op.optBoolean("try")) Log.w(TAG, "沙箱源 $src 不存在，已跳过")
                         continue
                     }
                     all.forEach { addBind(it) }
@@ -202,7 +202,7 @@ object BwrapSpawner {
                         // bound in its place.
                         val abs = if (target.startsWith("/")) target else normalize(dest.substringBeforeLast('/') + "/" + target)
                         val host = hostPath(binds, root.path, abs)
-                        if (File(host).exists()) addBind(Bind(host, dest)) else Log.w(TAG, "symlink $dest -> $target: nothing there; left out")
+                        if (File(host).exists()) addBind(Bind(host, dest)) else Log.w(TAG, "符号链接 $dest -> $target 指向的内容不存在，已跳过")
                     }
                 }
             }
@@ -239,7 +239,7 @@ object BwrapSpawner {
         val binds = ArrayList<Bind>()
         for (name in listOf("libvulkan_freedreno.so", "libdisplay-info.so.3", "libSPIRV-Tools.so", "libSPIRV-Tools-opt.so")) {
             val f = File(lib, name)
-            if (!f.exists()) { Log.w(TAG, "gpu: the runtime has no $name; apps draw on the CPU"); return null }
+            if (!f.exists()) { Log.w(TAG, "GPU：运行时缺少 $name，应用将改用 CPU 绘制"); return null }
             binds.add(Bind(f.canonicalPath, "$GPU_DIR/$name"))
         }
         // Beside the sandbox root, in the sandbox's own directory: removed with it.
@@ -325,7 +325,7 @@ object BwrapSpawner {
         }
         out
     } catch (e: Exception) {
-        Log.w(TAG, "cpuinfo", e); null
+        Log.w(TAG, "读取 cpuinfo 失败", e); null
     }
 
     /** [path] with "." and ".." resolved lexically. */
@@ -382,14 +382,14 @@ object BwrapSpawner {
         // A sandbox lives exactly as long as its bwrap stand-in, which ends it; a session starting
         // meanwhile (OrphanReaper) must not take it - an install's extra-data step, say.
         com.droiddeck.launcher.session.OrphanReaper.keep(pid)
-        Log.i(TAG, "sandbox $id pid $pid: ${plan.argv.joinToString(" ")} (${plan.binds.size} binds)")
+        Log.i(TAG, "沙箱 $id pid $pid: ${plan.argv.joinToString(" ")}（${plan.binds.size} 个绑定）")
         synchronized(out) { frame(out, 'P', pid.toString().toByteArray()) }
         // The stand-in going away (Flatpak killed, the session over) ends the sandbox.
         Thread({
             try { while (client.inputStream.read() >= 0) { /* nothing is sent after the request */ } }
             catch (e: IOException) { /* closed */ }
             if (process.isAlive) {
-                Log.i(TAG, "sandbox $id: its bwrap is gone; stopping it")
+                Log.i(TAG, "沙箱 $id：其 bwrap 已退出，正在停止")
                 process.destroy()
             }
         }, "bwrap-$id-watch").apply { isDaemon = true; start() }
@@ -403,7 +403,7 @@ object BwrapSpawner {
                 if (n < 0) break
                 if (logged < 4096 || verbose != null) {
                     String(buffer, 0, if (verbose != null) n else minOf(n, 4096 - logged)).lines().filter { it.isNotBlank() }
-                        .forEach { Log.i(TAG, "sandbox $id: $it") }
+                        .forEach { Log.i(TAG, "沙箱 $id：$it") }
                     logged += n
                 }
                 try { synchronized(out) { frame(out, 'O', buffer.copyOf(n)) } } catch (e: IOException) { break }
@@ -411,7 +411,7 @@ object BwrapSpawner {
         }
         val status = process.waitFor()
         com.droiddeck.launcher.session.OrphanReaper.release(pid)
-        Log.i(TAG, "sandbox $id exited $status")
+        Log.i(TAG, "沙箱 $id 已退出 $status")
         runCatching { synchronized(out) { frame(out, 'X', status.toString().toByteArray()) } }
     }
 

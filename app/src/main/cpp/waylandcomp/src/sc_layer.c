@@ -95,12 +95,12 @@ static int load_api(void) {
     if (!nw) nw = dlopen("libnativewindow.so", RTLD_NOW);
     api.getNativeHandle = nw ? dlsym(nw, "AHardwareBuffer_getNativeHandle") : NULL;
     if (!api.getNativeHandle) {
-        banner_log("layer", "unavailable: libnativewindow.so has no AHardwareBuffer_getNativeHandle");
+        banner_log("layer", "不可用：libnativewindow.so 没有 AHardwareBuffer_getNativeHandle");
         return -1;
     }
     void *lib = dlopen("libandroid.so", RTLD_NOW | RTLD_NOLOAD);
     if (!lib) lib = dlopen("libandroid.so", RTLD_NOW);
-    if (!lib) { banner_log("layer", "unavailable: dlopen(libandroid.so): %s", dlerror()); return -1; }
+    if (!lib) { banner_log("layer", "不可用：dlopen(libandroid.so)：%s", dlerror()); return -1; }
 #define SYM(field, name) api.field = dlsym(lib, name)
     SYM(createFromWindow, "ASurfaceControl_createFromWindow");
     SYM(release, "ASurfaceControl_release");
@@ -125,7 +125,7 @@ static int load_api(void) {
     if (!api.createFromWindow || !api.release || !api.txCreate || !api.txDelete || !api.txApply ||
         !api.setBuffer || !api.setZOrder || !api.setVisibility || !api.setGeometry ||
         !api.setBufferTransparency || !api.reparent || !api.setOnComplete || !api.prevReleaseFence) {
-        banner_log("layer", "unavailable: libandroid.so lacks part of the ASurfaceControl API (Android 10+)");
+        banner_log("layer", "不可用：libandroid.so 缺少部分 ASurfaceControl API（Android 10+）");
         return -1;
     }
     api.state = 1;
@@ -330,7 +330,7 @@ static void retire_sc(struct layer *l) {
         if (l->cur_token) ahb_swapchain_layer_released(l->cur_token, -1);
         api.release(l->sc);
     }
-    banner_log("layer", "%s: SurfaceControl retired (window %p)", l->name, (void *)l->win);
+    banner_log("layer", "%s：SurfaceControl 已退役（窗口 %p）", l->name, (void *)l->win);
     l->sc = NULL; l->win = NULL;
     l->shown = 0; l->cur_slot = -1; l->cur_token = NULL; l->geo_valid = 0;
     l->fps_applied = -1.0f; /* the next SurfaceControl carries no vote until it is re-applied */
@@ -390,7 +390,7 @@ enum { TIER_UBWC, TIER_PLAIN, TIER_LINEAR };
 #define BANNER_AHB_USAGE_VENDOR_UBWC (1ULL << 28) /* AHARDWAREBUFFER_USAGE_VENDOR_0 */
 
 static const char *tier_name(int tier) {
-    return tier == TIER_UBWC ? "asked for UBWC" : tier == TIER_PLAIN ? "no UBWC request" : "linear by request (CPU bit)";
+    return tier == TIER_UBWC ? "已请求 UBWC" : tier == TIER_PLAIN ? "未请求 UBWC" : "按请求使用线性（CPU 位）";
 }
 
 static int alloc_slot(struct layer *l, struct slot *s, int w, int h, uint32_t fmt) {
@@ -409,12 +409,12 @@ static int alloc_slot(struct layer *l, struct slot *s, int w, int h, uint32_t fm
         AHardwareBuffer *ahb = NULL;
         if (AHardwareBuffer_allocate(&d, &ahb) != 0 || !ahb) {
             if (tier < TIER_LINEAR) {
-                banner_log("layer", "%s: gralloc refused a %dx%d pool buffer (%s): trying %s", l->name, w, h,
+                banner_log("layer", "%s：gralloc 拒绝了 %dx%d 的池缓冲（%s）：改试 %s", l->name, w, h,
                            tier_name(tier), tier_name(tier + 1));
                 l->alloc_tier = tier + 1;
                 continue;
             }
-            banner_log("error", "layer: %s: AHardwareBuffer_allocate %dx%d (format %#x) failed", l->name, w, h, fmt);
+            banner_log("error", "layer: %s：AHardwareBuffer_allocate %dx%d（格式 %#x）失败", l->name, w, h, fmt);
             g_alloc_failed = 1;
             return -1;
         }
@@ -427,7 +427,7 @@ static int alloc_slot(struct layer *l, struct slot *s, int w, int h, uint32_t fm
             if (tier < TIER_LINEAR) {
                 AHardwareBuffer_release(ahb);
                 l->alloc_tier = TIER_LINEAR;
-                banner_log("layer", "%s: gralloc handle layout unknown (%d fds, %d ints): using linear pool buffers",
+                banner_log("layer", "%s：gralloc 句柄布局未知（%d 个 fd，%d 个 int）：改用线性池缓冲",
                            l->name, nh ? nh->numFds : -1, nh ? nh->numInts : -1);
                 continue;
             }
@@ -439,8 +439,8 @@ static int alloc_slot(struct layer *l, struct slot *s, int w, int h, uint32_t fm
         struct vkp_image *img = fd >= 0 ? vkp_image_import_dmabuf(fd, fmt == AHB_RGB10A2 ? DRM_ABGR2101010 : DRM_ABGR8888,
                                                                   mod, w, h, got.stride * 4, 0, 1) : NULL;
         if (!img) {
-            banner_log("layer", "%s: import of a %s %dx%d pool buffer (stride %u px) into the compositor's Turnip failed",
-                       l->name, mod == MOD_QCOM_COMPRESSED ? "UBWC" : "linear", w, h, got.stride);
+            banner_log("layer", "%s：把 %s %dx%d 池缓冲（步长 %u px）导入合成器的 Turnip 失败",
+                       l->name, mod == MOD_QCOM_COMPRESSED ? "UBWC" : "线性", w, h, got.stride);
             AHardwareBuffer_release(ahb);
             if (tier < TIER_LINEAR) { l->alloc_tier = tier + 1; continue; }
             g_alloc_failed = 1;
@@ -451,9 +451,9 @@ static int alloc_slot(struct layer *l, struct slot *s, int w, int h, uint32_t fm
         if (l->logged_w != w || l->logged_h != h || l->logged_fmt != fmt || l->logged_mod != mod ||
             l->logged_tier != tier) {
             l->logged_w = w; l->logged_h = h; l->logged_fmt = fmt; l->logged_mod = mod; l->logged_tier = tier;
-            banner_log("layer", "%s: pool buffers %dx%d%s: %s (%s), stride %u px, up to %d buffers (gralloc handle %d fds / %d ints)",
-                       l->name, w, h, fmt == AHB_RGB10A2 ? " 10-bit RGBA1010102" : "",
-                       mod == MOD_QCOM_COMPRESSED ? "UBWC (QCOM_COMPRESSED)" : "linear", tier_name(tier),
+            banner_log("layer", "%s：池缓冲 %dx%d%s：%s（%s），步长 %u px，最多 %d 个缓冲（gralloc 句柄 %d 个 fd / %d 个 int）",
+                       l->name, w, h, fmt == AHB_RGB10A2 ? " 10 位 RGBA1010102" : "",
+                       mod == MOD_QCOM_COMPRESSED ? "UBWC (QCOM_COMPRESSED)" : "线性", tier_name(tier),
                        got.stride, l->pool_n, nh ? nh->numFds : -1, nh ? nh->numInts : -1);
         }
         return 0;
@@ -532,10 +532,10 @@ void sc_layer_probe_dmabuf_fd(int fd) {
     struct { uint32_t flags; int32_t fd; } exp = {.flags = 1u /* DMA_BUF_SYNC_READ */, .fd = -1};
     /* DMA_BUF_IOCTL_EXPORT_SYNC_FILE = _IOWR('b', 2, struct dma_buf_export_sync_file) */
     if (ioctl(fd, _IOWR('b', 2, exp), &exp) == 0) {
-        banner_log("layer", "kernel exports sync_file fences from the game's dma-buf: zero-copy acquire fences can come from the buffer itself");
+        banner_log("layer", "内核可从游戏的 dma-buf 导出 sync_file 围栏：零拷贝获取围栏可以直接来自缓冲本身");
         if (exp.fd >= 0) close(exp.fd);
     } else {
-        banner_log("layer", "DMA_BUF_IOCTL_EXPORT_SYNC_FILE on the game's dma-buf failed (%s): acquire fences must be exported by the game's driver (sync_fd) instead",
+        banner_log("layer", "对游戏 dma-buf 的 DMA_BUF_IOCTL_EXPORT_SYNC_FILE 失败（%s）：获取围栏只能改由游戏的驱动（sync_fd）导出",
                    strerror(errno));
     }
 }
@@ -549,7 +549,7 @@ static int ensure_sc(struct layer *l) {
     if (l->sc && l->win != win) retire_sc(l);
     if (!l->sc) {
         l->sc = api.createFromWindow(win, l->name);
-        if (!l->sc) { banner_log("error", "layer: ASurfaceControl_createFromWindow(%s) failed", l->name); return -1; }
+        if (!l->sc) { banner_log("error", "layer: ASurfaceControl_createFromWindow(%s) 失败", l->name); return -1; }
         l->win = win;
         l->ds_applied = -1; l->md_applied = 0; l->hr_applied = -1.0f;
         ASurfaceTransaction *tx = api.txCreate();
@@ -559,7 +559,7 @@ static int ensure_sc(struct layer *l) {
             apply_frame_rate(tx, l);
             api.txApply(tx); api.txDelete(tx);
         }
-        banner_log("layer", "SurfaceControl \"%s\" created as a child of the screen surface (z=%d)", l->name, (int)l->z);
+        banner_log("layer", "SurfaceControl \"%s\" 已作为屏幕表面的子节点创建（z=%d）", l->name, (int)l->z);
     }
     return 0;
 }
@@ -585,8 +585,8 @@ static void apply_geometry(ASurfaceTransaction *tx, struct layer *l, const int r
         l->geo_src = srcR; l->geo_dst = dstR; l->geo_valid = 1;
         char cov[96] = "";
         if (l->ds_applied > 0) coverage_text(l, cov, sizeof(cov));
-        banner_log("layer", "%s geometry: buffer %d,%d-%d,%d -> screen %d,%d-%d,%d%s%s%s", l->name,
-                   r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], cov[0] ? " (HDR layer " : "", cov, cov[0] ? ")" : "");
+        banner_log("layer", "%s 几何：缓冲 %d,%d-%d,%d -> 屏幕 %d,%d-%d,%d%s%s%s", l->name,
+                   r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], cov[0] ? "（HDR 图层 " : "", cov, cov[0] ? "）" : "");
     }
 }
 
@@ -606,8 +606,8 @@ static void apply_frame_rate(ASurfaceTransaction *tx, struct layer *l) {
     }
     int first = l->fps_applied < 0.0f;
     l->fps_applied = want;
-    if (want > 0.0f) banner_log("layer", "display frame-rate vote on %s: %.2f Hz", l->name, want);
-    else if (!first) banner_log("layer", "display frame-rate vote on %s cleared (panel runs free)", l->name);
+    if (want > 0.0f) banner_log("layer", "%s 的显示帧率投票：%.2f Hz", l->name, want);
+    else if (!first) banner_log("layer", "%s 的显示帧率投票已清除（面板自由运行）", l->name);
 }
 
 /* ---- colour (HDR, banner_color.h) -------------------------------------------------------------
@@ -625,7 +625,7 @@ static void coverage_text(const struct layer *l, char *out, size_t n) {
     if (w < 0) w = 0;
     if (h < 0) h = 0;
     const double pct = 100.0 * ((double)w * h) / ((double)ow * oh);
-    snprintf(out, n, "covers %.0f%% of the screen (%dx%d of %dx%d)", pct > 100.0 ? 100.0 : pct, w, h, ow, oh);
+    snprintf(out, n, "占屏幕 %.0f%%（%dx%d / %dx%d）", pct > 100.0 ? 100.0 : pct, w, h, ow, oh);
 }
 
 /* API 35: ask the display for HDR headroom explicitly while the layer carries an HDR frame, and clear the
@@ -636,8 +636,8 @@ static void apply_headroom(ASurfaceTransaction *tx, struct layer *l, const struc
         if (c && c->dataspace && !said_missing) {
             said_missing = 1;
             banner_color_note_headroom_request(-1.0f);
-            banner_log("color", "HDR headroom request not available on %s (Android < 15 has no "
-                       "ASurfaceTransaction_setDesiredHdrHeadroom): the layer relies on Android's default", l->name);
+            banner_log("color", "%s 不支持 HDR 亮度余量请求（Android < 15 没有 "
+                       "ASurfaceTransaction_setDesiredHdrHeadroom）：图层依赖 Android 的默认行为", l->name);
         }
         return;
     }
@@ -651,11 +651,11 @@ static void apply_headroom(ASurfaceTransaction *tx, struct layer *l, const struc
     l->hr_applied = want;
     banner_color_note_headroom_request(want);
     if (want > 0.0f)
-        banner_log("color", "requested HDR headroom %.1fx on %s (%s)", want, l->name, why);
+        banner_log("color", "已请求 %.1fx HDR 亮度余量：%s（%s）", want, l->name, why);
     else if (c && c->dataspace)
-        banner_log("color", "no HDR headroom requested on %s: %s", l->name, why);
+        banner_log("color", "%s：未请求 HDR 亮度余量（%s）", l->name, why);
     else if (!first)
-        banner_log("color", "HDR headroom request on %s cleared (no preference): the frame on the layer is not HDR", l->name);
+        banner_log("color", "%s 上的 HDR 亮度余量请求已清除（无偏好）：图层上的帧不是 HDR", l->name);
 }
 
 static void apply_colour(ASurfaceTransaction *tx, struct layer *l, const struct banner_color *c) {
@@ -682,16 +682,16 @@ static void apply_colour(ASurfaceTransaction *tx, struct layer *l, const struct 
     if (want) {
         char cov[96];
         coverage_text(l, cov, sizeof(cov));
-        banner_log("color", "%s: dataspace %s (%#x) set on the display layer for image description #%u%s%s; SMPTE 2086 "
-                   "%s, CTA-861.3 %s [%s]", l->name, want == BANNER_ADATASPACE_BT2020_PQ ? "BT2020_PQ" : "HDR",
+        banner_log("color", "%s：已在显示图层上设置 dataspace %s（%#x），用于图像描述 #%u%s%s；SMPTE 2086 "
+                   "%s，CTA-861.3 %s [%s]", l->name, want == BANNER_ADATASPACE_BT2020_PQ ? "BT2020_PQ" : "HDR",
                    (unsigned)want, c->identity, cov[0] ? ", " : "", cov,
-                   st_on ? (api.setHdrMetadata_smpte2086 ? "sent" : "not supported by this Android") : "none given",
-                   cta_on ? (api.setHdrMetadata_cta861_3 ? "sent" : "not supported by this Android") : "none given",
+                   st_on ? (api.setHdrMetadata_smpte2086 ? "已发送" : "此 Android 不支持") : "未提供",
+                   cta_on ? (api.setHdrMetadata_cta861_3 ? "已发送" : "此 Android 不支持") : "未提供",
                    c->text);
     }
     else
-        banner_log("color", "%s: dataspace back to UNKNOWN (sRGB), HDR metadata cleared - the frame on the layer is "
-                   "not an HDR frame", l->name);
+        banner_log("color", "%s：dataspace 已回到 UNKNOWN（sRGB），HDR 元数据已清除 - 图层上的帧"
+                   "不是 HDR 帧", l->name);
     l->ds_applied = want;
     l->md_applied = md;
 }
@@ -699,11 +699,11 @@ static void apply_colour(ASurfaceTransaction *tx, struct layer *l, const struct 
 int sc_layer_can_tag_hdr(void) { return load_api() == 0 && api.setBufferDataSpace != NULL; }
 
 void sc_layer_hdr_symbols(char *out, size_t size) {
-    if (load_api() != 0) { snprintf(out, size, "no display layers"); return; }
+    if (load_api() != 0) { snprintf(out, size, "没有显示图层"); return; }
     snprintf(out, size, "setBufferDataSpace %s, setHdrMetadata_smpte2086 %s, setHdrMetadata_cta861_3 %s, "
-             "setDesiredHdrHeadroom %s", api.setBufferDataSpace ? "yes" : "NO",
-             api.setHdrMetadata_smpte2086 ? "yes" : "no", api.setHdrMetadata_cta861_3 ? "yes" : "no",
-             api.setDesiredHdrHeadroom ? "yes (asked for per HDR frame: content peak / SDR white)" : "no (Android < 15)");
+             "setDesiredHdrHeadroom %s", api.setBufferDataSpace ? "是" : "否",
+             api.setHdrMetadata_smpte2086 ? "是" : "否", api.setHdrMetadata_cta861_3 ? "是" : "否",
+             api.setDesiredHdrHeadroom ? "是（每个 HDR 帧请求：内容峰值 / SDR 白点）" : "否（Android < 15）");
 }
 
 /* Once, when a second layer first goes up: HWC only composes a few layers before SurfaceFlinger
@@ -711,9 +711,9 @@ void sc_layer_hdr_symbols(char *out, size_t size) {
 static void log_layer_count(void) {
     if (g_two_logged) return;
     g_two_logged = 1;
-    banner_log("layer", "%d display layers in use: \"%s\" (z=%d) and \"%s\" (z=%d) above it, both children of the "
-               "screen surface; the app's own views (drawer, HUD, pointer) stay above both. %d is the cap - more "
-               "would push SurfaceFlinger into GPU client composition",
+    banner_log("layer", "%d 个显示图层在用：\"%s\"（z=%d）及其上方的 \"%s\"（z=%d），两者都是 "
+               "屏幕表面的子节点；应用自身的视图（抽屉、HUD、指针）保持在两者之上。上限是 %d - 再多"
+               "就会把 SurfaceFlinger 推入 GPU 客户端合成",
                SC_LAYER_COUNT, g_layers[SC_LAYER_GAME].name, (int)g_layers[SC_LAYER_GAME].z,
                g_layers[SC_LAYER_OVERLAY].name, (int)g_layers[SC_LAYER_OVERLAY].z, SC_LAYER_COUNT);
 }
@@ -748,7 +748,7 @@ static ASurfaceControl *swap_sc_begin(struct layer *l) {
     if (!win || win != l->win) return NULL;  /* the window changed: ensure_sc re-creates it anyway */
     ASurfaceControl *fresh = api.createFromWindow(win, l->name);
     if (!fresh) {
-        banner_log("error", "layer: %s: composition recovery could not create a new SurfaceControl", l->name);
+        banner_log("error", "layer: %s：合成恢复无法创建新的 SurfaceControl", l->name);
         return NULL;
     }
     ASurfaceControl *old = l->sc;
@@ -760,8 +760,8 @@ static ASurfaceControl *swap_sc_begin(struct layer *l) {
     l->geo_valid = 0;
     l->fps_applied = -1.0f;
     l->ds_applied = -1; l->md_applied = 0; l->hr_applied = -1.0f;
-    banner_log("layer", "composition recovery: %s got a fresh SurfaceControl now that nothing is above "
-               "the game (measured on this panel: hardware composition does NOT return from this alone)", l->name);
+    banner_log("layer", "合成恢复：%s 已拿到新的 SurfaceControl，此时游戏上方已无任何内容 "
+               "（在本面板上实测：仅此一步并不恢复硬件合成）", l->name);
     return old;
 }
 
@@ -792,7 +792,7 @@ static int present_slot(struct layer *l, int idx, const int r[8], const struct b
     api.txDelete(tx);
     l->cur_slot = idx;
     l->cur_token = NULL;
-    if (!l->shown) { l->shown = 1; banner_log("layer", "%s: layer shown", l->name); }
+    if (!l->shown) { l->shown = 1; banner_log("layer", "%s：图层已显示", l->name); }
     g_stat_layer_frames++;
     return 0;
 }
@@ -805,9 +805,9 @@ static void log_drop(struct layer *l) {
     l->drops_unlogged++;
     int64_t t = now_ns();
     if (!l->drop_logged_ns || t - l->drop_logged_ns > 30000000000LL) {
-        banner_log("layer", "%s: no free layer buffer (display still holds all %d): %u frame%s dropped%s", l->name,
-                   l->pool_n, l->drops_unlogged, l->drops_unlogged == 1 ? "" : "s",
-                   l->drop_logged_ns ? " since the last such line" : "");
+        banner_log("layer", "%s：没有空闲图层缓冲（显示屏仍持有全部 %d 个）：已丢弃 %u 帧%s%s", l->name,
+                   l->pool_n, l->drops_unlogged, l->drops_unlogged == 1 ? "" : "",
+                   l->drop_logged_ns ? "（自上一条此类日志以来）" : "");
         l->drop_logged_ns = t;
         l->drops_unlogged = 0;
     }
@@ -862,7 +862,7 @@ int sc_layer_present_ahb(AHardwareBuffer *ahb, int w, int h, int acquire_fd, voi
     api.txDelete(tx);
     l->cur_slot = -1;
     l->cur_token = token;
-    if (!l->shown) { l->shown = 1; banner_log("layer", "%s: layer shown", l->name); }
+    if (!l->shown) { l->shown = 1; banner_log("layer", "%s：图层已显示", l->name); }
     if (!l->first_logged) { l->first_logged = 1; vkp_signal_first_frame(); }
     if (color && color->dataspace) banner_color_frame_shown(color, BANNER_HDR_ZERO_COPY, ahb_format);
     return 0;
@@ -888,9 +888,9 @@ int sc_layer_present(struct vkp_image *src, int scene_w, int scene_h, const stru
     if (color && color->dataspace) banner_color_frame_shown(color, BANNER_HDR_LAYER_COPY, AHB_RGBA8);
     if (!l->first_logged) {
         l->first_logged = 1;
-        banner_log("layer", "presenting %dx%d game frames on their own SurfaceControl layer (%s pool, %d buffers); "
-                   "HUD and pointer stay Android views above it", sw, sh,
-                   l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "linear", l->pool_n);
+        banner_log("layer", "正在把 %dx%d 的游戏帧呈现在其独立的 SurfaceControl 图层上（%s 池，%d 个缓冲）； "
+                   "HUD 与指针保持为它上方的 Android 视图", sw, sh,
+                   l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "线性", l->pool_n);
         vkp_signal_first_frame();
     }
     return 0;
@@ -912,9 +912,9 @@ int sc_layer_present_pass(const struct vkp_draw *draws, int n, int scene_w, int 
     if (present_slot(l, idx, r, NULL, 0) != 0) return -1; /* the effects chain's result is 8-bit sRGB */
     if (!l->first_logged) {
         l->first_logged = 1;
-        banner_log("layer", "presenting %dx%d frames on their own SurfaceControl layer (%s pool, %d buffers); "
-                   "HUD and pointer stay Android views above it", rw, rh,
-                   l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "linear", l->pool_n);
+        banner_log("layer", "正在把 %dx%d 的帧呈现在其独立的 SurfaceControl 图层上（%s 池，%d 个缓冲）； "
+                   "HUD 与指针保持为它上方的 Android 视图", rw, rh,
+                   l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "线性", l->pool_n);
         vkp_signal_first_frame();
     }
     return 0;
@@ -945,8 +945,8 @@ int sc_layer_present_hdr_scene(const struct vkp_draw *draws, int n, const struct
     int idx = take_free_slot(l, rw, rh, fmt, &wait_fd);
     if (idx < 0 && g_alloc_failed && fmt == AHB_RGB10A2) {
         g_hdr_pool_fmt = AHB_RGBA8;
-        banner_log("color", "%s: this device will not make a 10-bit layer buffer (RGBA1010102): the HDR picture goes "
-                   "on 8-bit buffers instead (still tagged BT2020_PQ; less precision)", l->name);
+        banner_log("color", "%s：本设备无法创建 10 位图层缓冲（RGBA1010102）：HDR 画面改用 "
+                   "8 位缓冲（仍标记为 BT2020_PQ；精度降低）", l->name);
         idx = take_free_slot(l, rw, rh, g_hdr_pool_fmt, &wait_fd);
     }
     if (idx < 0) { vkp_pass_abort(); log_drop(l); return 0; }
@@ -958,17 +958,17 @@ int sc_layer_present_hdr_scene(const struct vkp_draw *draws, int n, const struct
     if (said != tm) {
         said = tm;
         if (tm)
-            banner_log("color", "tone-mapped picture on the game's display layer: %dx%d, %s 8-bit buffers, untagged "
-                       "(sRGB) - HDR output is switched off", rw, rh,
-                       l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "linear");
+            banner_log("color", "游戏显示图层上的色调映射画面：%dx%d，%s 8 位缓冲，不带标记 "
+                       "（sRGB）- HDR 输出已关闭", rw, rh,
+                       l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "线性");
         else {
             char cov[96];
             coverage_text(l, cov, sizeof(cov));
-            banner_log("color", "HDR picture on its own display layer: %dx%d, %s %s buffers, tagged %s%s%s", rw, rh,
-                       l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "linear",
-                       g_hdr_pool_fmt == AHB_RGB10A2 ? "10-bit" : "8-bit",
+            banner_log("color", "独立显示图层上的 HDR 画面：%dx%d，%s %s 缓冲，标记为 %s%s%s", rw, rh,
+                       l->pool_modifier == MOD_QCOM_COMPRESSED ? "UBWC" : "线性",
+                       g_hdr_pool_fmt == AHB_RGB10A2 ? "10 位" : "8 位",
                        color && color->dataspace == BANNER_ADATASPACE_BT2020_PQ ? "BT2020_PQ" : "HDR",
-                       cov[0] ? ", " : "", cov);
+                       cov[0] ? "，" : "", cov);
         }
     }
     if (!l->first_logged) { l->first_logged = 1; vkp_signal_first_frame(); }
@@ -1020,14 +1020,14 @@ int sc_layer_overlay_affordable(void) {
         int first = g_overlay_declined < 0;
         g_overlay_declined = want;
         if (want)
-            banner_log("layer", "overlay layer declined: this display rotates every layer %d° and the game "
-                       "layer is scaled %dx%d -> %dx%d, and on that combination a second layer drops the "
-                       "whole frame to GPU composition for the rest of the session (measured). The window "
-                       "above the game goes on the copy path instead - same picture, one blit.",
+            banner_log("layer", "覆盖图层已拒绝：本显示屏会旋转每个图层 %d°，且游戏"
+                       "图层被缩放 %dx%d -> %dx%d；在这一组合下，第二个图层会让本次会话余下"
+                       "时间的整帧都落到 GPU 合成（实测）。游戏上方的窗口改走拷贝路径 "
+                       "- 画面相同，多一次 blit。",
                        deg, sr[0], sr[1], ds[0], ds[1]);
         else if (!first)
-            banner_log("layer", "overlay layer allowed again: the game layer is no longer both rotated and "
-                       "scaled, so a second display layer costs nothing here");
+            banner_log("layer", "覆盖图层再次允许：游戏图层不再同时被旋转"
+                       "和缩放，因此这里第二个显示图层没有额外代价");
     }
     return ok;
 }
@@ -1077,7 +1077,7 @@ void sc_layer_hide(void) {
      * SurfaceControl, since it goes up and down with every effects/frame-generation toggle. */
     if (g_layers[SC_LAYER_OVERLAY].sc) sc_layer_hide_overlay();
     if (g_layers[SC_LAYER_GAME].shown) hide_layer(&g_layers[SC_LAYER_GAME]);
-    if (said) banner_log("layer", "layers hidden (scene is not a single fullscreen window)");
+    if (said) banner_log("layer", "图层已隐藏（场景不是单个全屏窗口）");
 }
 
 void sc_layer_hide_overlay(void) {
@@ -1093,7 +1093,7 @@ void sc_layer_hide_overlay(void) {
      * buffers stay allocated for the next window. */
     if (l->shown) hide_layer(l);
     retire_sc(l);
-    banner_log("layer", "%s: gone (nothing is above the game any more)", l->name);
+    banner_log("layer", "%s：已移除（游戏上方不再有任何内容）", l->name);
     /* ...and that is the half the measurement said is not enough: arm the game layer's
      * SurfaceControl swap, which the next frame performs (swap_sc_begin). */
     if (g_layers[SC_LAYER_GAME].sc) g_layers[SC_LAYER_GAME].recreate_pending = 1;
