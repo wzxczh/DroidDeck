@@ -1,0 +1,35 @@
+--- ours/README.md
++++ final/README.md
+@@ -7,13 +7,21 @@
+ 
+ DroidDeck 将 SteamOS 体验带到 Android：在你的 Adreno 掌机上以 Big Picture 运行 Valve 的 Steam 客户端，Windows 游戏通过 Valve 的 ARM64 Proton 运行。
+ 
+-<p align="center"><img src="docs/releases/media/0.2.0/launch-into-steam.gif" width="80%" alt="在 Android 主屏幕上点击 DroidDeck 并进入 Steam Big Picture"></p>
++<p align="center"><a href="https://discord.gg/JRGAvawjsm"><img src="https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white" alt="Join the DroidDeck Discord"></a></p>
+ 
+-## 要求和安装
++<p align="center"><img src="docs/releases/media/0.2.0/launch-into-steam.gif" width="80%" alt="Tapping DroidDeck on the Android home screen and landing in Steam Big Picture"></p>
+ 
+-在受支持的 Adreno 设备（730 或更新，或 8xx）上使用 Android 9 或更新版本。不支持 Mali、Xclipse、PowerVR 和 Adreno 710。无需 root。为运行时预留约 3 GB，为桌面和模拟器再预留 1.1 GB。从 [发布](https://github.com/The412Banner/DroidDeck/releases) 安装 APK，安装 Linux 运行时，然后按 **Play** 并登录。Steam 在首次启动时下载。安装 **桌面与应用** 以使用桌面和模拟器。**商店** 使用 Flatpak 从 Flathub 安装 Linux 应用和游戏（ARM64 构建）；见 [docs/development/flatpak.md](docs/development/flatpak.md)。
++> Note: DroidDeck does not have a stand-alone website. Do not click on any download links from websites claiming to be the DroidDeck team. 
+ 
+-在 Android 12+ 上，如果 Steam 退出且没有日志，请在开发者选项中关闭 **限制子进程**。
++## Requirements and install
++
++Use Android 9 or newer on a supported Adreno device (730 or newer, or 8xx). Mali, Xclipse, PowerVR, and Adreno 710 are unsupported. No root is required. Allow about 3 GB for the runtime and 1.1 GB more for the desktop and emulators. Install the APK from [Releases](https://github.com/Droid-Deck/DroidDeck/releases), install the Linux runtime, then press **Play** and sign in. Steam downloads on first launch. Install **Desktop & apps** to use the desktop and emulators. The **Store** installs Linux apps and games from Flathub (ARM64 builds) with Flatpak; with additional options to install Appimages and set up scripts.
++
++Before Steam launches, you must turn off **Restrict child processes** in Developer options. If this option is not available in developer settings (Android 12 and 13 devices), first launch of Steam will present a "Fix it for me" button, which will help automate the setup process.
++
++## Community
++
++Join the [DroidDeck Discord](https://discord.gg/JRGAvawjsm) for help, Preview builds, and device reports. Bug reports go in its **#bug-reports** forum; attach the session folder from `Download/DroidDeck/` so the logs come with it.
+ 
+ ## 构建
+ 
+@@ -25,4 +33,5 @@
+ 
+ ## 致谢和许可
+ 
+-GPL-3.0。运行时、shim、输入和控制器工作基于 WinNative 和 Bannerlator (maxjivi05)。见 [LICENSE](LICENSE)。Steam 和 Proton 属于 Valve Corporation；此项目与 Valve 无关联。
++GPL-3.0. Runtime, shim, input, and controller work build on WinNative and Bannerlator (maxjivi05). LSFG frame generation is from the work of Camille LaVey and the [Eden](https://eden-emu.dev) emulator project, following [lsfg-vk](https://github.com/PancakeTAS/lsfg-vk), ported to WinNative and DroidDeck by [@maxjivi05](https://github.com/maxjivi05); it needs your own copy of [Lossless Scaling](https://store.steampowered.com/app/993090/) and ships none of its shaders. x86 AppImages, and any whose own runtime cannot unpack them, are unpacked with [uruntime](https://github.com/VHSgunzo/uruntime) by VHSgunzo (MIT), shipped unmodified with its licence. See [LICENSE](LICENSE). Steam and Proton belong to Valve Corporation; this project is not affiliated with Valve.
++

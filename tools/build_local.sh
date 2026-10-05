@@ -14,6 +14,12 @@ fi
 sdk_dir=${ANDROID_HOME:-${ANDROID_SDK_ROOT:-"${HOME}/Library/Android/sdk"}}
 java_dir=${JAVA_HOME:-"/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"}
 image_name=${DROIDDECK_BUILD_IMAGE:-droiddeck-local-cross:24.04-v2}
+build_variant=${DROIDDECK_BUILD_VARIANT:-release}
+case "$build_variant" in
+    debug) gradle_task=assembleDebug ;;
+    release) gradle_task=assembleRelease ;;
+    *) echo "DROIDDECK_BUILD_VARIANT must be debug or release" >&2; exit 1 ;;
+esac
 
 if [[ ! -x "${sdk_dir}/platform-tools/adb" ]]; then
     echo "Android SDK not found at ${sdk_dir}; set ANDROID_HOME or ANDROID_SDK_ROOT." >&2
@@ -33,9 +39,9 @@ for tool in curl tar zstd shasum unzip; do
         exit 1
     fi
 done
-if [[ -f "${repo_root}/tools/gamescope/release.env" || -f "${repo_root}/tools/wlroots/release.env" ]] \
-        && ! command -v gh >/dev/null 2>&1; then
-    echo "GitHub CLI is required to download the pinned Gamescope and wlroots release assets." >&2
+if [[ -f "${repo_root}/tools/gamescope/release.env" || -f "${repo_root}/tools/wlroots/release.env" \
+        || -f "${repo_root}/tools/droiddeck-esync/release.env" ]] && ! command -v gh >/dev/null 2>&1; then
+    echo "GitHub CLI is required to download the pinned Gamescope, wlroots and droiddeck-esync release assets." >&2
     exit 1
 fi
 
@@ -117,7 +123,13 @@ docker run --rm --platform linux/amd64 \
         aarch64-linux-gnu-gcc -shared -fPIC -O2 -Wall -pthread \
             -o "$d/libblsession.so" tools/linuxfs/preload/*.c -ldl
         aarch64-linux-gnu-strip --strip-unneeded "$d/libblsession.so"
-        for script in tools/linuxfs/overlay/usr/local/bin/bannerlator-*; do
+        aarch64-linux-gnu-gcc -shared -fPIC -O2 -Wall -pthread \
+            -o "$d/libblfastpath.so" tools/proot/fastpath/fastpath.c -ldl
+        aarch64-linux-gnu-strip --strip-unneeded "$d/libblfastpath.so"
+        mkdir -p "$d/usr/local/bin"
+        aarch64-linux-gnu-gcc -O2 -Wall -Wextra -o "$d/usr/local/bin/droiddeck-clipboard" tools/linuxfs/clipboard/clipboard.c -ldl
+        aarch64-linux-gnu-strip --strip-unneeded "$d/usr/local/bin/droiddeck-clipboard"
+        for script in tools/linuxfs/overlay/usr/local/bin/droiddeck-* tools/linuxfs/overlay/usr/local/bin/steam-compatibility; do
             install -Dm644 "$script" "$d/usr/local/bin/$(basename "$script")"
         done
         for f in tools/linuxfs/overlay/usr/bin/* tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/*; do
@@ -154,8 +166,18 @@ docker run --rm --platform linux/amd64 \
                 exit 1
             }
         done
-        test -f "$d/usr/local/bin/bannerlator-session"
-        test -f "$d/usr/local/bin/bannerlator-proton-extra"
+        test -f "$d/usr/local/bin/droiddeck-session"
+        test -f "$d/usr/local/bin/droiddeck-proton-extra"
+    '
+
+docker run --rm --platform linux/amd64 \
+    -v "${repo_root}:/src" -w /src debian:bullseye bash -c '
+        set -euo pipefail
+        printf "deb http://archive.debian.org/debian bullseye main\ndeb http://archive.debian.org/debian-security bullseye-security main\n" > /etc/apt/sources.list
+        apt-get -o Acquire::Check-Valid-Until=false update -qq
+        DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends gcc g++ gcc-multilib g++-multilib binutils >/dev/null
+        tools/linuxfs/build-x86-preloads.sh app/src/main/assets/linuxfs
+        chown -R '"$(id -u):$(id -g)"' app/src/main/assets/linuxfs
     '
 
 github_repo=${DROIDDECK_GITHUB_REPOSITORY:-}
@@ -198,7 +220,7 @@ cached() {
 if [[ -f "${repo_root}/tools/gamescope/release.env" ]]; then
     . "${repo_root}/tools/gamescope/release.env"
     gamescope_archive=$(cached "${GAMESCOPE_SHA256}" gamescope.tzst \
-        bash -c 'gh release download "$0" -R "$1" -p gamescope.tzst -O "$out"' "${GAMESCOPE_TAG}" "${github_repo}")
+        bash -c 'gh release download "$0" -R "$1" -p gamescope.tzst -O "$out" || gh release download "$0" -R Droid-Deck/DroidDeck -p gamescope.tzst -O "$out"' "${GAMESCOPE_TAG}" "${github_repo}")
     zstd -dc "${gamescope_archive}" | tar -xf - -C "${linuxfs_dir}"
     test -f "${linuxfs_dir}/usr/local/bin/gamescope"
 fi
@@ -211,6 +233,36 @@ if [[ -f "${repo_root}/tools/wlroots/release.env" ]]; then
     test -f "${linuxfs_dir}/usr/local/lib/droiddeck-wlroots/libwlroots-0.20.so"
 fi
 
+. "${repo_root}/tools/linuxfs/uruntime.env"
+uruntime_binary=$(cached "${URUNTIME_SHA256}" "${URUNTIME_ASSET}" \
+    bash -c 'curl -fsSL --retry 3 -o "$out" "$0"' "https://github.com/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/${URUNTIME_ASSET}")
+install -Dm644 "${uruntime_binary}" "${linuxfs_dir}/usr/local/lib/droiddeck/uruntime"
+install -Dm644 "${repo_root}/tools/linuxfs/licenses/uruntime-LICENSE" "${linuxfs_dir}/usr/local/share/licenses/uruntime/LICENSE"
+
+sync_assets="${repo_root}/app/src/main/assets/droiddeck-esync"
+if [[ -f "${repo_root}/tools/droiddeck-esync/release.env" ]]; then
+    . "${repo_root}/tools/droiddeck-esync/release.env"
+    sync_archive=$(cached "${SYNC_BUNDLE_SHA256}" "${SYNC_BUNDLE_ASSET}" \
+        bash -c 'gh release download "$0" -R "$2" -p "$1" -O "$out"' "${SYNC_BUNDLE_TAG}" "${SYNC_BUNDLE_ASSET}" "${SYNC_BUNDLE_REPO}")
+    rm -rf "${sync_assets}"
+    mkdir -p "${sync_assets}"
+    zstd -dc "${sync_archive}" | tar -xf - -C "${sync_assets}"
+    test -f "${sync_assets}/index.json"
+    test -f "${sync_assets}/index.json.sig"
+    sync_index=$(mktemp)
+    gh release download "${SYNC_BUNDLE_TAG}" -R "${SYNC_BUNDLE_REPO}" -p index.json -O "${sync_index}" --clobber
+    revoked=$(python3 -c 'import json, sys; print(" ".join(p["id"] for p in json.load(open(sys.argv[1]))["packs"] if p.get("revoked") is True))' "${sync_index}")
+    for id in ${revoked}; do
+        if [[ -e "${sync_assets}/packs/${id}.tzst" ]]; then
+            echo "${SYNC_BUNDLE_ASSET} carries revoked pack ${id}; it is left out of the APK" >&2
+            rm -f "${sync_assets}/packs/${id}.tzst"
+        fi
+    done
+    rm -f "${sync_index}"
+elif [[ -d "${sync_assets}" ]]; then
+    echo "No tools/droiddeck-esync/release.env: the APK bundles the droiddeck-esync packs already in ${sync_assets}." >&2
+fi
+
 mango_dir="${linuxfs_dir}/usr/local/lib/mangoapp"
 mango_pkgs="${staging_dir}/mango-pkgs"
 mkdir -p "${mango_dir}" "${mango_pkgs}"
@@ -221,9 +273,13 @@ while read -r package_sha256 package_url; do
     zstd -dc "${package_archive}" | tar -xf - -C "${mango_pkgs}"
 done < <(grep -v '^#' "${repo_root}/tools/mangoapp/packages.txt")
 install -m644 "${mango_pkgs}/usr/bin/mangoapp" "${mango_dir}/mangoapp"
-for library in libfmt.so.10 libspdlog.so.1.13 libglfw.so.3 libtraceevent.so.1 libtracefs.so.1; do
+for library in libfmt.so.10 libspdlog.so.1.13 libglfw.so.3 libtraceevent.so.1; do
     cp -L "${mango_pkgs}/usr/lib/${library}" "${mango_dir}/${library}"
 done
+# Ours, not the package's: GPU memory without tracefs (tools/mangoapp/libtracefs-shim.c).
+docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" -v "${repo_root}:/src" -w /src "${image_name}" \
+    aarch64-linux-gnu-gcc -shared -fPIC -O2 -Wall -Wl,-soname,libtracefs.so.1 \
+    -o app/src/main/assets/linuxfs/usr/local/lib/mangoapp/libtracefs.so.1 tools/mangoapp/libtracefs-shim.c
 mkdir -p "${linuxfs_dir}/usr/local/bin"
 install -m644 "${repo_root}/tools/mangoapp/mangoapp" "${linuxfs_dir}/usr/local/bin/mangoapp"
 
@@ -275,11 +331,12 @@ bundle_replaced=1
 mv "${staging_dir}/pulseaudio.tzst" "${bundle_asset}"
 
 cd "${repo_root}"
-./gradlew assembleRelease --console=plain -PndkVersion="${ndk_version}"
+./gradlew "${gradle_task}" --console=plain -PndkVersion="${ndk_version}"
+python3 tools/release/check_session_assets.py "app/build/outputs/apk/${build_variant}/app-${build_variant}.apk"
 cp -p "${bundle_backup}" "${bundle_asset}"
 bundle_replaced=0
 
-apk="${repo_root}/app/build/outputs/apk/release/app-release.apk"
+apk="${repo_root}/app/build/outputs/apk/${build_variant}/app-${build_variant}.apk"
 audio_check="${staging_dir}/audio-check"
 mkdir -p "${audio_check}"
 unzip -p "${apk}" assets/pulseaudio.tzst | zstd -dc | tar -xf - -C "${audio_check}"
@@ -293,10 +350,10 @@ for audio_file in \
     fi
 done
 
-docker run --rm --platform linux/amd64 -v "${repo_root}:/src:ro" -w /src "${image_name}" \
+docker run --rm --platform linux/amd64 -e build_variant="${build_variant}" -v "${repo_root}:/src:ro" -w /src "${image_name}" \
     bash -lc '
         set -euo pipefail
-        apk=app/build/outputs/apk/release/app-release.apk
+        apk=app/build/outputs/apk/${build_variant}/app-${build_variant}.apk
         work=$(mktemp -d)
         unzip -q "$apk" "lib/arm64-v8a/*" -d "$work"
         cd "$work/lib/arm64-v8a"

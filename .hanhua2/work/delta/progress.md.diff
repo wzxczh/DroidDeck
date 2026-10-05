@@ -1,0 +1,46 @@
+--- ours/progress.md
++++ final/progress.md
+@@ -1,4 +1,32 @@
+ # DroidDeck 汉化 — 进度日志
++
++# 第二轮：版本更新合并 + 全项目汉化（进行中）
++
++## 当前状态：Phase 4 增量翻译进行中（冲突合并已全部完成）
++
++### 已完成
++1. **取证**：自写 Python 读 `.git`（`.hanhua2/gread.py`：loose+pack+delta+index 三 stage）；merge-base=9ed25d8a；base/ours/theirs 三棵树落地临时目录；86 冲突路径。
++2. **冲突裁决 518/518**：三方分类（489 自动 / 11 人工复核 / 18 特殊文件 / 6 删除），`audit_local.py` 证明本地非汉化修复全部位于冲突区之外或复核安全 → 统一"取上游侧"，英文交 Phase 4 翻译。
++3. **写回**：80 文件覆盖 + 删 6（bannerlator-* 改名 5 个 + AppImageState.kt，上游重构为 UserApps）；全库 0 真冲突标记（build.yml 内为 CI 脚本字面量）。
++4. **资源**：values-zh-rCN=上游完整中文（0 英文值）；values 默认=同步 zh-rCN + 92 个仅默认键由协调者译完（translate_values.py：84 处替换，0 英文残留）——**待批量写回**。
++5. **文档**：docs/development 3 个小文档（flatpak、game-environment、steam-game-imports）协调者亲自译完（D1 子任务读大文档时上下文耗尽中断）。
++6. **验证器就绪**：verify_final.py（标记/XML/资源引用/三向结构分类/英文残留）、eng_check.py（文档英文段）。首轮预检全绿：markers OK、XML OK、R.string 引用 OK；结构分类 OK-THEIRS 672 / OK-OURS 143 / REVIEW 11（多为在译文档与已知双语解析文件）。
++
++### 并行子任务（8 active / 上限 8）
++- 运行中：K1 session、K2 ui、K3 runtime、K4 core/frontend、K5 gpu/input/wayland、K6 root+全部 app/src/test、C1 合成器大文件、S1 核心会话脚本。
++- 排队（等槽位）：C2 wayland 其余、S2 overlay 脚本、D2 其余文档（README、0.3.0、testing、PATCHES、ZERO_COPY_SPIKE）、C3 tools C、S3 开发脚本、D1b thor-sd、D1c proot-performance、T1 tools/tests pytest（必须最后启动，依赖 S1/S2/S3 完成）。
++
++### 已知风险与跟进项
++- **测试↔源码配对跨任务**（app/src/test 全在 K6，主源码在 K1-K5）：已给 K6 发同步指令；终检做自动化断言一致性审计。
++- 加载管线一律保留英文协议串（step/正则/token），已写入手册；S1 完成后核对其保留清单。
++- gamescope release.env 取上游 p5+新 sha256；本地曾修过 p4 sha——终检时考虑下载校验 p5 tarball。
++- REVIEW 分类文件终检复核（文档译完后应转 OK）。
++- 沙箱：子进程写工作区被会话限制（ACL 诊断无问题，属会话策略）；写回走 danger-full-access 批量调用（已用 1 次：80 文件+6 删除；values/strings.xml 待第 2 次）。
++- 未覆盖（沿用第一轮范围决策）：`.github/workflows/*.yml`、`*.gradle`、代码注释、values-ja/ko/es/zh-rHK/zh-rTW（上游自带的其他语言资源）、`dxbc/LICENSE.md`、`uruntime-LICENSE`。
++
++---
++
++# 第一轮（旧版本汉化，已随合并保留）
+ 
+ ## 最终状态（全部阶段完成，除 1 个收尾子任务）
+ 
+@@ -36,8 +64,8 @@
+ 7. MD：除许可证外全中文。
+ 8. C++ verify.ps1：21 文件 0 失败（行数/字符串骨架/说明符序列/tag 序列）。
+ 
+-### 进行中
+-- [ ] b5e232cf：guest 脚本消息汉化（tools/linuxfs 约 50 处，含测试保护约束）——最后一个任务。
++### 进行中（第一轮遗留，已在第二轮合并中覆盖）
++- [ ] b5e232cf：guest 脚本消息汉化（tools/linuxfs 约 50 处，含测试保护约束）——随上游改名被新版本取代。
+ 
+ ## 历史协调记录
+ - 子任务并发冲突 2 次（wl_color_mgmt.c 双写、306e5465 僵尸）：已通过叫停 590edbec/306e5465、独占授权 5f4053bf 解决。

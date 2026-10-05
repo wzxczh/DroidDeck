@@ -1,0 +1,15 @@
+--- ours/app/src/test/java/com/droiddeck/launcher/core/GameEnvironmentTest.kt
++++ final/app/src/test/java/com/droiddeck/launcher/core/GameEnvironmentTest.kt
+@@ -34,6 +34,12 @@
+         assertNull(game["VKD3D_SHADER_MODEL"])
+         val restored = GameEnvironment.effective(config.withEntries("42", emptyMap()), "", "42")
+         assertEquals("6_9", restored["VKD3D_SHADER_MODEL"])
++    }
++
++    @Test fun dotnetRuntimeFitsAndroidAddressSpaceForEveryGame() {
++        val values = GameEnvironment.effective(GameEnvironment.Config(), "PERFORMANCE", "43")
++        assertEquals("0x800000000", values["DOTNET_GCRegionRange"])
++        assertEquals("0", values["DOTNET_EnableWriteXorExecute"])
+     }
+ 
+     @Test fun multiSelectionPreservesCustomTokensAndRemovesToggledValues() {

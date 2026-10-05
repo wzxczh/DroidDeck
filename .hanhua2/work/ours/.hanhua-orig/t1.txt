@@ -1,0 +1,5 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\banner_ext.c
+#OLD
+        __android_log_print(ANDROID_LOG_ERROR, "BannerWayland", "host queue pipe failed");
+#NEW
+        __android_log_print(ANDROID_LOG_ERROR, "BannerWayland", "宿主队列管道创建失败");

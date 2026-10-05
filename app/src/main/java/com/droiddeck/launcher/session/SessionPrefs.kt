@@ -1,6 +1,9 @@
 package com.droiddeck.launcher.session
 
 import android.content.Context
+import com.droiddeck.launcher.core.TextureFiltering
+import com.droiddeck.launcher.gpu.ScreenEffects
+import org.json.JSONObject
 
 /** The in-session switches: the HUD and how the on-screen controls decide to appear. */
 object SessionPrefs {
@@ -30,25 +33,35 @@ object SessionPrefs {
         prefs(context).edit().putBoolean("launcherFullscreen", on).apply()
     }
 
-    /** The Flathub Store (beta): its rail item and the Store's apps on the Desktop page. Off by default. */
+    fun animationsEnabled(context: Context): Boolean = prefs(context).getBoolean("animations", true)
+
+    fun setAnimationsEnabled(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("animations", on).apply()
+    }
+
+    /** The Flathub Store (beta): its rail item. Off by default. */
     fun storeEnabled(context: Context): Boolean = prefs(context).getBoolean("storeEnabled", false)
 
     fun setStoreEnabled(context: Context, on: Boolean) {
         prefs(context).edit().putBoolean("storeEnabled", on).apply()
     }
 
-    /** AppImage import (beta): the AppImages section on the Desktop page. Off by default. */
-    fun appImagesEnabled(context: Context): Boolean = prefs(context).getBoolean("appImagesEnabled", false)
-
-    fun setAppImagesEnabled(context: Context, on: Boolean) {
-        prefs(context).edit().putBoolean("appImagesEnabled", on).apply()
-    }
-
-    fun hudEnabled(context: Context): Boolean = prefs(context).getBoolean("hud", true)
+    /**
+     * The session's performance HUD (the fps box). A Deck-mode Steam session with the performance
+     * overlay has Steam's own (mangoapp, from the QAM), so there the HUD is off unless turned on
+     * in one - a choice kept apart from every other session's, where it stays on by default.
+     */
+    fun hudEnabled(context: Context): Boolean = prefs(context).getBoolean(hudKey(context), !mangoappSession(context))
 
     fun setHudEnabled(context: Context, on: Boolean) {
-        prefs(context).edit().putBoolean("hud", on).apply()
+        prefs(context).edit().putBoolean(hudKey(context), on).apply()
     }
+
+    private fun hudKey(context: Context) = if (mangoappSession(context)) "hudDeck" else "hud"
+
+    /** A Steam session that runs Deck mode with its performance overlay (mangoapp). */
+    private fun mangoappSession(context: Context) =
+        SessionState.mode == SessionService.MODE_STEAM && steamDeckMode(context) && mangoapp(context)
 
     /** When enabled, a single Back opens Steam QAM and a double Back opens the session menu. */
     fun backActionsInverted(context: Context): Boolean = prefs(context).getBoolean("backActionsInverted", false)
@@ -60,9 +73,11 @@ object SessionPrefs {
     const val TOUCH_AUTO = "auto"
     const val TOUCH_PAD = "touchpad"
     const val TOUCH_DIRECT = "direct"
+    const val TOUCH_OFF = "off"
 
     /** How touch drives the pointer: a touchpad (drag moves it from where it is) or direct
-     *  (it jumps under the finger). Auto = touchpad on the desktop, direct in Steam. */
+     *  (it jumps under the finger). Auto = touchpad on the desktop, direct in Steam.
+     *  Off ignores touches on the guest picture; Android controls remain usable. */
     fun touchMode(context: Context): String = prefs(context).getString("touch", TOUCH_AUTO) ?: TOUCH_AUTO
 
     fun setTouchMode(context: Context, mode: String) {
@@ -73,26 +88,15 @@ object SessionPrefs {
     const val SHAPE_WIDE = "16:9"
     const val SHAPE_EXACT = "exact"
 
-    /** The choices the settings offer, in order. */
-    val shapeChoices = listOf(
-        SHAPE_AUTO to "自动 (16:9+)",
-        SHAPE_EXACT to "匹配屏幕",
-        SHAPE_WIDE to "始终 16:9",
-    )
-
     /**
      * The shape of the display the session presents: the panel's own (never narrower than 16:9),
      * exactly the panel's (a 4:3 or 3:2 handheld, drawn edge to edge), or a fixed 16:9. A foldable defaults to 16:9, which sits with modest bars on either of its
      * panels; the panel's own shape would fit one and leave a strip on the other, and gamescope's
      * display cannot change size once the session is up.
      */
-    fun shapeMode(context: Context): String =
+    private fun shapeMode(context: Context): String =
         prefs(context).getString("shape", null)
             ?: if (context.packageManager.hasSystemFeature("android.hardware.sensor.hinge_angle")) SHAPE_WIDE else SHAPE_AUTO
-
-    fun setShapeMode(context: Context, mode: String) {
-        prefs(context).edit().putString("shape", mode).apply()
-    }
 
     fun oscMode(context: Context): String = prefs(context).getString("osc", OSC_AUTO) ?: OSC_AUTO
 
@@ -101,15 +105,52 @@ object SessionPrefs {
     }
 
     /**
-     * The imported glibc Turnip a mode draws with inside the runtime, keyed by
-     * SessionService.MODE_STEAM / MODE_DESKTOP so Steam and the desktop can differ; "" = the
-     * driver built into the runtime. Resolved by LinuxVulkanDriver at session start.
+     * The imported glibc Turnip every session draws with inside the runtime - Steam, its games and
+     * the desktop alike, as they run on the same GPU; "" = the driver built into the runtime.
+     * Resolved by LinuxVulkanDriver at session start. It was once chosen per mode: the Steam
+     * session's choice, the one nearly everyone set, carries over.
      */
-    fun linuxDriver(context: Context, mode: String): String =
-        prefs(context).getString("linuxDriver.$mode", "") ?: ""
+    fun linuxDriver(context: Context): String =
+        prefs(context).getString("linuxDriver", null)
+            ?: prefs(context).getString("linuxDriver.steam", null)
+            ?: prefs(context).getString("linuxDriver.desktop", "") ?: ""
 
-    fun setLinuxDriver(context: Context, mode: String, id: String) {
-        prefs(context).edit().putString("linuxDriver.$mode", id).apply()
+    fun setLinuxDriver(context: Context, id: String) {
+        prefs(context).edit().putString("linuxDriver", id).apply()
+    }
+
+    const val GPU_DRIVERS_AUTO = "auto"
+    const val GPU_DRIVERS_MANUAL = "manual"
+
+    /**
+     * Who picks the GPU drivers: [GPU_DRIVERS_AUTO] (the app, the matched pair recommended for
+     * this GPU, kept current - DriverPairs) or [GPU_DRIVERS_MANUAL] (the user). Auto for new
+     * installs; see settleGpuDriverMode.
+     */
+    fun gpuDriverMode(context: Context): String =
+        prefs(context).getString("gpuDriverMode", GPU_DRIVERS_AUTO) ?: GPU_DRIVERS_AUTO
+
+    fun setGpuDriverMode(context: Context, mode: String) {
+        prefs(context).edit().putString("gpuDriverMode", mode).apply()
+    }
+
+    /**
+     * Auto arrived after people had picked drivers by hand: an install that chose either driver
+     * keeps its choice (Manual), everyone else is Auto. Decided once, at process start.
+     */
+    fun settleGpuDriverMode(context: Context) {
+        val p = prefs(context)
+        if (p.contains("gpuDriverMode")) return
+        val chosen = androidDriver(context).isNotEmpty() || linuxDriver(context).isNotEmpty()
+        p.edit().putString("gpuDriverMode", if (chosen) GPU_DRIVERS_MANUAL else GPU_DRIVERS_AUTO).apply()
+    }
+
+    /** Drivers Auto downloaded: the only ones it removes when a newer pair replaces them. */
+    fun gpuAutoInstalled(context: Context): Set<String> =
+        prefs(context).getStringSet("gpuAutoInstalled", emptySet()).orEmpty()
+
+    fun setGpuAutoInstalled(context: Context, ids: Set<String>) {
+        prefs(context).edit().putStringSet("gpuAutoInstalled", ids.toSet()).apply()
     }
 
     /**
@@ -134,6 +175,12 @@ object SessionPrefs {
     fun setForceFullscreen(context: Context, on: Boolean) {
         prefs(context).edit().putBoolean("forceFullscreen", on).apply()
         writeForceFullscreenFlag(context)
+    }
+
+    fun stretch16x9(context: Context): Boolean = prefs(context).getBoolean("stretch16x9", false)
+
+    fun setStretch16x9(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("stretch16x9", on).apply()
     }
 
     /**
@@ -171,6 +218,19 @@ object SessionPrefs {
 
     fun setMicEnabled(context: Context, on: Boolean) {
         prefs(context).edit().putBoolean("mic", on).apply()
+    }
+
+    /** Optional SSID reporting and scans. A Location grant alone never opts the user in. */
+    fun wifiDiscoveryEnabled(context: Context): Boolean = prefs(context).getBoolean("wifiDiscovery", false)
+
+    fun setWifiDiscoveryEnabled(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("wifiDiscovery", on).apply()
+    }
+
+    fun wifiDiscoveryAsked(context: Context): Boolean = prefs(context).getBoolean("wifiDiscoveryAsked", false)
+
+    fun setWifiDiscoveryAsked(context: Context) {
+        prefs(context).edit().putBoolean("wifiDiscoveryAsked", true).apply()
     }
 
     /**
@@ -214,6 +274,52 @@ object SessionPrefs {
         prefs(context).edit().putBoolean("noXalia", on).apply()
     }
 
+    fun fastSync(context: Context): Boolean = prefs(context).getBoolean("fastSync", false)
+
+    fun setFastSync(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("fastSync", on).apply()
+    }
+
+    fun fsyncFirst(context: Context): Boolean = prefs(context).getBoolean("fsyncFirst", false)
+
+    fun setFsyncFirst(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("fsyncFirst", on).apply()
+    }
+
+    const val SYNC_ESYNC = "esync"
+    const val SYNC_NTSYNC = "ntsync"
+    const val SYNC_FSYNC = "fsync"
+    const val SYNC_WINESERVER = "wineserver"
+
+    /**
+     * The sync Proton games use, as the three switches above decide it: droiddeck-ntsync wins
+     * while it is on, then droiddeck-fsync first, then droiddeck-esync, and wineserver alone while all three are off.
+     */
+    fun syncBackend(context: Context): String = syncBackendOf(fastSync(context), fsyncFirst(context), syncFallback(context))
+
+    fun syncBackendOf(fastSync: Boolean, fsyncFirst: Boolean, syncFallback: Boolean): String = when {
+        fastSync -> SYNC_NTSYNC
+        fsyncFirst -> SYNC_FSYNC
+        syncFallback -> SYNC_ESYNC
+        else -> SYNC_WINESERVER
+    }
+
+    /** Picks one sync for Proton games; the switches change together, in one write. */
+    fun setSyncBackend(context: Context, backend: String) {
+        require(backend == SYNC_ESYNC || backend == SYNC_NTSYNC || backend == SYNC_FSYNC || backend == SYNC_WINESERVER) { "未知的同步后端 $backend" }
+        prefs(context).edit()
+            .putBoolean("fastSync", backend == SYNC_NTSYNC)
+            .putBoolean("fsyncFirst", backend == SYNC_FSYNC)
+            .putBoolean("syncFallback", backend != SYNC_WINESERVER)
+            .apply()
+    }
+
+    fun syncFallback(context: Context): Boolean = prefs(context).getBoolean("syncFallback", true)
+
+    fun setSyncFallback(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("syncFallback", on).apply()
+    }
+
     /**
      * Whether gamescope asks for realtime-priority Vulkan queues (GAMESCOPE_FORCE_VULKAN_REALTIME=1,
      * which the app's gamescope build honours without CAP_SYS_NICE). Off by default, as in
@@ -235,10 +341,28 @@ object SessionPrefs {
      * plainly exist is the signature - and the fallback is to trace everything instead: slower,
      * but correct. Max's advice for devices whose kernels "don't work well with it".
      */
+    /** Hold the GPU at its top clock during a session (GpuClockPin). Off by default: power and heat. */
+    fun gpuClockPin(context: Context): Boolean = prefs(context).getBoolean("gpuClockPin", false)
+
+    fun setGpuClockPin(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("gpuClockPin", on).apply()
+    }
+
     fun prootNoSeccomp(context: Context): Boolean = prefs(context).getBoolean("prootNoSeccomp", false)
 
     fun setProotNoSeccomp(context: Context, on: Boolean) {
         prefs(context).edit().putBoolean("prootNoSeccomp", on).apply()
+    }
+
+    /**
+     * Whether the session's path lookups take proot's fast path (ProotFastPath): answered inside
+     * each process instead of a round trip through the tracer. On by default; it needs proot's
+     * seccomp filter, so it is off whenever proot runs without one.
+     */
+    fun prootFastPath(context: Context): Boolean = prefs(context).getBoolean("prootFastPath", true)
+
+    fun setProotFastPath(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("prootFastPath", on).apply()
     }
 
     const val DEFAULT_GUEST_HOSTNAME = "DroidDeck"
@@ -292,9 +416,28 @@ object SessionPrefs {
         prefs(context).getString("steamController", CONTROLLER_DECK) ?: CONTROLLER_DECK
     fun setSteamController(context: Context, id: String) { prefs(context).edit().putString("steamController", id).apply() }
 
-    /** Runs the SteamOS gamepad client with its Quick Access performance controls. */
-    fun steamDeckMode(context: Context): Boolean = prefs(context).getBoolean("steamDeckMode", false)
+    /** Runs the SteamOS gamepad client with its Quick Access performance controls. On by default (settleDeckModeDefault). */
+    fun steamDeckMode(context: Context): Boolean = prefs(context).getBoolean("steamDeckMode", true)
     fun setSteamDeckMode(context: Context, on: Boolean) { prefs(context).edit().putBoolean("steamDeckMode", on).apply() }
+
+    /**
+     * Deck mode is the default: every install, new or from before, is moved to it once. An install
+     * from before 0.3.0 had off written down for it whether or not anyone chose it, so the move
+     * can't tell a choice from that default and moves everyone; turning it off afterwards sticks.
+     * Run once at process start, before anything reads or writes these prefs.
+     */
+    fun settleDeckModeDefault(context: Context) {
+        val p = prefs(context)
+        if (p.getBoolean("deckModeMoved", false)) return
+        p.edit().putBoolean("steamDeckMode", true).putBoolean("deckModeMoved", true).apply()
+    }
+
+    /**
+     * Deck mode's performance overlay (mangoapp, beside gamescope): the QAM's Overlay Level draws
+     * through it. Off is the way out where Valve's mangoapp crashes (one Turnip build did).
+     */
+    fun mangoapp(context: Context): Boolean = prefs(context).getBoolean("mangoapp", true)
+    fun setMangoapp(context: Context, on: Boolean) { prefs(context).edit().putBoolean("mangoapp", on).apply() }
 
     /**
      * Zink's lazy descriptor mode (ZINK_DESCRIPTORS=lazy) with its compact set layout
@@ -340,6 +483,14 @@ object SessionPrefs {
         prefs(context).edit().putBoolean("logs", on).apply()
     }
 
+    /** Steam storage-call diagnostics are opt-in because they add timing work to file operations. */
+    fun storageDiagnosticsEnabled(context: Context): Boolean =
+        prefs(context).getBoolean("storageDiagnostics", false)
+
+    fun setStorageDiagnosticsEnabled(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("storageDiagnostics", on).apply()
+    }
+
     // ── Per-mode display ────────────────────────────────────────────────────────────────────
 
     /**
@@ -350,11 +501,33 @@ object SessionPrefs {
      * and the emulators under it get the same GPU headroom. Read once, when the session's display
      * is sized; a cap the user chose wins over the default.
      */
-    fun resolutionCap(context: Context, mode: String): Int = prefs(context).getInt("resolutionCap.$mode", defaultResolutionCap(mode))
+    private fun resolutionCap(context: Context, mode: String): Int = prefs(context).getInt("resolutionCap.$mode", 720)
 
     /** Whether the user chose the mode's resolution (a cap or a custom size) rather than the default. */
     fun resolutionChosen(context: Context, mode: String): Boolean =
-        prefs(context).contains("resolutionCap.$mode") || customResolution(context, mode) != null
+        prefs(context).contains("displayResolution.$mode") ||
+            prefs(context).contains("resolutionCap.$mode") || customResolution(context, mode) != null
+
+    /** One per-mode choice now owns both dimensions; old caps/shapes are read only for migration. */
+    fun resolutionChoice(context: Context, mode: String, panel: Pair<Int, Int>): String {
+        val saved = prefs(context)
+        saved.getString("displayResolution.$mode", null)?.let { value ->
+            if (value == SessionDisplay.MATCH_SCREEN) return value
+            parseResolution(value)?.let { return "${it.first}x${it.second}" }
+        }
+        if (!resolutionChosen(context, mode) && !saved.contains("shape")) return SessionDisplay.DEFAULT_RESOLUTION
+        val legacy = SessionDisplay.resolve(panel, resolutionCap(context, mode), shapeMode(context), customResolution(context, mode))
+        return if (legacy == SessionDisplay.screenSize(panel)) SessionDisplay.MATCH_SCREEN
+        else "${legacy.first}x${legacy.second}"
+    }
+
+    fun setResolutionChoice(context: Context, mode: String, choice: String) {
+        val value = if (choice == SessionDisplay.MATCH_SCREEN) choice else {
+            val size = requireNotNull(parseResolution(choice)) { "无法解析的分辨率" }
+            "${size.first}x${size.second}"
+        }
+        prefs(context).edit().putString("displayResolution.$mode", value).apply()
+    }
 
     /**
      * The FEXCore preset for the games the client launches (core/FexPreset ids); "" = FEX's defaults.
@@ -372,14 +545,19 @@ object SessionPrefs {
             .onFailure { android.util.Log.e("GameEnvironment", "无法更新游戏环境", it) }
     }
 
-    /** The Steam client branch forced on the command line: "publicbeta" (every session so far) or "steamdeck_publicbeta" (Armada's). */
+    /**
+     * The Steam client branch used for the first download and forced on the command line:
+     * "steamdeck_publicbeta" by default, or "publicbeta" when chosen with Deck mode off.
+     * Deck mode always takes the Deck branch, whatever was chosen:
+     * with -steamos3 the client picks its own branch as SteamOS does, and on publicbeta it settled
+     * on steamdeck_stable - an older client it then offered as a "Software Update" in every session,
+     * which applying turns into the exit-42 restart loop (seen on device 2026-09-30). Earlier, Deck
+     * mode on publicbeta also reinstalled the same client at every start (2026-09-23). On
+     * steamdeck_publicbeta the client finds no update. The choice applies with Deck mode off.
+     */
     fun steamChannel(context: Context): String =
-        prefs(context).getString("steamChannel", null)
-            // Deck mode on the publicbeta channel reinstalls the same client at every start (the
-            // client reports "installed version 0" against that manifest and exits 42 to apply it,
-            // losing the launch URL each time); on steamdeck_publicbeta the second launch comes up
-            // clean. Seen on device 2026-09-23. So Deck mode takes the Deck channel unless chosen.
-            ?: if (steamDeckMode(context)) "steamdeck_publicbeta" else "publicbeta"
+        if (steamDeckMode(context)) "steamdeck_publicbeta"
+        else prefs(context).getString("steamChannel", null) ?: "steamdeck_publicbeta"
 
     fun setSteamChannel(context: Context, id: String) {
         prefs(context).edit().putString("steamChannel", id).apply()
@@ -429,24 +607,12 @@ object SessionPrefs {
         prefs(context).edit().putString("theme", id).apply()
     }
 
-    /** What a mode gets when nothing was chosen. */
-    @Suppress("UNUSED_PARAMETER")
-    fun defaultResolutionCap(mode: String): Int = 720
-
-    fun setResolutionCap(context: Context, mode: String, cap: Int) {
-        prefs(context).edit().putInt("resolutionCap.$mode", cap).apply()
-    }
-
     /**
      * A fixed size for the session's display, per mode, or null. When set it replaces both the
      * cap and the shape: the compositor fits it to the panel with bars where the shapes differ.
      */
-    fun customResolution(context: Context, mode: String): Pair<Int, Int>? =
+    private fun customResolution(context: Context, mode: String): Pair<Int, Int>? =
         parseResolution(prefs(context).getString("customRes.$mode", null))
-
-    fun setCustomResolution(context: Context, mode: String, size: Pair<Int, Int>?) {
-        prefs(context).edit().putString("customRes.$mode", size?.let { "${it.first}x${it.second}" }).apply()
-    }
 
     /** "1024x768" (or ×, or *) to an even size inside 320x240..3840x2160; anything else is null. */
     fun parseResolution(text: String?): Pair<Int, Int>? {
@@ -485,10 +651,109 @@ object SessionPrefs {
     }
 
     /**
+     * The session's frame cap, 0 for none. One number used everywhere a frame is paced: gamescope's
+     * -r (what the client and its games see as the display's rate), the compositor's buffer release
+     * pacer, the rate the display layer votes for, and the panel mode picked, which is the fastest
+     * one the cap divides evenly (40 on a 120 Hz panel, not on a 144 Hz one). A 60 fps cap on a
+     * 144 Hz panel with nothing else changed judders; this is what WinNative's per-shortcut limit
+     * does. Applies next session.
+     */
+    fun fpsLimit(context: Context, mode: String): Int = prefs(context).getInt("fpsLimit.$mode", 0)
+
+    fun setFpsLimit(context: Context, mode: String, fps: Int) {
+        prefs(context).edit().putInt("fpsLimit.$mode", fps.coerceAtLeast(0)).apply()
+    }
+
+    val fpsLimitChoices = listOf(0 to "关闭", 30 to "30", 40 to "40", 45 to "45", 60 to "60", 90 to "90", 120 to "120")
+
+    /**
+     * How the compositor resizes the session onto the panel (WaylandCompositor.nativeSetUpscaler's
+     * modes). Linear is the default; Nearest preserves hard pixel edges. Spatial filters work
+     * when enlarged; Sharpen only works at any size. The old Off/Linear and FSR/FSR Fit pairs
+     * are equivalent on Wayland, so saved aliases resolve to one choice.
+     */
+    val upscalerChoices = listOf(
+        0 to "线性", 2 to "最近邻", 4 to "AMD FSR 1", 3 to "Snapdragon GSR",
+        8 to "Snapdragon GSR（质量）", 7 to "NVIDIA NIS", 6 to "仅锐化",
+    )
+
+    fun canonicalUpscaler(mode: Int): Int = when (mode) {
+        1 -> 0
+        5 -> 4
+        else -> mode.takeIf { m -> upscalerChoices.any { it.first == m } } ?: 0
+    }
+
+    fun upscalerHasSharpness(mode: Int): Boolean = canonicalUpscaler(mode) in 3..8
+
+    fun upscaler(context: Context): Int = canonicalUpscaler(prefs(context).getInt("upscaler", 0))
+
+    fun setUpscaler(context: Context, mode: Int) {
+        prefs(context).edit().putInt("upscaler", canonicalUpscaler(mode)).apply()
+    }
+
+    fun upscaleSharpness(context: Context): Int = prefs(context).getInt("upscaleSharpness", 75).coerceIn(0, 100)
+
+    fun setUpscaleSharpness(context: Context, pct: Int) {
+        prefs(context).edit().putInt("upscaleSharpness", pct.coerceIn(0, 100)).apply()
+    }
+
+    // ── Screen effects and texture filtering (the Display page) ─────────────────────────────
+
+    /** The compositor's post chain as last set; off until the user picks a Look or moves a row. */
+    fun screenEffects(context: Context): ScreenEffects {
+        val text = prefs(context).getString("screenEffects", null) ?: return ScreenEffects.OFF
+        return runCatching { ScreenEffects.decode(JSONObject(text)) }.getOrDefault(ScreenEffects.OFF)
+    }
+
+    fun setScreenEffects(context: Context, effects: ScreenEffects) {
+        prefs(context).edit().putString("screenEffects", effects.encode().toString()).apply()
+    }
+
+    val textureAnisotropyChoices = TextureFiltering.ANISOTROPY.map { it to if (it == 0) "关闭" else "${it}x" }
+
+    val textureLodBiasChoices = TextureFiltering.LOD_BIAS.map {
+        it to when (it) {
+            TextureFiltering.LOD_BIAS_OFF -> "关闭"
+            TextureFiltering.LOD_BIAS_AUTO -> "自动（匹配缩放）"
+            else -> it
+        }
+    }
+
+    /** Anisotropic filtering forced on DirectX 9-11 games (core/TextureFiltering); 0 = the game's own. */
+    fun textureAnisotropy(context: Context): Int =
+        prefs(context).getInt("textureAnisotropy", 0).takeIf { it in TextureFiltering.ANISOTROPY } ?: 0
+
+    fun setTextureAnisotropy(context: Context, value: Int) {
+        prefs(context).edit().putInt("textureAnisotropy", value).apply()
+        publishGameEnvironment(context)
+    }
+
+    /** Texture sharpness: the mip LOD bias choice (TextureFiltering.LOD_BIAS), "0" = the game's own. */
+    fun textureLodBias(context: Context): String =
+        prefs(context).getString("textureLodBias", null)?.takeIf { it in TextureFiltering.LOD_BIAS } ?: TextureFiltering.LOD_BIAS_OFF
+
+    fun setTextureLodBias(context: Context, choice: String) {
+        prefs(context).edit().putString("textureLodBias", choice).apply()
+        publishGameEnvironment(context)
+    }
+
+    /** Hands the change to the next game launch (GameEnvironmentStore); the running game keeps its own. */
+    private fun publishGameEnvironment(context: Context) {
+        runCatching { GameEnvironmentStore.publish(context) }
+            .onFailure { android.util.Log.e("GameEnvironment", "无法更新游戏环境", it) }
+    }
+
+    /**
      * The mode whose per-mode settings apply: a program run under gamescope (MODE_RUN) is a
      * fullscreen session like Steam's, so it takes Steam's display, driver and HDR choices.
      */
     fun prefMode(mode: String): String = if (mode == SessionService.MODE_RUN) SessionService.MODE_STEAM else mode
+
+    fun pipAutoEnter(context: Context): Boolean = prefs(context).getBoolean("pipAutoEnter", false)
+
+    fun setPipAutoEnter(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean("pipAutoEnter", enabled).apply()
+    }
 
     fun suspendPolicy(context: Context, mode: String): String =
         prefs(context).getString("suspendPolicy.${prefMode(mode)}", SUSPEND_MANUAL)
@@ -504,7 +769,7 @@ object SessionPrefs {
     // ── Game storage ────────────────────────────────────────────────────────────────────────
 
     /**
-     * A second Steam library on this device: the folder bound at /mnt/bannerlator-sd and
+     * A second Steam library on this device: the folder bound at /mnt/droiddeck-sd and
      * registered with the client, which then asks where to install every game and shows both
      * on its Storage page. "" = automatic: the SD card when one is in the phone (the default,
      * so the choice is made inside the client like anywhere else); GAME_STORAGE_OFF = internal

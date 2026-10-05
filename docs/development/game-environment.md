@@ -29,8 +29,15 @@
 
 WinNative 的 Linux 会话过滤仅 Android 选项，将用户变量合并到 FEX 预设上，并将结果传递给 `env -i` 后再启动 Steam。其 Windows/Wine 图形助手还将选定的功能级别映射到 `VKD3D_FEATURE_LEVEL`。已审查源代码：[WinNative Linux 会话](https://github.com/maxjivi05/WinNative/blob/c9fbbb342f2689c852046804f4f5c9afa45b5dcb/app/src/main/runtime/display/XServerDisplayActivity.java)，[变量编辑器](https://github.com/maxjivi05/WinNative/blob/c9fbbb342f2689c852046804f4f5c9afa45b5dcb/app/src/main/shared/ui/widget/EnvVarsView.java)，[图形配置](https://github.com/maxjivi05/WinNative/blob/c9fbbb342f2689c852046804f4f5c9afa45b5dcb/app/src/main/feature/settings/drivers/DXVKConfigUtils.java)。
 
-DroidDeck 改为在 `/root/.config/droiddeck/game-environment.json` 发布一个原子 JSON 快照。它的 Valve ARM64 Proton wrapper 和采用的第三方 Proton wrapper 都执行 `bannerlator-game-env`，它每次真实游戏启动时读取该快照，并使用 `execvpe` 启动 Proton。Probe prefix `compatdata/0` 和非启动动词不变。格式错误的配置会回退到继承的环境，而不评估其内容。有符号的非 Steam prefix ID 被规范化为无符号 ID。
+DroidDeck 改为在 `/root/.config/droiddeck/game-environment.json` 发布一个原子 JSON 快照。它的 Valve ARM64 Proton wrapper 与采用的第三方 Proton wrapper 都执行 `droiddeck-game-env`，它在每次真实游戏启动时读取该快照，并用 `execvpe` 启动 Proton。探测前缀 `compatdata/0` 与非启动动词保持不变。格式错误的配置会回退到继承的环境，而不评估其内容。带符号的非 Steam 前缀 ID 会被规范化为无符号 ID。
 
-上游参考：[VKD3D 能力解析](https://github.com/HansKristian-Work/vkd3d-proton/blob/master/libs/vkd3d/device.c)，[VKD3D 选项](https://github.com/HansKristian-Work/vkd3d-proton#environment-variables)，[Proton 运行时选项](https://github.com/ValveSoftware/Proton/tree/proton_11.0#runtime-config-options)，[Mesa 变量](https://docs.mesa3d.org/envvars.html)，[DXVK 变量](https://github.com/doitsujin/dxvk#environment-variables)，[DXVK 帧率限制器更改](https://github.com/doitsujin/dxvk/releases)。
+发布的文件还携带一个应用自身文件里没有的 `dxvkConfig` 字符串：会话菜单的纹理过滤（效果页；`core/TextureFiltering`）以 `d3d9/d3d11.samplerAnisotropy` 与 `samplerLodBias` 选项表达。启动器把它追加在配置文件之后写入 `DXVK_CONFIG`，因此用户自己的 `DXVK_CONFIG` 条目保有其选项。“自动”纹理锐度为 `-log2(panel / session)`，在会话尺寸确定时推导，自下次启动起生效。
+
+上游参考：[VKD3D 能力解析](https://github.com/HansKristian-Work/vkd3d-proton/blob/master/libs/vkd3d/device.c)，
+[VKD3D 选项](https://github.com/HansKristian-Work/vkd3d-proton#environment-variables)，
+[Proton 运行时选项](https://github.com/ValveSoftware/Proton/tree/proton_11.0#runtime-config-options)，
+[Mesa 变量](https://docs.mesa3d.org/envvars.html)，
+[DXVK 变量](https://github.com/doitsujin/dxvk#environment-variables)，
+[DXVK 帧率限制器更改](https://github.com/doitsujin/dxvk/releases)。
 
 验证：`./gradlew testDebugUnitTest` 和 `python3 -m unittest discover -s tools/tests -p test_game_environment.py`。实际游戏兼容性取决于已安装的 Proton、VKD3D 和 Vulkan 驱动；这些检查并不确立每台设备都支持功能级别 12_2 或 SM 6_9。

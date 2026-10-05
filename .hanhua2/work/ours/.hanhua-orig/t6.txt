@@ -1,0 +1,136 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\ahb_swapchain.c
+#OLD
+"zero-copy: DMA_BUF_IOCTL_IMPORT_SYNC_FILE failed (%s): releases wait for the display's fence here instead"
+#NEW
+"zero-copy: DMA_BUF_IOCTL_IMPORT_SYNC_FILE 失败（%s）：改为在此等待显示屏的围栏再释放"
+#OLD
+"zero-copy: DMA_BUF_IOCTL_EXPORT_SYNC_FILE failed (%s): waiting for each frame on the CPU instead"
+#NEW
+"zero-copy: DMA_BUF_IOCTL_EXPORT_SYNC_FILE 失败（%s）：改为在 CPU 上逐帧等待"
+#OLD
+"zero-copy: presenting %s without a copy"
+#NEW
+"zero-copy: 正在无拷贝呈现 %s"
+#OLD
+"zero-copy: %s attached an AHardwareBuffer to a non-dma-buf wl_buffer, ignored"
+#NEW
+"zero-copy: %s 把 AHardwareBuffer 附加到了非 dma-buf 的 wl_buffer，已忽略"
+#OLD
+"zero-copy: receiving %s's AHardwareBuffer failed (%s)"
+#NEW
+"zero-copy: 接收 %s 的 AHardwareBuffer 失败（%s）"
+#OLD
+"nothing on the socket"
+#NEW
+"套接字上没有数据"
+#OLD
+"zero-copy: %s's AHardwareBuffer is %ux%u but its wl_buffer %dx%d, ignored"
+#NEW
+"zero-copy: %s 的 AHardwareBuffer 为 %ux%u，但其 wl_buffer 为 %dx%d，已忽略"
+#OLD
+"zero-copy: AHB swapchain from %s (%u images, %dx%d, %s, %s, stride %u px)"
+#NEW
+"zero-copy: 来自 %s 的 AHB 交换链（%u 张图像，%dx%d，%s，%s，步长 %u px）"
+#OLD
+modifier == 0 ? "linear" : "unknown modifier"
+#NEW
+modifier == 0 ? "线性" : "未知修饰符"
+#OLD
+"zero-copy: %s bound banner_ahb_v1 version %u (%s)"
+#NEW
+"zero-copy: %s 绑定了 banner_ahb_v1 版本 %u（%s）"
+#OLD
+ver >= 2 ? "follows the live switch" : "version 1: decides from its launch environment only"
+#NEW
+ver >= 2 ? "跟随实时开关" : "版本 1：只根据启动环境决定"
+#OLD
+"zero-copy switched %s from the drawer, but no display layer is available on this device: no change"
+#NEW
+"zero-copy 已从抽屉切换为%s，但本设备没有可用的显示图层：未更改"
+#OLD
+on ? "on" : "off");
+#NEW
+on ? "开" : "关");
+#OLD
+        banner_log("layer", "zero-copy switched %s from the drawer: %d bound program%s told to rebuild their swapchains%s",
+                   on ? "on" : "off", told, told == 1 ? "" : "s",
+                   on ? "; frames go on the display layer once the new gralloc swapchain is up"
+                      : "; gralloc frames still in flight stay on the layer (or take the copy path) until then");
+#NEW
+        banner_log("layer", "zero-copy 已从抽屉切换为%s：已通知 %d 个绑定程序%s重建其交换链%s",
+                   on ? "开" : "关", told, told == 1 ? "" : "",
+                   on ? "；新的 gralloc 交换链建立后，帧即上显示图层"
+                      : "；在此之前仍在处理的 gralloc 帧留在图层上（或走拷贝路径）");
+#OLD
+        banner_log("layer", "zero-copy: %s at launch (%s)", on ? "on" : "off",
+                   on ? "BANNER_WAYLAND_ZERO_COPY=1: games present their own gralloc buffers on the display layer"
+                      : "the drawer's Zero-copy presentation switch turns it on live");
+#NEW
+        banner_log("layer", "zero-copy: 启动时为%s（%s）", on ? "开" : "关",
+                   on ? "BANNER_WAYLAND_ZERO_COPY=1：游戏把自己的 gralloc 缓冲呈现到显示图层"
+                      : "抽屉中的零拷贝呈现开关可实时开启");
+#OLD
+"zero-copy: no display layer on this device (see the line above): banner_ahb_v1 not advertised"
+#NEW
+"zero-copy: 本设备没有显示图层（见上一行）：未公布 banner_ahb_v1"
+#OLD
+"zero-copy: release pipe creation failed (%s); zero-copy presents disabled"
+#NEW
+"zero-copy: 释放管道创建失败（%s）；已禁用零拷贝呈现"
+#OLD
+"zero-copy: banner_ahb_v1 global creation failed"
+#NEW
+"zero-copy: banner_ahb_v1 全局对象创建失败"
+#OLD
+"zero-copy: banner_ahb_v1 version 2 advertised (games built for it present their own gralloc buffers while the switch is on)"
+#NEW
+"zero-copy: 已公布 banner_ahb_v1 版本 2（支持它的游戏在开关开启时自行呈现 gralloc 缓冲）"
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\waylandcomp_jni.c
+#OLD
+"first client frame presented -> notified app"
+#NEW
+"首个客户端帧已呈现 -> 已通知应用"
+#OLD
+"compositor thread starting"
+#NEW
+"合成器线程启动中"
+#OLD
+"compositor thread exited"
+#NEW
+"合成器线程已退出"
+#OLD
+"pthread_create failed"
+#NEW
+"pthread_create 失败"
+#OLD
+"output window bound (%p)"
+#NEW
+"输出窗口已绑定（%p）"
+#OLD
+"zero-copy layer mode %s%s", on ? "on" : "off", live ? " (live)" : ""
+#NEW
+"零拷贝图层模式 %s%s", on ? "开" : "关", live ? "（实时）" : ""
+#OLD
+"compressed (UBWC) game buffers %s", on ? "on" : "off"
+#NEW
+"压缩（UBWC）游戏缓冲 %s", on ? "开" : "关"
+#OLD
+"debug: advertising no DRM device (main device 0:0)"
+#NEW
+"调试：不公布 DRM 设备（主设备 0:0）"
+#OLD
+"scale mode %d alignment %d"
+#NEW
+"缩放模式 %d，对齐 %d"
+#OLD
+"fps limit %d"
+#NEW
+"帧率上限 %d"
+#OLD
+"compositor thread %d \"wl-compositor\": stays at nice %d, a higher priority was refused (%s)"
+#NEW
+"合成器线程 %d \"wl-compositor\"：保持 nice %d，更高优先级被拒绝（%s）"
+#OLD
+"compositor thread %d \"wl-compositor\": nice %d -> %d"
+#NEW
+"合成器线程 %d \"wl-compositor\"：nice %d -> %d"

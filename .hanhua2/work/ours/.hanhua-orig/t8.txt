@@ -1,0 +1,17 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\sc_layer.c
+#OLD
+"%s: dataspace %s (%#x) set on the display layer for image description #%u%s%s; SMPTE 2086 "
+#NEW
+"%s：已在显示图层上设置 dataspace %s（%#x），用于图像描述 #%u%s%s；SMPTE 2086 "
+#OLD
+"%s, CTA-861.3 %s [%s]", l->name,
+#NEW
+"%s，CTA-861.3 %s [%s]", l->name,
+#OLD
+st_on ? (api.setHdrMetadata_smpte2086 ? "sent" : "not supported by this Android") : "none given",
+#NEW
+st_on ? (api.setHdrMetadata_smpte2086 ? "已发送" : "此 Android 不支持") : "未提供",
+#OLD
+cta_on ? (api.setHdrMetadata_cta861_3 ? "sent" : "not supported by this Android") : "none given",
+#NEW
+cta_on ? (api.setHdrMetadata_cta861_3 ? "已发送" : "此 Android 不支持") : "未提供",

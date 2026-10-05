@@ -1,0 +1,125 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\fakeinput_steam.cpp
+#OLD
+"No input ring is configured for %s (slot %d)\n"
+#NEW
+"%s 没有配置输入环（槽位 %d）\n"
+#OLD
+"Input ring %s has no valid header\n"
+#NEW
+"输入环 %s 没有有效头部\n"
+#OLD
+"Adding ring-backed controller, fd %d event %s slot %d\n"
+#NEW
+"正在添加基于环的控制器，fd %d，event %s，槽位 %d\n"
+#OLD
+"uinput: opened as fd %d\n"
+#NEW
+"uinput: 已作为 fd %d 打开\n"
+#OLD
+"uinput: removed event%d\n"
+#NEW
+"uinput: 已移除 event%d\n"
+#OLD
+"uinput: \"%s\" %04x:%04x is /dev/input/event%d\n"
+#NEW
+"uinput: \"%s\" %04x:%04x 对应 /dev/input/event%d\n"
+#OLD
+"uinput: \"%s\" %04x:%04x is not a gamepad; its events are dropped\n"
+#NEW
+"uinput: \"%s\" %04x:%04x 不是游戏手柄；其事件被丢弃\n"
+#OLD
+"uinput: could not publish \"%s\": %s\n"
+#NEW
+"uinput: 无法发布 \"%s\"：%s\n"
+#OLD
+"uinput: unhandled ioctl %d\n"
+#NEW
+"uinput: 未处理的 ioctl %d\n"
+#OLD
+"deck: %s opened as fd %d\n"
+#NEW
+"deck: %s 已作为 fd %d 打开\n"
+#OLD
+"deck: feature 0x%02x set\n"
+#NEW
+"deck: 已设置 feature 0x%02x\n"
+#OLD
+"deck: feature 0x%02x read\n"
+#NEW
+"deck: 已读取 feature 0x%02x\n"
+#OLD
+"deck: unhandled hidraw ioctl 0x%02x\n"
+#NEW
+"deck: 未处理的 hidraw ioctl 0x%02x\n"
+#OLD
+"Hooking ioctl EVIOCGVERSION for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGVERSION\n"
+#OLD
+"Hooking ioctl EVIOCGID for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGID\n"
+#OLD
+"Hooking ioctl EVIOCGNAME for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGNAME\n"
+#OLD
+"Hooking ioctl EVIOCGPHYS for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGPHYS\n"
+#OLD
+"Hooking ioctl EVIOCGUNIQ for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGUNIQ\n"
+#OLD
+"Hooking ioctl EVIOCGBIT(0, len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGBIT(0, len)\n"
+#OLD
+"Hooking ioctl EVIOCGBIT(EV_KEY, len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGBIT(EV_KEY, len)\n"
+#OLD
+"Hooking ioctl EVIOCGBIT(EV_REL, len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGBIT(EV_REL, len)\n"
+#OLD
+"Hooking ioctl EVIOCGBIT(EV_ABS, len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGBIT(EV_ABS, len)\n"
+#OLD
+"Hooking ioctl EVIOCGBIT(EV_FF, len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGBIT(EV_FF, len)\n"
+#OLD
+"Hooking ioctl EVIOCGABS(ABS) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGABS(ABS)\n"
+#OLD
+"Hooking ioctl EVIOCGRAB for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl EVIOCGRAB\n"
+#OLD
+"Hooking ioctl JSIOCGVERSION for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl JSIOCGVERSION\n"
+#OLD
+"Hooking ioctl JSIOCGAXES for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl JSIOCGAXES\n"
+#OLD
+"Hooking ioctl JSIOCGBUTTONS for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl JSIOCGBUTTONS\n"
+#OLD
+"Hooking ioctl JSIOCGNAME(len) for event %s\n"
+#NEW
+"正在为 event %s 钩取 ioctl JSIOCGNAME(len)\n"
+#OLD
+"Unhandled evdev ioctl, type %d number %d\n"
+#NEW
+"未处理的 evdev ioctl，类型 %d 编号 %d\n"
+#OLD
+"Removing controller, fd %d event %s\n"
+#NEW
+"正在移除控制器，fd %d，event %s\n"

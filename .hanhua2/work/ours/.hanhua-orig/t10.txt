@@ -1,0 +1,357 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\compositor.c
+#OLD
+"can't create %s: %s"
+#NEW
+"无法创建 %s：%s"
+#OLD
+"can't open session log %s: %s"
+#NEW
+"无法打开会话日志 %s：%s"
+#OLD
+"session log: %s"
+#NEW
+"会话日志：%s"
+#OLD
+    fprintf(f,
+            "Bannerlator Wayland session\n"
+            "===========================\n"
+            "Started   %s\n"
+            "Display   Wayland: Windows programs draw through the Bannerlator compositor.\n"
+            "          No X server is used for this session.\n"
+            "Log       %s\n\n"
+            "Time          Area      Event\n"
+            "------------  --------  -----------------------------------------------------\n",
+            stamp, path);
+#NEW
+    fprintf(f,
+            "Bannerlator Wayland 会话\n"
+            "===========================\n"
+            "开始时间  %s\n"
+            "显示      Wayland：Windows 程序通过 Bannerlator 合成器绘制。\n"
+            "          本次会话不使用 X 服务器。\n"
+            "日志      %s\n\n"
+            "时间          区域      事件\n"
+            "------------  --------  -----------------------------------------------------\n",
+            stamp, path);
+#OLD
+"disconnected: %s (pid %d)"
+#NEW
+"断开连接：%s（pid %d）"
+#OLD
+"connected over Wayland: %s (pid %d)"
+#NEW
+"通过 Wayland 连接：%s（pid %d）"
+#OLD
+"the desktop (%s)"
+#NEW
+"桌面（%s）"
+#OLD
+"window %#x (%s)"
+#NEW
+"窗口 %#x（%s）"
+#OLD
+"opened %s %dx%d at %d,%d%s"
+#NEW
+"打开 %s %dx%d，位于 %d,%d%s"
+#OLD
+" (no desktop position yet)"
+#NEW
+"（尚无桌面位置）"
+#OLD
+banner_log("window", "closed %s", name);
+#NEW
+banner_log("window", "关闭 %s", name);
+#OLD
+"dmabuf import failed (%dx%d fmt=0x%08x mod=0x%llx)"
+#NEW
+"dmabuf 导入失败（%dx%d fmt=0x%08x mod=0x%llx）"
+#OLD
+"%s is presenting GPU frames through Wayland: %dx%d, format %c%c%c%c, %s (%s)"
+#NEW
+"%s 正通过 Wayland 呈现 GPU 帧：%dx%d，格式 %c%c%c%c，%s（%s）"
+#OLD
+"gralloc buffers: can go on the display layer without a copy"
+#NEW
+"gralloc 缓冲：可不经拷贝上显示图层"
+#OLD
+"dma-buf: copied into the screen swapchain"
+#NEW
+"dma-buf：拷贝进屏幕交换链"
+#OLD
+"%s is presenting GPU frames through Wayland: %dx%d on its own display layer only "
+#NEW
+"%s 正通过 Wayland 呈现 GPU 帧：%dx%d，且只能在其自己的显示图层上 "
+#OLD
+"(gralloc buffers the compositor cannot import for the copy path)"
+#NEW
+"（合成器无法为拷贝路径导入的 gralloc 缓冲）"
+#OLD
+"could not import GPU frames from %s (%dx%d, modifier %#llx)"
+#NEW
+"无法从 %s 导入 GPU 帧（%dx%d，修饰符 %#llx）"
+#OLD
+"%s presents %dx%d buffers in %c%c%c%c (%s), %s%s%s; %s"
+#NEW
+"%s 呈现 %dx%d 缓冲，格式 %c%c%c%c（%s），%s%s%s；%s"
+#OLD
+ten ? "10-bit A2B10G10R10" : "8-bit"
+#NEW
+ten ? "10 位 A2B10G10R10" : "8 位"
+#OLD
+af ? ", gralloc " : ", no gralloc buffer (copy path only)"
+#NEW
+af ? "，gralloc " : "，没有 gralloc 缓冲（仅拷贝路径）"
+#OLD
+b->img ? "the compositor imported it"
+#NEW
+b->img ? "合成器已导入"
+#OLD
+: af ? "the compositor's driver could NOT import it (display layer only, fullscreen)"
+#NEW
+: af ? "合成器驱动无法导入（仅显示图层，全屏）"
+#OLD
+: "the compositor's driver could NOT import it (nothing can show it)");
+#NEW
+: "合成器驱动无法导入（没有任何路径能显示它）");
+#OLD
+"the desktop closed"
+#NEW
+"桌面已关闭"
+#OLD
+"Windows virtual desktop created by %s"
+#NEW
+"Windows 虚拟桌面已由 %s 创建"
+#OLD
+"moved %s to %d,%d"
+#NEW
+"将 %s 移动到 %d,%d"
+#OLD
+    char name[160] = "the HDR game";
+#NEW
+    char name[160] = "HDR 游戏";
+#OLD
+            banner_log("color", "tone-mapped picture for %s: %s - the whole scene is composed and tone-mapped to SDR "
+                       "(HDR peak %.0f nits rolled off to SDR white, screen effects applied after it) on the game's "
+                       "display layer, untagged", name, hs->why ? hs->why : "?", hs->hf.peak_nits);
+#NEW
+            banner_log("color", "%s 的色调映射画面：%s - 整个场景合成为 SDR "
+                       "（HDR 峰值 %.0f nits 回落到 SDR 白点，之后再应用屏幕效果）置于游戏的 "
+                       "显示图层上，不带标记", name, hs->why ? hs->why : "?", hs->hf.peak_nits);
+#OLD
+            banner_log("color", "HDR picture for %s: %s - the whole scene is composed into one 10-bit PQ BT.2020 picture "
+                       "(SDR content at %.0f nits, screen effects applied in 10-bit) on the game's display layer, tagged "
+                       "BT2020_PQ", name, hs->why ? hs->why : "?", banner_color_sdr_white());
+#NEW
+            banner_log("color", "%s 的 HDR 画面：%s - 整个场景合成为单幅 10 位 PQ BT.2020 画面 "
+                       "（SDR 内容置于 %.0f nits，屏幕效果以 10 位应用）置于游戏的 "
+                       "显示图层上，标记为 BT2020_PQ", name, hs->why ? hs->why : "?", banner_color_sdr_white());
+#OLD
+            banner_log("color", "HDR with frame generation for %s, HDR output switched off: the scene is tone-mapped to "
+                       "SDR and presented through an SDR screen swapchain", name);
+#NEW
+            banner_log("color", "%s 的 HDR 与帧生成（HDR 输出已关闭）：场景被色调映射为 "
+                       "SDR，并通过 SDR 屏幕交换链呈现", name);
+#OLD
+            banner_log("color", "HDR with frame generation for %s: the scene is composed into PQ and presented through "
+                       "the screen swapchain (HDR10 where the surface offers it, else tone-mapped to SDR)", name);
+#NEW
+            banner_log("color", "%s 的 HDR 与帧生成：场景合成为 PQ 并通过 "
+                       "屏幕交换链呈现（表面支持时为 HDR10，否则色调映射为 SDR）", name);
+#OLD
+            banner_log("color", "HDR output is switched off, but %s's HDR frames cannot be imported by the compositor, "
+                       "so nothing can tone-map them: they stay HDR on its own display layer", name);
+#NEW
+            banner_log("color", "HDR 输出已关闭，但合成器无法导入 %s 的 HDR 帧，"
+                       "因此无法对它们做色调映射：这些帧保持 HDR，显示在其自己的显示图层上", name);
+#OLD
+"%s is back on its own display layer (no composition needed)"
+#NEW
+"%s 回到其自己的显示图层（无需合成）"
+#OLD
+    char name[160] = "the game";
+#NEW
+    char name[160] = "游戏";
+#OLD
+            banner_log("color", "screen effects are NOT applied to %s: its HDR frames cannot be imported by the "
+                       "compositor, so only its own display layer can show them (as they are)", name);
+#NEW
+            banner_log("color", "屏幕效果未应用于 %s：合成器无法导入其 HDR 帧，"
+                       "因此只有它自己的显示图层能显示这些帧（保持原样）", name);
+#OLD
+"screen effects apply to the scene again (no HDR game on its layer, or effects off)"
+#NEW
+"屏幕效果重新应用于场景（其图层上没有 HDR 游戏，或效果已关闭）"
+#OLD
+            banner_log("color", "frame generation is NOT applied to %s: its HDR frames cannot be imported by the "
+                       "compositor, so only its own display layer can show them (as they are)", name);
+#NEW
+            banner_log("color", "帧生成未应用于 %s：合成器无法导入其 HDR 帧，"
+                       "因此只有它自己的显示图层能显示这些帧（保持原样）", name);
+#OLD
+"frame generation applies again (no HDR game on its layer, or frame generation off)"
+#NEW
+"帧生成重新生效（其图层上没有 HDR 游戏，或帧生成已关闭）"
+#OLD
+banner_log("desktop", "size %dx%d", w, h);
+#NEW
+banner_log("desktop", "尺寸 %dx%d", w, h);
+#OLD
+"no desktop: showing %dx%d (largest window)"
+#NEW
+"没有桌面：显示 %dx%d（最大的窗口）"
+#OLD
+"the composed picture is on the game's display layer again"
+#NEW
+"合成画面重新回到游戏的显示图层上"
+#OLD
+                banner_log("color", "the composed picture could not go on the game's display layer (no layer, or the "
+                           "10-bit pass failed): it goes through the screen swapchain instead until that changes");
+#NEW
+                banner_log("color", "合成画面无法放到游戏的显示图层上（没有图层，或 "
+                           "10 位通道失败）：在情况改变前改走屏幕交换链");
+#OLD
+hdr_copy = "the HDR composition pass is unavailable on this driver";
+#NEW
+hdr_copy = "该驱动上 HDR 合成通道不可用";
+#OLD
+"zero-copy paused: frame generation needs the compositor pass"
+#NEW
+"零拷贝已暂停：帧生成需要合成器通道"
+#OLD
+"zero-copy paused: a window above the game needs the compositor pass for the whole scene"
+#NEW
+"零拷贝已暂停：游戏上方的窗口需要整个场景走合成器通道"
+#OLD
+            banner_log("layer", "zero-copy paused: a window above the game would need a second display layer, "
+                                "which this display cannot compose in hardware - whole scene on the copy path");
+#NEW
+            banner_log("layer", "零拷贝已暂停：游戏上方的窗口需要第二个显示图层，"
+                                "而本显示屏无法硬件合成它 - 整个场景改走拷贝路径");
+#OLD
+"zero-copy resumed: the game is back on its own display layer"
+#NEW
+"零拷贝已恢复：游戏回到其自己的显示图层上"
+#OLD
+"the game's frames cannot be imported by the compositor: shown zero-copy, %s skipped"
+#NEW
+"合成器无法导入游戏的帧：以零拷贝显示，已跳过 %s"
+#OLD
+                   framegen ? "frame generation" : "effects");
+#NEW
+                   framegen ? "帧生成" : "效果");
+#OLD
+else snprintf(out, size, "a closed window");
+#NEW
+else snprintf(out, size, "已关闭的窗口");
+#OLD
+banner_log("pointer", "%s: %s (%s), pointer at %d,%d", k->is_lock ? "unlocked" : "unconfined",
+#NEW
+banner_log("pointer", "%s：%s（%s），指针位于 %d,%d", k->is_lock ? "已解锁" : "已解除限制",
+#OLD
+"replaced by a newer request"
+#NEW
+"被更新的请求替换"
+#OLD
+constraint_end(k, 1, "window closed");
+#NEW
+constraint_end(k, 1, "窗口已关闭");
+#OLD
+constraint_end(k, 1, "pointer released");
+#NEW
+constraint_end(k, 1, "指针已释放");
+#OLD
+constraint_end(k, 0, "released by the program");
+#NEW
+constraint_end(k, 0, "已被程序释放");
+#OLD
+"locked: %s (%s), pointer frozen at %d,%d"
+#NEW
+"已锁定：%s（%s），指针冻结在 %d,%d"
+#OLD
+"confined: %s (%s) to %dx%d at %d,%d of the window"
+#NEW
+"已限制：%s（%s）到窗口内 %dx%d，位于 %d,%d"
+#OLD
+"confined: %s (%s) to the whole window"
+#NEW
+"已限制：%s（%s）到整个窗口"
+#OLD
+LIFETIME_ONESHOT ? "oneshot" : "persistent"
+#NEW
+LIFETIME_ONESHOT ? "单次" : "持久"
+#OLD
+"position hint: pointer moved to %d,%d"
+#NEW
+"位置提示：指针已移动到 %d,%d"
+#OLD
+banner_log("pointer", "%s requested by %s for %s", is_lock ? "lock" : "confine", client_name(c), name);
+#NEW
+banner_log("pointer", "%s 由 %s 请求（针对 %s）", is_lock ? "锁定" : "限制", client_name(c), name);
+#OLD
+"relative pointer released by %s"
+#NEW
+"相对指针已由 %s 释放"
+#OLD
+"relative pointer created for %s (motion arrives as deltas)"
+#NEW
+"已为 %s 创建相对指针（移动以增量形式到达）"
+#OLD
+banner_log("touch", "%s gets %s", name, has_touch ? "touch" : "the pointer (it takes no touch)");
+#NEW
+banner_log("touch", "%s 接收 %s", name, has_touch ? "触摸" : "指针（它不接受触摸）");
+#OLD
+" | %u zero-copy frames"
+#NEW
+" | %u 个零拷贝帧"
+#OLD
+" | %u layer frames"
+#NEW
+" | %u 个图层帧"
+#OLD
+" | %u generated frames"
+#NEW
+" | %u 个生成帧"
+#OLD
+"last 10 s: %u frames on screen (%.1f fps) | %u GPU frames from games | %u window redraws | %d windows open%s"
+#NEW
+"过去 10 秒：%u 帧上屏（%.1f fps） | %u 个来自游戏的 GPU 帧 | %u 次窗口重绘 | %d 个窗口打开%s"
+#OLD
+            banner_log("perf", "last 10 s: %u ticks, %u scenes, %u on screen (copy %u, zero-copy %u, layer copy %u) | "
+                       "render_scene %.2f/%.2f ms | base %u black kept, %u presented | acquire %.2f/%.2f ms | "
+                       "present %.2f/%.2f ms (%u) | fence wait %.2f/%.2f ms (%u, %u GPU release waits) | "
+                       "release %.2f/%.2f ms (%u, %u held) | %u pool drops",
+#NEW
+            banner_log("perf", "过去 10 秒：%u 次心跳，%u 个场景，%u 帧上屏（拷贝 %u，零拷贝 %u，图层拷贝 %u） | "
+                       "render_scene %.2f/%.2f ms | 基础表面 %u 帧保持黑、%u 帧呈现 | 获取 %.2f/%.2f ms | "
+                       "呈现 %.2f/%.2f ms (%u) | 围栏等待 %.2f/%.2f ms (%u，%u 次 GPU 释放等待) | "
+                       "释放 %.2f/%.2f ms (%u，%u 帧被占用) | %u 次池丢帧",
+#OLD
+        banner_log("opengl", "%s asked for GPU buffers but has drawn only software (shared-memory) "
+                   "frames: its OpenGL fell back to software rendering, which the Wayland layer cannot "
+                   "draw - expect a black picture (main device %u:%u)", ci->name,
+                   (unsigned)major(g_main_device), (unsigned)minor(g_main_device));
+#NEW
+        banner_log("opengl", "%s 请求了 GPU 缓冲，但只绘制过软件（共享内存）"
+                   "帧：其 OpenGL 已回退到软件渲染，而 Wayland 层无法"
+                   "绘制它 - 预计画面为黑（主设备 %u:%u）", ci->name,
+                   (unsigned)major(g_main_device), (unsigned)minor(g_main_device));
+#OLD
+"renderer unavailable; clients will connect but nothing is drawn"
+#NEW
+"渲染器不可用；客户端仍会连接，但不会绘制任何内容"
+#OLD
+"wl_display_create failed"
+#NEW
+"wl_display_create 失败"
+#OLD
+"add_socket(wayland-0) failed in XDG_RUNTIME_DIR=%s (errno path/perms?)"
+#NEW
+"add_socket(wayland-0) 在 XDG_RUNTIME_DIR=%s 中失败（errno 路径/权限？）"
+#OLD
+"Wayland compositor listening on %s/wayland-0"
+#NEW
+"Wayland 合成器正在监听 %s/wayland-0"
+#OLD
+"input pipe creation failed"
+#NEW
+"输入管道创建失败"

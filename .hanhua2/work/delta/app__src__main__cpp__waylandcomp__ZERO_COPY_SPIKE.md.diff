@@ -1,0 +1,46 @@
+--- ours/app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md
++++ final/app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md
+@@ -25,7 +25,7 @@
+ 已有的、经 `zwp_linux_dmabuf_v1` 传递的 dma-buf fd 一并交给合成器（于是 blit 路径保留为回
+ 退）。** 宿主这半——每个全屏窗口一个 `ASurfaceControl` 图层、几何取自全屏模式、release fence
+ 取自 `ASurfaceTransaction_setOnComplete`、黑色基底 surface、HUD/指针作为 Android view 叠在
+-上方——在本分支实现为一个开关控制的原型（`sc_layer.c`、`BANNER_WAYLAND_ZERO_COPY=1`），带
++上方——在本分支实现为一个开关控制的原型（`sc_layer.c`、`DROIDDECK_WAYLAND_ZERO_COPY=1`），带
+ 一个合成器持有的 AHB 池和一次 blit，以便在驱动工作开始之前先在设备上测量 SurfaceFlinger 这
+ 一侧。
+ 
+@@ -226,13 +226,13 @@
+ 标签页）作为负载、会话日志位于 `Download/Wayland-logs/`。
+ 
+ 0. **UBWC modifier A/B（不涉及图层）。** 已在 `feat/wayland-ubwc` 上完成（当合成器的驱动能够
+-   导入时才广播，`BANNER_WAYLAND_UBWC=0` = 旧的仅 linear 列表；见 `WAYLAND_RUNTIME.md` 的
++   导入时才广播，`DROIDDECK_WAYLAND_UBWC=0` = 旧的仅 linear 列表；见 `WAYLAND_RUNTIME.md` 的
+    "Compressed (UBWC) game buffers"）。开关各跑一次 AIO Vulkan/D3D12。预期日志
+    `vulkan: … is presenting GPU frames through Wayland: WxH, format XB24, tiled (zero-copy)`
+    且没有 `dmabuf import failed`。记录这 20 % 里单是 linear swapchain 占多少。
+-1. **图层模式冒烟。** 把 `BANNER_WAYLAND_ZERO_COPY=1` 放进容器的环境变量，启动 AIO 全屏。
++1. **图层模式冒烟。** 把 `DROIDDECK_WAYLAND_ZERO_COPY=1` 放进容器的环境变量，启动 AIO 全屏。
+    预期日志行（tag `layer`）：
+-   `SurfaceControl "banner_wayland_game" created as a child of the screen surface`、
++   `SurfaceControl "droiddeck_wayland_game" created as a child of the screen surface`、
+    `pool buffer 1920x1080 UBWC (QCOM_COMPRESSED), stride 1920 px (gralloc handle 2 fds / N ints)`
+    （或者在 `import of a UBWC … failed` 之后是 `linear`——这也是一个结果：它能说明合成器
+    Turnip 是否接受 gralloc 的 UBWC pitch）、`geometry: buffer 0,0-1920,1080 -> screen …`、
+@@ -240,7 +240,7 @@
+    以及探测行 `kernel exports sync_file fences from the game's dma-buf …` 或
+    `DMA_BUF_IOCTL_EXPORT_SYNC_FILE … failed (…)`。画面正确，HUD 和指针在上层，全屏模式切换会
+    移动图层（`geometry:` 行）。
+-2. **合成类型。** AIO 运行时执行 `dumpsys SurfaceFlinger | grep -A3 banner_wayland_game` 以及
++2. **合成类型。** AIO 运行时执行 `dumpsys SurfaceFlinger | grep -A3 droiddeck_wayland_game` 以及
+    pipe 表里的 `GPU_TARGET` 行。游戏图层 DEVICE/DEVICE 且 GPU target 为空 = DPU 在做缩放；
+    CLIENT = 在这个面板朝向上没有收益 → 试试掌机的原生方向 / 与面板相同的分辨率。
+ 3. **宿主拷贝的代价。** 标志开与关时的 AIO Vulkan fps（预期代价相同，误差 ± 噪声，因为 blit
+@@ -254,7 +254,7 @@
+ fence 替代 CPU 等待、按窗口分图层、从 `getLatchTime` 取 presentation 反馈）；选项 (a) 的 WSI +
+ 协议 + wcp = 2–3 天 + 1 天设备验证；选项 (c) = 3–4 天 + 同样的验证；(b) = 无法构建。
+ 
+-## 6. 本分支的原型做了什么（`BANNER_WAYLAND_ZERO_COPY=1`）
++## 6. 本分支的原型做了什么（`DROIDDECK_WAYLAND_ZERO_COPY=1`）
+ 
+ 文件：`src/sc_layer.{c,h}`（新增）、`src/vk_present.{c,h}`（`vkp_image_import_dmabuf` 承担
+ blit 目的地角色、`vkp_blit_image`、`vkp_update_map`、`vkp_map_draw`、`vkp_window`、

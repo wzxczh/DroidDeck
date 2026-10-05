@@ -1,0 +1,2990 @@
+{
+ ".github/workflows/build-aaudio-sink.yml": {
+  "mode": "100644",
+  "sha": "63133e545f06e958822dc79b8de17f146652c121"
+ },
+ ".github/workflows/build-gamescope.yml": {
+  "mode": "100644",
+  "sha": "2b2ddbe7700cdcf6da07624f56fc5432444dd8e1"
+ },
+ ".github/workflows/build-wlroots.yml": {
+  "mode": "100644",
+  "sha": "2bee0ac7bd89aa721d08e5ccc37ecf9820732095"
+ },
+ ".github/workflows/build.yml": {
+  "mode": "100644",
+  "sha": "df1071dc18f01f36ea8ff110568e7017de143f52"
+ },
+ ".github/workflows/pr-release-publish.yml": {
+  "mode": "100644",
+  "sha": "cbd532c42fe560b08eb6a8496aa3a991fc907aeb"
+ },
+ ".github/workflows/release.yml": {
+  "mode": "100644",
+  "sha": "870c6b5f243e4726fdf973a2121f69be9d6c891a"
+ },
+ ".github/workflows/sign.yml": {
+  "mode": "100644",
+  "sha": "cad16ca03761cfb95a7b8e49a6578ff89876e6aa"
+ },
+ ".gitignore": {
+  "mode": "100644",
+  "sha": "3240a2ea047a665f72c9baa9598bb21caa32d23d"
+ },
+ ".hanhua-orig/apply.ps1": {
+  "mode": "100644",
+  "sha": "dd1478b7081668d012afd0d675f58c23d14db8ec"
+ },
+ ".hanhua-orig/fakeinput_steam.cpp": {
+  "mode": "100644",
+  "sha": "f3e2727472a355778c5dcc394ab71bca18f6d7be"
+ },
+ ".hanhua-orig/framegen/VulkanRendererContext.h": {
+  "mode": "100644",
+  "sha": "cec4a4119b86630cd1b92adb715143d35d2c2f70"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_alpha.cpp": {
+  "mode": "100644",
+  "sha": "73be35b59cbd02df1919ae5d768c2326e76f30e7"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_alpha.hpp": {
+  "mode": "100644",
+  "sha": "6c233c16ca29a228320f9151ee9d81f5f772219c"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_beta.cpp": {
+  "mode": "100644",
+  "sha": "299e22cf72cb1bc0f98d78cc20ab25bfbbb6e314"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_beta.hpp": {
+  "mode": "100644",
+  "sha": "1d1e77a56c066b2bbb60d44ce42b815b9e4beec2"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_chain.cpp": {
+  "mode": "100644",
+  "sha": "f9ff4b4f86d4cb778b1ed1562472f0a83fe77d96"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_chain.hpp": {
+  "mode": "100644",
+  "sha": "4324c80bc2cddeeac08a76805920acdd76e638c8"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_common.cpp": {
+  "mode": "100644",
+  "sha": "b72eb2287321e934ee0cd45e7b45224cf5d9c8c0"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_common.hpp": {
+  "mode": "100644",
+  "sha": "1f6b209833bcc258df1f613eeb93028976a35633"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_delta.cpp": {
+  "mode": "100644",
+  "sha": "ddba102d5cfb98602e5d7616b5fc86203d93e6ba"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_delta.hpp": {
+  "mode": "100644",
+  "sha": "8d823267524bfce6594fbb3b5f93614ef91bd055"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_dll.cpp": {
+  "mode": "100644",
+  "sha": "78ddbccc73fa7c239f1e804f5c90614ca2348ff7"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_dll.h": {
+  "mode": "100644",
+  "sha": "72a862b5829a55e41ea3d083292edd952239f1c4"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_dxbc.cpp": {
+  "mode": "100644",
+  "sha": "db23e36864575e8cf185ee627e71b3410105bf9b"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_dxbc.h": {
+  "mode": "100644",
+  "sha": "3fa643728dae4a679b5b1fa81de338abd1aa07c5"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_engine.cpp": {
+  "mode": "100644",
+  "sha": "4f1482eb7790ed1d1a75054896d63c574b5f2c6c"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_engine.h": {
+  "mode": "100644",
+  "sha": "20489e652b18385a47f8395a9a600d359e6a60d9"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_gamma.cpp": {
+  "mode": "100644",
+  "sha": "392930b615cd1fa7f0ef97500aaf5eefcd10a90c"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_gamma.hpp": {
+  "mode": "100644",
+  "sha": "8210dd259065287f71e3a5f4e4e9a548f7c49fb5"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_generate.cpp": {
+  "mode": "100644",
+  "sha": "1c84cb1866893687c43896df3ee518e8d811a1ef"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_generate.hpp": {
+  "mode": "100644",
+  "sha": "68e23967b71e0a4201be8ddb5bd19300c2701721"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_governor.cpp": {
+  "mode": "100644",
+  "sha": "828b5be6bfb35acd59aec91aca4a9ab6265b268d"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_governor.h": {
+  "mode": "100644",
+  "sha": "0ae9b696deb6f88ac7799e8e4464612bb940211b"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_jni.cpp": {
+  "mode": "100644",
+  "sha": "ba8447313ae16fb6a05892878490eaa5799fa745"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_mipmaps.cpp": {
+  "mode": "100644",
+  "sha": "4d17625554c7db03aa148f8943721f2896267eaa"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_mipmaps.hpp": {
+  "mode": "100644",
+  "sha": "4ce06b0f5ebb229bfba4ceb06288982068b0fdf2"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_pacer.cpp": {
+  "mode": "100644",
+  "sha": "29da8729d0aa57170947b9b6a4411964d15086a9"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_pacer.hpp": {
+  "mode": "100644",
+  "sha": "5613c4c3064eff340105f274ca2406e05318cd78"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_probe.cpp": {
+  "mode": "100644",
+  "sha": "823283419307ba4e309fc8a58551763159447a64"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_probe.h": {
+  "mode": "100644",
+  "sha": "38d1d1a4f13776d899bed00bc2474467430e92c4"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_shaders.cpp": {
+  "mode": "100644",
+  "sha": "96fb7bfdca5b473f91b4c3b50fe0146c89bbc22e"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_shaders.hpp": {
+  "mode": "100644",
+  "sha": "ba7854da4f54e937c9fadbb8b008c0718e222933"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_vkd.cpp": {
+  "mode": "100644",
+  "sha": "1e7877e92f0aa60a0844f510b8b84003f6a0994a"
+ },
+ ".hanhua-orig/framegen/lsfg/lsfg_vkd.h": {
+  "mode": "100644",
+  "sha": "0657ac9758100fdc5c914bce9067e55bdf259ce1"
+ },
+ ".hanhua-orig/framegen/winfg/LICENSE.win-fg": {
+  "mode": "100644",
+  "sha": "1fb0c75624cc29d5362200c7130b4becb9884408"
+ },
+ ".hanhua-orig/framegen/winfg/NOTICE_FIDELITYFX_OPTICALFLOW.md": {
+  "mode": "100644",
+  "sha": "85067a66c5a3ccdc0efa39225875fde7a9f8c2c6"
+ },
+ ".hanhua-orig/framegen/winfg/config.hpp": {
+  "mode": "100644",
+  "sha": "d8786697c19b690aaa5c84fd5facb0f41559fd18"
+ },
+ ".hanhua-orig/framegen/winfg/embedded_shaders.hpp": {
+  "mode": "100644",
+  "sha": "934d07a616050bb9c66f48a731118bca27f16821"
+ },
+ ".hanhua-orig/framegen/winfg/framegen.cpp": {
+  "mode": "100644",
+  "sha": "2848937d504a2d1cf4932089bd1465c0a412762b"
+ },
+ ".hanhua-orig/framegen/winfg/framegen.hpp": {
+  "mode": "100644",
+  "sha": "1980f1104d6aceca4e9d5e8eda459a73d5617895"
+ },
+ ".hanhua-orig/framegen/winfg/log.hpp": {
+  "mode": "100644",
+  "sha": "77c7b82702817273da74feb8a38d31a075a28c10"
+ },
+ ".hanhua-orig/framegen/winfg/record_impl.inc": {
+  "mode": "100644",
+  "sha": "dcf0696ceec692f44bebeca70063df5929e2e10c"
+ },
+ ".hanhua-orig/framegen/winfg/vk_dispatch.hpp": {
+  "mode": "100644",
+  "sha": "d1a6366ad0f576accf5671e31a317dd143920c44"
+ },
+ ".hanhua-orig/framegen/winfg/winfg_engine.cpp": {
+  "mode": "100644",
+  "sha": "c2737e2610d407162bc448c1599c4bb5659cf841"
+ },
+ ".hanhua-orig/framegen/winfg/winfg_engine.h": {
+  "mode": "100644",
+  "sha": "13675da9916176c9961598f1b892403744b02116"
+ },
+ ".hanhua-orig/framegen/winfg/winfg_vkd.cpp": {
+  "mode": "100644",
+  "sha": "d76f357c13bcf71cba266947741110795bc8b598"
+ },
+ ".hanhua-orig/framegen/winfg/winfg_vkd.h": {
+  "mode": "100644",
+  "sha": "59d27bf2e3e5e610ae2f2fb20ee911a415746500"
+ },
+ ".hanhua-orig/scanout/ScanoutContext.h": {
+  "mode": "100644",
+  "sha": "e14a82a9b5322f762ee7499d2214a563f60dcb06"
+ },
+ ".hanhua-orig/sdnative/sdnative.c": {
+  "mode": "100644",
+  "sha": "aa928b8561b347af858d00dfe2e72f41fe57b76d"
+ },
+ ".hanhua-orig/shaders/cas_frag.h": {
+  "mode": "100644",
+  "sha": "21347e38d158b471bbd4202272fc349a907b588a"
+ },
+ ".hanhua-orig/shaders/color_frag.h": {
+  "mode": "100644",
+  "sha": "bde543ab47e1adf2cc495b100fa2e35b10b03580"
+ },
+ ".hanhua-orig/shaders/crt_frag.h": {
+  "mode": "100644",
+  "sha": "2239f22748340f0c53b28e9417bf10c824e730c4"
+ },
+ ".hanhua-orig/shaders/deband_frag.h": {
+  "mode": "100644",
+  "sha": "4a59f2135aa12c54f71fa5d0c3f278888fba431d"
+ },
+ ".hanhua-orig/shaders/fsr_easu_frag.h": {
+  "mode": "100644",
+  "sha": "eb6d36af4c694f691db213495f2a0149b3b4265f"
+ },
+ ".hanhua-orig/shaders/fsr_rcas_frag.h": {
+  "mode": "100644",
+  "sha": "066d125dd64de309f5e6b25bcb04d4dce247320f"
+ },
+ ".hanhua-orig/shaders/fxaa_frag.h": {
+  "mode": "100644",
+  "sha": "6b7be374bfb8622094908ef2b73ef8cb0cc802a9"
+ },
+ ".hanhua-orig/shaders/hdr_frag.h": {
+  "mode": "100644",
+  "sha": "37e5783aa587d1f11dec6b066c6aa7eaa881c62a"
+ },
+ ".hanhua-orig/shaders/nis_frag.h": {
+  "mode": "100644",
+  "sha": "468283d7f5b2b6e788e86d378d63951ecdb4f573"
+ },
+ ".hanhua-orig/shaders/ntsc_frag.h": {
+  "mode": "100644",
+  "sha": "9eb75f218415343ddb467a497db1a848261398d7"
+ },
+ ".hanhua-orig/shaders/sgsr_frag.h": {
+  "mode": "100644",
+  "sha": "2452fb68f3b4cc85cac513fee25680f4f8dd0436"
+ },
+ ".hanhua-orig/shaders/sgsr_quality_frag.h": {
+  "mode": "100644",
+  "sha": "ca44e6a6a54c66604147f0c523f6c79cec53118b"
+ },
+ ".hanhua-orig/shaders/toon_frag.h": {
+  "mode": "100644",
+  "sha": "aa54788ff84792a8d58bfc0b92dc495c4387e4c5"
+ },
+ ".hanhua-orig/shaders/upscale_vert.h": {
+  "mode": "100644",
+  "sha": "c64f91729d19897ffea7bedf0801fba3ea3f38c6"
+ },
+ ".hanhua-orig/t1.txt": {
+  "mode": "100644",
+  "sha": "ebff747c389251e012c6fe22ba5ac41a168690a5"
+ },
+ ".hanhua-orig/t10.txt": {
+  "mode": "100644",
+  "sha": "21ae982b5e05a9a1ea9df0fdf7fe4a4b62e11ec9"
+ },
+ ".hanhua-orig/t11.txt": {
+  "mode": "100644",
+  "sha": "2d585e8039a15cf0eef51f48406ffb0af5bf00ce"
+ },
+ ".hanhua-orig/t12.txt": {
+  "mode": "100644",
+  "sha": "ee57cd68c3d5163814e0ab9539791a6c42e96f09"
+ },
+ ".hanhua-orig/t13.txt": {
+  "mode": "100644",
+  "sha": "cc87a6e8388050f663c4a4ca70c1e0b9a2b24cb2"
+ },
+ ".hanhua-orig/t2.txt": {
+  "mode": "100644",
+  "sha": "6d2b25e08b3a7699c5639b76d34a5da8fb43b749"
+ },
+ ".hanhua-orig/t3.txt": {
+  "mode": "100644",
+  "sha": "a62ac45fe6febf22ea9b49ed252e8a06be1b338a"
+ },
+ ".hanhua-orig/t4.txt": {
+  "mode": "100644",
+  "sha": "fabd581775dea7d280901fd0b11aa7be3ab526bf"
+ },
+ ".hanhua-orig/t5.txt": {
+  "mode": "100644",
+  "sha": "f0de393b736fd7d7c9c8781a71d23a81e27f38c4"
+ },
+ ".hanhua-orig/t6.txt": {
+  "mode": "100644",
+  "sha": "e96d5630e216e12efc242ccf7361b49adc92e764"
+ },
+ ".hanhua-orig/t7.txt": {
+  "mode": "100644",
+  "sha": "9cd3a1a5b02b40d38b2b9910a77263a0127c44d0"
+ },
+ ".hanhua-orig/t8.txt": {
+  "mode": "100644",
+  "sha": "1c72a0c68766060dba2ffaa6f7d2dabf04c76b3b"
+ },
+ ".hanhua-orig/t9.txt": {
+  "mode": "100644",
+  "sha": "7d542d8a590d7a6db1979b8c2b46a7bbcddba448"
+ },
+ ".hanhua-orig/verify.ps1": {
+  "mode": "100644",
+  "sha": "a6891b74a0234a66ae992129d4a6dd46be536af7"
+ },
+ ".hanhua-orig/waylandcomp_src/ahb_swapchain.c": {
+  "mode": "100644",
+  "sha": "a697ab19b416419a44a7be88a5868763f7140429"
+ },
+ ".hanhua-orig/waylandcomp_src/ahb_swapchain.h": {
+  "mode": "100644",
+  "sha": "fff1bf2f7b476f1aaee235e2be5ea84fe27d770f"
+ },
+ ".hanhua-orig/waylandcomp_src/banner_color.h": {
+  "mode": "100644",
+  "sha": "e39a81bfbdb7571dde5e31c5e10e257f8958495d"
+ },
+ ".hanhua-orig/waylandcomp_src/banner_ext.c": {
+  "mode": "100644",
+  "sha": "0b9c8c4110f5d459aa28e2f675a44208bf275d2e"
+ },
+ ".hanhua-orig/waylandcomp_src/banner_ext.h": {
+  "mode": "100644",
+  "sha": "f982b95332f522c9c9ed05a37cac5010a36bec78"
+ },
+ ".hanhua-orig/waylandcomp_src/blend.frag": {
+  "mode": "100644",
+  "sha": "88739de2554f35951928f0cfb28b147ed0ee5008"
+ },
+ ".hanhua-orig/waylandcomp_src/blend.vert": {
+  "mode": "100644",
+  "sha": "5c87cc3528228d825919ff4b84de3884a16056e5"
+ },
+ ".hanhua-orig/waylandcomp_src/blend_frag.h": {
+  "mode": "100644",
+  "sha": "9d2af54a3876c4f8fb7de89ecb9a94477ace58de"
+ },
+ ".hanhua-orig/waylandcomp_src/blend_pass.c": {
+  "mode": "100644",
+  "sha": "471eedc9ae3ca8fb91db6256272fa7eb0189aebe"
+ },
+ ".hanhua-orig/waylandcomp_src/blend_pass.h": {
+  "mode": "100644",
+  "sha": "2faade252187a12f0991b0399dcbb8166ac8277d"
+ },
+ ".hanhua-orig/waylandcomp_src/blend_vert.h": {
+  "mode": "100644",
+  "sha": "f402c6a926d5739565467721fd6e48abe9afe437"
+ },
+ ".hanhua-orig/waylandcomp_src/compositor.c": {
+  "mode": "100644",
+  "sha": "8b2509a68c97f47b0ec1e9637e1c739361d01e25"
+ },
+ ".hanhua-orig/waylandcomp_src/compositor_internal.h": {
+  "mode": "100644",
+  "sha": "db739132afc1240629366a60218d19f419a032fa"
+ },
+ ".hanhua-orig/waylandcomp_src/effects_chain.c": {
+  "mode": "100644",
+  "sha": "a4227102d854ff0f88cc33dd743b8db693cf2569"
+ },
+ ".hanhua-orig/waylandcomp_src/effects_chain.h": {
+  "mode": "100644",
+  "sha": "74203bccc1bd07a18b03a6741ca6fd967444e56b"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_bridge.c": {
+  "mode": "100644",
+  "sha": "43b94987f19d036ff03889474650ed7f82a29f69"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_bridge.h": {
+  "mode": "100644",
+  "sha": "2d4d6d99a5d1f71f12cafe641b93912a89bf8687"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_engine.cpp": {
+  "mode": "100644",
+  "sha": "1d9d294689d6c62197d02bbcacf149f9c8356501"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_engine.h": {
+  "mode": "100644",
+  "sha": "ecc9e30d19a40876d1d3af06104fd1bfea4bf379"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_engine_stub.c": {
+  "mode": "100644",
+  "sha": "45bd27dfff54f54aee5224cb142bed4d5059145f"
+ },
+ ".hanhua-orig/waylandcomp_src/framegen_jni.c": {
+  "mode": "100644",
+  "sha": "c693ad25c75dbeb3d7e8dfd3188ae7b4200c8f2b"
+ },
+ ".hanhua-orig/waylandcomp_src/hdr_compose.c": {
+  "mode": "100644",
+  "sha": "a927df908865c83f0578682538040371cce8e5d4"
+ },
+ ".hanhua-orig/waylandcomp_src/hdr_compose.h": {
+  "mode": "100644",
+  "sha": "cfeef7497274f57115aa017db03ce7ec0ce04e59"
+ },
+ ".hanhua-orig/waylandcomp_src/hdr_encode.frag": {
+  "mode": "100644",
+  "sha": "4b75ed5861434db7f0a4867a165b8a789e3d2d5e"
+ },
+ ".hanhua-orig/waylandcomp_src/hdr_encode_frag.h": {
+  "mode": "100644",
+  "sha": "eb1536f1f3dfe563f3e9214b7de6ef50aa173d5f"
+ },
+ ".hanhua-orig/waylandcomp_src/sc_layer.c": {
+  "mode": "100644",
+  "sha": "1fcbf3357c6e5496f5408935e658e6d1d2410f24"
+ },
+ ".hanhua-orig/waylandcomp_src/sc_layer.h": {
+  "mode": "100644",
+  "sha": "f2f12a704f5fb0b2252d9e83b2b5bd8a2856d349"
+ },
+ ".hanhua-orig/waylandcomp_src/vk_loader.c": {
+  "mode": "100644",
+  "sha": "3038d79ae2c0867a760d6d0552814844ae62e3d6"
+ },
+ ".hanhua-orig/waylandcomp_src/vk_loader.h": {
+  "mode": "100644",
+  "sha": "32a15ae874f090e186bee19c1002cdad133ec2d9"
+ },
+ ".hanhua-orig/waylandcomp_src/vk_present.c": {
+  "mode": "100644",
+  "sha": "7a2ecfd48b76d7a9f2508f7f8b180b7b6004ff61"
+ },
+ ".hanhua-orig/waylandcomp_src/vk_present.h": {
+  "mode": "100644",
+  "sha": "eef9c80cca54c9a54dbb04ceef14c4f4dd343583"
+ },
+ ".hanhua-orig/waylandcomp_src/waylandcomp_jni.c": {
+  "mode": "100644",
+  "sha": "10283f570b01cd3313367cf1cd7a976f523d08e1"
+ },
+ ".hanhua-orig/waylandcomp_src/wl_clipboard.c": {
+  "mode": "100644",
+  "sha": "0c6c57304df1fea095bead23d5698abe28f52524"
+ },
+ ".hanhua-orig/waylandcomp_src/wl_color_mgmt.c": {
+  "mode": "100644",
+  "sha": "be4885fd54a49b56853ef71bc7c7af6372e89a4d"
+ },
+ ".hanhua-orig/waylandcomp_src/wl_dmabuf.c": {
+  "mode": "100644",
+  "sha": "bdda9d75ef1129596b7881e41be24d6745b65592"
+ },
+ ".hanhua-orig/waylandcomp_src/wl_text_input.c": {
+  "mode": "100644",
+  "sha": "1c424c83ceec13d8b4b75102a5f31285339381e3"
+ },
+ ".hanhua-orig/waylandcomp_src/wl_toplevel_icon.c": {
+  "mode": "100644",
+  "sha": "17a9f59e088b983379c21e7971ed80f6400b1af7"
+ },
+ "LICENSE": {
+  "mode": "100644",
+  "sha": "5ae980bfc612213f0f8a6457978575b3ead3eae2"
+ },
+ "README.md": {
+  "mode": "100644",
+  "sha": "ff35bdc93bd01408e5d1d402d01ab6af5ccb356f"
+ },
+ "app/build.gradle": {
+  "mode": "100644",
+  "sha": "fac983903cf98964d323e44d01446d0e93f178f9"
+ },
+ "app/src/debug/AndroidManifest.xml": {
+  "mode": "100644",
+  "sha": "70db082b2056bfa740009ca2f6b284968e665507"
+ },
+ "app/src/debug/java/com/droiddeck/launcher/agent/AgentBridgeProvider.kt": {
+  "mode": "100644",
+  "sha": "b89a06f85b6344052f0cad1d773007d10b52b454"
+ },
+ "app/src/debug/java/com/droiddeck/launcher/agent/AgentStartActivity.kt": {
+  "mode": "100644",
+  "sha": "9e35ca46c906543063a5236f75603a6797434367"
+ },
+ "app/src/main/AndroidManifest.xml": {
+  "mode": "100644",
+  "sha": "86a4f4617e56cd80e28760af8e9e87d1b183819f"
+ },
+ "app/src/main/assets/directaudio/linux-wine11/README.md": {
+  "mode": "100644",
+  "sha": "652cee2dbc721b599e9038773a89c95845ac5291"
+ },
+ "app/src/main/assets/directaudio/linux-wine11/aarch64-unix/winedirectaudio.so": {
+  "mode": "100644",
+  "sha": "7d3083052af69d314bd8f4502d1fe75c6ebfbf31"
+ },
+ "app/src/main/assets/directaudio/linux-wine11/aarch64-windows/winedirectaudio.drv": {
+  "mode": "100644",
+  "sha": "d078149dc9e44895236c98df348cfb29aca5612a"
+ },
+ "app/src/main/assets/directaudio/linux-wine11/i386-windows/winedirectaudio.drv": {
+  "mode": "100644",
+  "sha": "93efd051f78be6dfb83c9e6d56824bd68359f10c"
+ },
+ "app/src/main/assets/directaudio/linux-wine11/version.txt": {
+  "mode": "100644",
+  "sha": "a32f892380401dffbfdcd65e687686385794ea14"
+ },
+ "app/src/main/assets/graphics_driver/adrenotools-turnip-sdk36.tzst": {
+  "mode": "100644",
+  "sha": "abcb8fbe85077634220159f56768e93bc2970d8e"
+ },
+ "app/src/main/assets/graphics_driver/adrenotools-turnip25.1.0.tzst": {
+  "mode": "100644",
+  "sha": "99db0ac0544f184d5794ac1f4b17a6b908810fe6"
+ },
+ "app/src/main/assets/pulseaudio.tzst": {
+  "mode": "100644",
+  "sha": "388ea8933b0416da8f2db6e6743c304268a38866"
+ },
+ "app/src/main/assets/steam-startup/droiddeck-startup.webm": {
+  "mode": "100644",
+  "sha": "7e2fa4587f9b5abfc59836a79ba43de8ae42f0a5"
+ },
+ "app/src/main/assets/wayland/keymap.xkb": {
+  "mode": "100644",
+  "sha": "d1689e661c31f03b15348f44066d5d29fc0dbbf9"
+ },
+ "app/src/main/cpp/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "ccc3c12c26eee3ff8c4f07665416d0ab56b6307e"
+ },
+ "app/src/main/cpp/adrenotools/.gitmodules": {
+  "mode": "100644",
+  "sha": "9c18d908dabe536b4beffd8fd8e2d3010ec707c3"
+ },
+ "app/src/main/cpp/adrenotools/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "16c60923028fd51039a0a3ec4f4df7a5af2e4de7"
+ },
+ "app/src/main/cpp/adrenotools/LICENSE": {
+  "mode": "100644",
+  "sha": "a8f664a745e96b3994e7bae2d72e6c98d457885e"
+ },
+ "app/src/main/cpp/adrenotools/README.md": {
+  "mode": "100644",
+  "sha": "234f2b098db8832a997647f052a8325e907eab59"
+ },
+ "app/src/main/cpp/adrenotools/adrenotools.pc.in": {
+  "mode": "100644",
+  "sha": "1102f434c8b7670c4b7c068fd1d4bc237b1f3a56"
+ },
+ "app/src/main/cpp/adrenotools/build_asm.sh": {
+  "mode": "100644",
+  "sha": "b53d25c1baedd32a2377737adbf9540239bebc0d"
+ },
+ "app/src/main/cpp/adrenotools/gen/bcenabler_patch.h": {
+  "mode": "100644",
+  "sha": "3909a25ca12b6b437c7c7a16b2f0d03350ac3ea6"
+ },
+ "app/src/main/cpp/adrenotools/include/adrenotools/bcenabler.h": {
+  "mode": "100644",
+  "sha": "3d3a76e7d50afbb287e507da9cc799fde333ffa4"
+ },
+ "app/src/main/cpp/adrenotools/include/adrenotools/driver.h": {
+  "mode": "100644",
+  "sha": "f81e8fe34dae38dee68118e8f8af38c2552975f8"
+ },
+ "app/src/main/cpp/adrenotools/include/adrenotools/priv.h": {
+  "mode": "100644",
+  "sha": "742d24f247ec6a97d3672b2c51f4db77becc8506"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "c2e92b04228ec6ff4f8c66af308bb02867960a63"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/LICENSE": {
+  "mode": "100644",
+  "sha": "a8f664a745e96b3994e7bae2d72e6c98d457885e"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/README.md": {
+  "mode": "100644",
+  "sha": "401f82d8e83b2000a5f8ffe186a43ac8547163da"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/android_linker_ns.cpp": {
+  "mode": "100644",
+  "sha": "3bd58992c26bb185196d723841e8a56f4dbdd386"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/android_linker_ns.h": {
+  "mode": "100644",
+  "sha": "77ec4005a54048e3f2eef482268317c2aa7a5af6"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/elf_soname_patcher.cpp": {
+  "mode": "100644",
+  "sha": "db619ab534f33ba4b1dc7f70dbfcb09f73298333"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/elf_soname_patcher.h": {
+  "mode": "100644",
+  "sha": "0b2c186ffcf7eb1929345c68c9f8bf0ba63d767d"
+ },
+ "app/src/main/cpp/adrenotools/lib/linkernsbypass/meson.build": {
+  "mode": "100644",
+  "sha": "e666aff8a7dd526146ac6414b02b5c21e5d0ad00"
+ },
+ "app/src/main/cpp/adrenotools/meson.build": {
+  "mode": "100644",
+  "sha": "bf519bb2adbc34e853935d42b666ab2c1d809325"
+ },
+ "app/src/main/cpp/adrenotools/src/bcenabler.cpp": {
+  "mode": "100644",
+  "sha": "1deb41df4061978a5c0e48c50d7203c5c26a6bf1"
+ },
+ "app/src/main/cpp/adrenotools/src/bcenabler_patch.s": {
+  "mode": "100644",
+  "sha": "8766e7880d73fc6a6fb23481d2a2aeceac5fd55a"
+ },
+ "app/src/main/cpp/adrenotools/src/driver.cpp": {
+  "mode": "100644",
+  "sha": "581e04a671a87d1282469472d891c7d6d8ee7d49"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "ebff0639d7b54e052ccaae109958f4fa5d72acca"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/file_redirect_hook.c": {
+  "mode": "100644",
+  "sha": "aa3b6d2f2d3951a828a3f05a6fca442be4eb9115"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/gsl_alloc_hook.c": {
+  "mode": "100644",
+  "sha": "07f332d9b522e1ddfc8f070a42bd6fd527e53f40"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/hook_impl.cpp": {
+  "mode": "100644",
+  "sha": "50e79a946b80e5f9654798b65ba378f476d5faec"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/hook_impl.h": {
+  "mode": "100644",
+  "sha": "2ce2471e1d780efed1e7dfbbd5da78be31542a5e"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/hook_impl_params.h": {
+  "mode": "100644",
+  "sha": "8a3bd1673e18912d34f976afcc61164faeb38e8f"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/kgsl.h": {
+  "mode": "100644",
+  "sha": "6d4d93d6af7cc399cd1b1b0010a5c13ce1e766ca"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/main_hook.c": {
+  "mode": "100644",
+  "sha": "067537f3246cb77aa064bf1836b5b3a33af95355"
+ },
+ "app/src/main/cpp/adrenotools/src/hook/meson.build": {
+  "mode": "100644",
+  "sha": "0bb6eb390732365384c99043868ae97c33e693da"
+ },
+ "app/src/main/cpp/adrenotools/tools/ADPKG.md": {
+  "mode": "100644",
+  "sha": "03485dcbe326e3c514ec1113052ef86ee253ab78"
+ },
+ "app/src/main/cpp/adrenotools/tools/README.md": {
+  "mode": "100644",
+  "sha": "4b13900f32fa57942fd8ebddb644b7061bfc3abc"
+ },
+ "app/src/main/cpp/adrenotools/tools/acc-shim/README.md": {
+  "mode": "100644",
+  "sha": "ee1511029b8df345782a8cd40fe79de15d7aa697"
+ },
+ "app/src/main/cpp/adrenotools/tools/acc-shim/vk_acc_shim.cpp": {
+  "mode": "100644",
+  "sha": "2bccb05347688e2e8b9c7db6f1ef2c9b32ce2c9a"
+ },
+ "app/src/main/cpp/adrenotools/tools/blob-patcher.py": {
+  "mode": "100644",
+  "sha": "2464d7f2344fd6d22cc74d7566b33170e92985b1"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/.clang-format": {
+  "mode": "100644",
+  "sha": "ede5d7e18bc92c47c8530cce494ebc50dacd4a55"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/Android.bp": {
+  "mode": "100644",
+  "sha": "bc4a66bee0a2b5c3ee8a44439d1c39528db5d9bb"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/README.md": {
+  "mode": "100644",
+  "sha": "7f80fe82fd7d708db6d25169dbe88e3753fc9cdd"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/QtiGrallocDefs.h": {
+  "mode": "100644",
+  "sha": "e0ccbe1d258af9b8aae8174661566f95025d6b3d"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/common.h": {
+  "mode": "100644",
+  "sha": "73e80cb1d6c6d64b7fbb530c589abefe3e39ec86"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gr_adreno_info.cpp": {
+  "mode": "100644",
+  "sha": "30610e810df51e0babc262cbf26f627f34b91c69"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gr_adreno_info.h": {
+  "mode": "100644",
+  "sha": "590d18ba672b9295afdce59191ef199fee32123a"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gr_priv_handle.h": {
+  "mode": "100644",
+  "sha": "3efbea4b782330d0204d4fdefa748754a7840342"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gr_utils.cpp": {
+  "mode": "100644",
+  "sha": "a83ef20a6bbf59ec7e2ef18af71492b7db12c920"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gr_utils.h": {
+  "mode": "100644",
+  "sha": "13b21577c5dd1967eebac1610cfaeb2226da1a9d"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/gralloc_priv.h": {
+  "mode": "100644",
+  "sha": "8a333a6bde95314aa3b2ec2aace57c0fd6c52b8f"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/mapper.h": {
+  "mode": "100644",
+  "sha": "ae3bdbba9b1f932136ef06d95e4c15efd7536227"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/mapperextensions.h": {
+  "mode": "100644",
+  "sha": "078cb90b269e38964500562e8ea488ccc1331913"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/types/common.h": {
+  "mode": "100644",
+  "sha": "6f327baf3b62903d9769f2101dc1dad3a9a05c11"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/types/mapper.h": {
+  "mode": "100644",
+  "sha": "ce126427de09b65ed58223fec356e0ecbc768683"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/ext/types/mapperextensions.h": {
+  "mode": "100644",
+  "sha": "79fddd18e49dd5e46dc787531d32e3d28994b61f"
+ },
+ "app/src/main/cpp/adrenotools/tools/qtimapper-shim/shim.cpp": {
+  "mode": "100644",
+  "sha": "34dd68296c549b89de3f51fc006009b4cc64d00a"
+ },
+ "app/src/main/cpp/fakeinput_steam.cpp": {
+  "mode": "100644",
+  "sha": "741a89b17e92975ec26515db1f6e8ae7dde766a7"
+ },
+ "app/src/main/cpp/framegen/VulkanRendererContext.h": {
+  "mode": "100644",
+  "sha": "cec4a4119b86630cd1b92adb715143d35d2c2f70"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_alpha.cpp": {
+  "mode": "100644",
+  "sha": "73be35b59cbd02df1919ae5d768c2326e76f30e7"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_alpha.hpp": {
+  "mode": "100644",
+  "sha": "6c233c16ca29a228320f9151ee9d81f5f772219c"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_beta.cpp": {
+  "mode": "100644",
+  "sha": "299e22cf72cb1bc0f98d78cc20ab25bfbbb6e314"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_beta.hpp": {
+  "mode": "100644",
+  "sha": "1d1e77a56c066b2bbb60d44ce42b815b9e4beec2"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_chain.cpp": {
+  "mode": "100644",
+  "sha": "f9ff4b4f86d4cb778b1ed1562472f0a83fe77d96"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_chain.hpp": {
+  "mode": "100644",
+  "sha": "4324c80bc2cddeeac08a76805920acdd76e638c8"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_common.cpp": {
+  "mode": "100644",
+  "sha": "b72eb2287321e934ee0cd45e7b45224cf5d9c8c0"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_common.hpp": {
+  "mode": "100644",
+  "sha": "1f6b209833bcc258df1f613eeb93028976a35633"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_delta.cpp": {
+  "mode": "100644",
+  "sha": "ddba102d5cfb98602e5d7616b5fc86203d93e6ba"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_delta.hpp": {
+  "mode": "100644",
+  "sha": "8d823267524bfce6594fbb3b5f93614ef91bd055"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_dll.cpp": {
+  "mode": "100644",
+  "sha": "9f08a68202dfb91579cff59f0d4aa49942018700"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_dll.h": {
+  "mode": "100644",
+  "sha": "72a862b5829a55e41ea3d083292edd952239f1c4"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_dxbc.cpp": {
+  "mode": "100644",
+  "sha": "db23e36864575e8cf185ee627e71b3410105bf9b"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_dxbc.h": {
+  "mode": "100644",
+  "sha": "3fa643728dae4a679b5b1fa81de338abd1aa07c5"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_engine.cpp": {
+  "mode": "100644",
+  "sha": "7a108ec05f6d00ccb7fa5526b0b3f0bbe63134f1"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_engine.h": {
+  "mode": "100644",
+  "sha": "20489e652b18385a47f8395a9a600d359e6a60d9"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_gamma.cpp": {
+  "mode": "100644",
+  "sha": "392930b615cd1fa7f0ef97500aaf5eefcd10a90c"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_gamma.hpp": {
+  "mode": "100644",
+  "sha": "8210dd259065287f71e3a5f4e4e9a548f7c49fb5"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_generate.cpp": {
+  "mode": "100644",
+  "sha": "1c84cb1866893687c43896df3ee518e8d811a1ef"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_generate.hpp": {
+  "mode": "100644",
+  "sha": "68e23967b71e0a4201be8ddb5bd19300c2701721"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_governor.cpp": {
+  "mode": "100644",
+  "sha": "c205ad77ba1f7a13c40d0b4e296b90761ae47b25"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_governor.h": {
+  "mode": "100644",
+  "sha": "0ae9b696deb6f88ac7799e8e4464612bb940211b"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_jni.cpp": {
+  "mode": "100644",
+  "sha": "ba8447313ae16fb6a05892878490eaa5799fa745"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_mipmaps.cpp": {
+  "mode": "100644",
+  "sha": "4d17625554c7db03aa148f8943721f2896267eaa"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_mipmaps.hpp": {
+  "mode": "100644",
+  "sha": "4ce06b0f5ebb229bfba4ceb06288982068b0fdf2"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_pacer.cpp": {
+  "mode": "100644",
+  "sha": "29da8729d0aa57170947b9b6a4411964d15086a9"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_pacer.hpp": {
+  "mode": "100644",
+  "sha": "5613c4c3064eff340105f274ca2406e05318cd78"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_probe.cpp": {
+  "mode": "100644",
+  "sha": "823283419307ba4e309fc8a58551763159447a64"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_probe.h": {
+  "mode": "100644",
+  "sha": "38d1d1a4f13776d899bed00bc2474467430e92c4"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_shaders.cpp": {
+  "mode": "100644",
+  "sha": "802566410159386b8dffd096744c374bb07913db"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_shaders.hpp": {
+  "mode": "100644",
+  "sha": "ba7854da4f54e937c9fadbb8b008c0718e222933"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_vkd.cpp": {
+  "mode": "100644",
+  "sha": "1e7877e92f0aa60a0844f510b8b84003f6a0994a"
+ },
+ "app/src/main/cpp/framegen/lsfg/lsfg_vkd.h": {
+  "mode": "100644",
+  "sha": "0657ac9758100fdc5c914bce9067e55bdf259ce1"
+ },
+ "app/src/main/cpp/framegen/winfg/LICENSE.win-fg": {
+  "mode": "100644",
+  "sha": "1fb0c75624cc29d5362200c7130b4becb9884408"
+ },
+ "app/src/main/cpp/framegen/winfg/NOTICE_FIDELITYFX_OPTICALFLOW.md": {
+  "mode": "100644",
+  "sha": "85067a66c5a3ccdc0efa39225875fde7a9f8c2c6"
+ },
+ "app/src/main/cpp/framegen/winfg/config.hpp": {
+  "mode": "100644",
+  "sha": "d8786697c19b690aaa5c84fd5facb0f41559fd18"
+ },
+ "app/src/main/cpp/framegen/winfg/embedded_shaders.hpp": {
+  "mode": "100644",
+  "sha": "934d07a616050bb9c66f48a731118bca27f16821"
+ },
+ "app/src/main/cpp/framegen/winfg/framegen.cpp": {
+  "mode": "100644",
+  "sha": "2848937d504a2d1cf4932089bd1465c0a412762b"
+ },
+ "app/src/main/cpp/framegen/winfg/framegen.hpp": {
+  "mode": "100644",
+  "sha": "1980f1104d6aceca4e9d5e8eda459a73d5617895"
+ },
+ "app/src/main/cpp/framegen/winfg/log.hpp": {
+  "mode": "100644",
+  "sha": "77c7b82702817273da74feb8a38d31a075a28c10"
+ },
+ "app/src/main/cpp/framegen/winfg/record_impl.inc": {
+  "mode": "100644",
+  "sha": "dcf0696ceec692f44bebeca70063df5929e2e10c"
+ },
+ "app/src/main/cpp/framegen/winfg/vk_dispatch.hpp": {
+  "mode": "100644",
+  "sha": "d1a6366ad0f576accf5671e31a317dd143920c44"
+ },
+ "app/src/main/cpp/framegen/winfg/winfg_engine.cpp": {
+  "mode": "100644",
+  "sha": "c2737e2610d407162bc448c1599c4bb5659cf841"
+ },
+ "app/src/main/cpp/framegen/winfg/winfg_engine.h": {
+  "mode": "100644",
+  "sha": "13675da9916176c9961598f1b892403744b02116"
+ },
+ "app/src/main/cpp/framegen/winfg/winfg_vkd.cpp": {
+  "mode": "100644",
+  "sha": "d76f357c13bcf71cba266947741110795bc8b598"
+ },
+ "app/src/main/cpp/framegen/winfg/winfg_vkd.h": {
+  "mode": "100644",
+  "sha": "59d27bf2e3e5e610ae2f2fb20ee911a415746500"
+ },
+ "app/src/main/cpp/scanout/ScanoutContext.h": {
+  "mode": "100644",
+  "sha": "e14a82a9b5322f762ee7499d2214a563f60dcb06"
+ },
+ "app/src/main/cpp/sdnative/sdnative.c": {
+  "mode": "100644",
+  "sha": "aa928b8561b347af858d00dfe2e72f41fe57b76d"
+ },
+ "app/src/main/cpp/shaders/cas_frag.h": {
+  "mode": "100644",
+  "sha": "21347e38d158b471bbd4202272fc349a907b588a"
+ },
+ "app/src/main/cpp/shaders/color_frag.h": {
+  "mode": "100644",
+  "sha": "bde543ab47e1adf2cc495b100fa2e35b10b03580"
+ },
+ "app/src/main/cpp/shaders/crt_frag.h": {
+  "mode": "100644",
+  "sha": "2239f22748340f0c53b28e9417bf10c824e730c4"
+ },
+ "app/src/main/cpp/shaders/deband_frag.h": {
+  "mode": "100644",
+  "sha": "4a59f2135aa12c54f71fa5d0c3f278888fba431d"
+ },
+ "app/src/main/cpp/shaders/fsr_easu_frag.h": {
+  "mode": "100644",
+  "sha": "eb6d36af4c694f691db213495f2a0149b3b4265f"
+ },
+ "app/src/main/cpp/shaders/fsr_rcas_frag.h": {
+  "mode": "100644",
+  "sha": "066d125dd64de309f5e6b25bcb04d4dce247320f"
+ },
+ "app/src/main/cpp/shaders/fxaa_frag.h": {
+  "mode": "100644",
+  "sha": "6b7be374bfb8622094908ef2b73ef8cb0cc802a9"
+ },
+ "app/src/main/cpp/shaders/hdr_frag.h": {
+  "mode": "100644",
+  "sha": "37e5783aa587d1f11dec6b066c6aa7eaa881c62a"
+ },
+ "app/src/main/cpp/shaders/nis_frag.h": {
+  "mode": "100644",
+  "sha": "468283d7f5b2b6e788e86d378d63951ecdb4f573"
+ },
+ "app/src/main/cpp/shaders/ntsc_frag.h": {
+  "mode": "100644",
+  "sha": "9eb75f218415343ddb467a497db1a848261398d7"
+ },
+ "app/src/main/cpp/shaders/sgsr_frag.h": {
+  "mode": "100644",
+  "sha": "2452fb68f3b4cc85cac513fee25680f4f8dd0436"
+ },
+ "app/src/main/cpp/shaders/sgsr_quality_frag.h": {
+  "mode": "100644",
+  "sha": "ca44e6a6a54c66604147f0c523f6c79cec53118b"
+ },
+ "app/src/main/cpp/shaders/toon_frag.h": {
+  "mode": "100644",
+  "sha": "aa54788ff84792a8d58bfc0b92dc495c4387e4c5"
+ },
+ "app/src/main/cpp/shaders/upscale_vert.h": {
+  "mode": "100644",
+  "sha": "c64f91729d19897ffea7bedf0801fba3ea3f38c6"
+ },
+ "app/src/main/cpp/termux/termux.c": {
+  "mode": "100644",
+  "sha": "195098169fa954ea15e46220fac30a916aa901b6"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/.gitignore": {
+  "mode": "100644",
+  "sha": "4522fe54d275cb301d0ed135f3d13fd07b4352e1"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "2651d7b8dd347d46cc1f0d40c19bf14f05afd534"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/LICENSE.md": {
+  "mode": "100644",
+  "sha": "35d56c0baa980b10aa25e494a3c944a1e8dd04b7"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/README.md": {
+  "mode": "100644",
+  "sha": "9da26b361aa90d08871a39b3bfcba93e4b6a8dfa"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_analysis.h": {
+  "mode": "100644",
+  "sha": "6c8b0325bacc2d98fe6048e4c567f40260629443"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_chunk_isgn.h": {
+  "mode": "100644",
+  "sha": "9b4b79186d9b41df238097b4e8929bbebec5642c"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_chunk_shex.h": {
+  "mode": "100644",
+  "sha": "8deecc8675b3f7d4cc51100ad4827a02cfecdd74"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_common.h": {
+  "mode": "100644",
+  "sha": "d9d4207673b88a03d3c89ad654c0a4783a32807b"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_compiler.h": {
+  "mode": "100644",
+  "sha": "f63d1e11a13f4c939a7a2682ae9fdfb5f1b636dd"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_decoder.h": {
+  "mode": "100644",
+  "sha": "771837152e9c8b54c716820f85e912bc8f7db60a"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_defs.h": {
+  "mode": "100644",
+  "sha": "8782481affaee1ae182ae92cc3c2716066e37d57"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_enums.h": {
+  "mode": "100644",
+  "sha": "f6d29a5b87171696618146a7776951f1eab9a134"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_header.h": {
+  "mode": "100644",
+  "sha": "8eca0d499c154e7f05ef56e4956e1a7192315e55"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_include.h": {
+  "mode": "100644",
+  "sha": "b33162227e4dddb50da6955b8102e76776569e36"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_modinfo.h": {
+  "mode": "100644",
+  "sha": "13e733dde2b9e4b10c029c480f1b55e6fb046850"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_module.h": {
+  "mode": "100644",
+  "sha": "3ef75cfe1763c5fa1224633405f707da1fb1a828"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_names.h": {
+  "mode": "100644",
+  "sha": "52235ae5932c33b4720fd3178a5d1f9854739d50"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_options.h": {
+  "mode": "100644",
+  "sha": "0fe46a767a12813061a24a6b8463346c166c4ae1"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_reader.h": {
+  "mode": "100644",
+  "sha": "a16000179bf65f00a80cc5e429bba8ff6dd48ad5"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_tag.h": {
+  "mode": "100644",
+  "sha": "2ba17509c5179be0aa036e4e1b327be9ac51b654"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxbc/dxbc_util.h": {
+  "mode": "100644",
+  "sha": "7d98af6ee38ec9791158bc74acf146eab7969a5e"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxvk/dxvk_hash.h": {
+  "mode": "100644",
+  "sha": "120e268cb237fc9080dd33c9a57636f47b5f962a"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxvk/dxvk_limits.h": {
+  "mode": "100644",
+  "sha": "4903c32cef9ba1c01c3793e3e86aa15f72fbb13f"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/dxvk/dxvk_pipelayout.h": {
+  "mode": "100644",
+  "sha": "9873719c70f760c090ca2b27072d5ce64adc5213"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/spirv_code_buffer.h": {
+  "mode": "100644",
+  "sha": "4e33d6dcb046efcf39a2b7feabdba632d8c0314c"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/spirv_include.h": {
+  "mode": "100644",
+  "sha": "36651dcb172c4106934d9c89aab9e6798b3fdffd"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/spirv_instruction.h": {
+  "mode": "100644",
+  "sha": "1f93141578759777ae97279b41aeb3aaa384183f"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/spirv_module.h": {
+  "mode": "100644",
+  "sha": "02b7b7cf773df61018a1bed86dddd2ff33d3a384"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/thirdparty/GLSL.std.450.h": {
+  "mode": "100644",
+  "sha": "0594f907a145aa238668db22e825eb4ef4e7f4bd"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/spirv/thirdparty/spirv.hpp": {
+  "mode": "100644",
+  "sha": "f439e472f1cf4c4d7a68d6d1468488f3bba8d5e5"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/log/log.h": {
+  "mode": "100644",
+  "sha": "b12428c08ccf28c9ab98584a0709c5907da2d1a5"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/log/log_debug.h": {
+  "mode": "100644",
+  "sha": "34c61106cfc669a8df7ec8a41216cc59ebea0afd"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/rc/util_rc.h": {
+  "mode": "100644",
+  "sha": "b92cf00b49c4625b1c682fbc0c9a85503a5e2200"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/rc/util_rc_ptr.h": {
+  "mode": "100644",
+  "sha": "ac465758cc28254393af3879c1bd908f54e11fc5"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_bit.h": {
+  "mode": "100644",
+  "sha": "2a530258186203e4751cf03db6bca512c4540404"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_enum.h": {
+  "mode": "100644",
+  "sha": "85b9b21b9f9f93a76158799408c909a399a84d8b"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_error.h": {
+  "mode": "100644",
+  "sha": "2cfd45ffd0c98dcae019e4e59c6db921c3e8d7a6"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_flags.h": {
+  "mode": "100644",
+  "sha": "f67b4a2efac58cfbea745ef757cd3daeed913af1"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_likely.h": {
+  "mode": "100644",
+  "sha": "84795ba7cab1869b6a4e9aec9df39c4e9f9aaa14"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_math.h": {
+  "mode": "100644",
+  "sha": "9276d9337c0c0573bfeeddc040238335f6ed4ca2"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_small_vector.h": {
+  "mode": "100644",
+  "sha": "861c9e0e02d2b1efa636664cdf2df8c3312ddb81"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/include/util/util_string.h": {
+  "mode": "100644",
+  "sha": "5fe00fbf5323ce739d99ca721ea4bab0d1c30268"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_analysis.cpp": {
+  "mode": "100644",
+  "sha": "6064e9ee5dade2234ae6d370cf0588662858f225"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_chunk_isgn.cpp": {
+  "mode": "100644",
+  "sha": "80e540f2342932e26b3cc01483458e80ff8fbb8f"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_chunk_shex.cpp": {
+  "mode": "100644",
+  "sha": "552329b882b6c46745e735ccad55cc6b77ec4aaf"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_common.cpp": {
+  "mode": "100644",
+  "sha": "db3d715291ed98c5f6a433087b9fcb73deccdd5f"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_compiler.cpp": {
+  "mode": "100644",
+  "sha": "0b6286fe5d1567f0d13ae7e047493cefbad06e9a"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_decoder.cpp": {
+  "mode": "100644",
+  "sha": "0de7ddad17a936d4931caf57b13e1a4165b97748"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_defs.cpp": {
+  "mode": "100644",
+  "sha": "0d193ada9752268a14390884cec04dbf6cec59d2"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_header.cpp": {
+  "mode": "100644",
+  "sha": "9b5f6989572a253cdc1396359a4fc8343d8b8c6d"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_module.cpp": {
+  "mode": "100644",
+  "sha": "573d503b0493a43c35b1289881edee1f21295d23"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_names.cpp": {
+  "mode": "100644",
+  "sha": "c6a00eccca0180c53d942b6b042f816b6f7772dc"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_reader.cpp": {
+  "mode": "100644",
+  "sha": "9b9a340a38794a15db1cc47f9a46b9fa9a69138e"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/dxbc/dxbc_util.cpp": {
+  "mode": "100644",
+  "sha": "3d885fc9c54b935e8b039fa2f5de0a9df98e1ce9"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/spirv/spirv_code_buffer.cpp": {
+  "mode": "100644",
+  "sha": "f8166df51c8bb904ac7debbafe7fa3e7be6ef7fa"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/spirv/spirv_module.cpp": {
+  "mode": "100644",
+  "sha": "aad1b39ec3f52c6172b1d262cec077e6514e26b9"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/util/util_log.cpp": {
+  "mode": "100644",
+  "sha": "e2dcfb803f9c64dddc48e83ea21c18bf15cdd8b9"
+ },
+ "app/src/main/cpp/thirdparty/dxbc/src/util/util_string.cpp": {
+  "mode": "100644",
+  "sha": "9bb4b611491f048bc84257e52e7b2725a331b2f1"
+ },
+ "app/src/main/cpp/waylandcomp/CMakeLists.txt": {
+  "mode": "100644",
+  "sha": "d942fd68670df577bfcd8346e9db192667171a26"
+ },
+ "app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md": {
+  "mode": "100644",
+  "sha": "2d5a2a37a00009c8b868d366347989e34ddb8808"
+ },
+ "app/src/main/cpp/waylandcomp/generated/banner-ahb-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "08e5d76e0f4ea4b55c729acccbad074f2d0a385e"
+ },
+ "app/src/main/cpp/waylandcomp/generated/banner-ahb-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "a06ea07061619a66905fc15c5264e9e6c705ec8e"
+ },
+ "app/src/main/cpp/waylandcomp/generated/banner-desktop-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "9ed8996dd970371281d5f19104bf2abce4286d81"
+ },
+ "app/src/main/cpp/waylandcomp/generated/banner-desktop-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "f2608a46e2641a662f15335e815d14007f68fd97"
+ },
+ "app/src/main/cpp/waylandcomp/generated/color-management-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "ff31f8a4118150a9fd41f9fb355b0cc12a02d85a"
+ },
+ "app/src/main/cpp/waylandcomp/generated/color-management-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "08008e8f883ed5d78cf0b5521a18a997caa65b84"
+ },
+ "app/src/main/cpp/waylandcomp/generated/linux-dmabuf-v1-client-protocol.h": {
+  "mode": "100644",
+  "sha": "e7c4665f372f718a715e4903182648e364d1dfbc"
+ },
+ "app/src/main/cpp/waylandcomp/generated/linux-dmabuf-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "7d2c38984e71c6cb9d6e4799d61dc6c30dd746cc"
+ },
+ "app/src/main/cpp/waylandcomp/generated/linux-dmabuf-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "7d87d90ace6d8fa42cb57e579d745f7cc3e3221f"
+ },
+ "app/src/main/cpp/waylandcomp/generated/pointer-constraints-unstable-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "89ea811badf4673bbff81590312dc40b6c8eb018"
+ },
+ "app/src/main/cpp/waylandcomp/generated/pointer-constraints-unstable-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "8aeb921410bdc177e26c31513fcfbba5425d0577"
+ },
+ "app/src/main/cpp/waylandcomp/generated/presentation-time-protocol.c": {
+  "mode": "100644",
+  "sha": "63eea910d461cde703b4966480891793836a4642"
+ },
+ "app/src/main/cpp/waylandcomp/generated/presentation-time-server-protocol.h": {
+  "mode": "100644",
+  "sha": "1e1a39c075daad0bf63a498875d23d8188d58c5a"
+ },
+ "app/src/main/cpp/waylandcomp/generated/relative-pointer-unstable-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "454f95556227ab31328ca556696bbe42085dab1d"
+ },
+ "app/src/main/cpp/waylandcomp/generated/relative-pointer-unstable-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "f40c9749805ffa78d87f181918fb33eb391a8fb3"
+ },
+ "app/src/main/cpp/waylandcomp/generated/text-input-unstable-v3-protocol.c": {
+  "mode": "100644",
+  "sha": "a6030f8df8a907f7daed56b52acd26dff56a862c"
+ },
+ "app/src/main/cpp/waylandcomp/generated/text-input-unstable-v3-server-protocol.h": {
+  "mode": "100644",
+  "sha": "c8473dd6adbcb374cfe2e1dd7bc5f1486a4625fe"
+ },
+ "app/src/main/cpp/waylandcomp/generated/viewporter-protocol.c": {
+  "mode": "100644",
+  "sha": "d6aaa71e7fb06aef784276ebf2155e4971e5f0af"
+ },
+ "app/src/main/cpp/waylandcomp/generated/viewporter-server-protocol.h": {
+  "mode": "100644",
+  "sha": "51957565cbacf0821ecda9b5996630b13162fa37"
+ },
+ "app/src/main/cpp/waylandcomp/generated/wlr-data-control-unstable-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "4bb2945afc1944ee20b1aecd933dd3891e2dd7f7"
+ },
+ "app/src/main/cpp/waylandcomp/generated/wlr-data-control-unstable-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "a4848758480b3512afe56802da8ebc55cdbbc0b4"
+ },
+ "app/src/main/cpp/waylandcomp/generated/xdg-shell-client-protocol.h": {
+  "mode": "100644",
+  "sha": "5280ba38b8132c6937966cf340dad5e14a8dbfa9"
+ },
+ "app/src/main/cpp/waylandcomp/generated/xdg-shell-protocol.c": {
+  "mode": "100644",
+  "sha": "72b394a2b5b84cb333a0ed715ae3ab994b10e567"
+ },
+ "app/src/main/cpp/waylandcomp/generated/xdg-shell-server-protocol.h": {
+  "mode": "100644",
+  "sha": "2683694cee135f0a6ee216d2e58e7c83474fd5db"
+ },
+ "app/src/main/cpp/waylandcomp/generated/xdg-toplevel-icon-v1-protocol.c": {
+  "mode": "100644",
+  "sha": "73d39d207ab6db4e3f0978b86f4b45efe9211292"
+ },
+ "app/src/main/cpp/waylandcomp/generated/xdg-toplevel-icon-v1-server-protocol.h": {
+  "mode": "100644",
+  "sha": "b186d88975be7754ade724f56ed5dd3da39f385c"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/include/wayland-server-core.h": {
+  "mode": "100644",
+  "sha": "757f6a1f1ea2b83e21b6d56ca974013b514db383"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/include/wayland-server-protocol.h": {
+  "mode": "100644",
+  "sha": "484faff1b1544a6d60847894c3e4f363c29754d1"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/include/wayland-server.h": {
+  "mode": "100644",
+  "sha": "48fab1ddace766ba884bd4cb67c2d74ddaeed9c5"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/include/wayland-util.h": {
+  "mode": "100644",
+  "sha": "98c72fdedaca2f661d7c6818a6f20a592fa67cee"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/include/wayland-version.h": {
+  "mode": "100644",
+  "sha": "c7e04c2cd43e71aa3798284bacde4dfcb130caef"
+ },
+ "app/src/main/cpp/waylandcomp/prebuilt/lib/libwayland-server.so": {
+  "mode": "100644",
+  "sha": "4eda476851f71811079e6518749e9c6b720b631b"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/banner-ahb-v1.xml": {
+  "mode": "100644",
+  "sha": "1560c8f7cb1671fe10040b247b8b88f154b1f662"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/banner-desktop-v1.xml": {
+  "mode": "100644",
+  "sha": "7c62b2a2e2e915839752ba1304ae72b23f95716a"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/color-management-v1.xml": {
+  "mode": "100644",
+  "sha": "7f8da78f1238d23fcce195d63e650209d8e78799"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/linux-dmabuf-v1.xml": {
+  "mode": "100644",
+  "sha": "733717545a0908408dccd1a3e20ada8bd8d1537d"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/pointer-constraints-unstable-v1.xml": {
+  "mode": "100644",
+  "sha": "efd64b6603c8da85bbdfccef737e07da133d1d33"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/presentation-time.xml": {
+  "mode": "100644",
+  "sha": "c2431c500367fe7237b9c9e50b3d2255d6108082"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/relative-pointer-unstable-v1.xml": {
+  "mode": "100644",
+  "sha": "ca6f81d12ac1de1960ae1417cf4179def59b69e9"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/text-input-unstable-v3.xml": {
+  "mode": "100644",
+  "sha": "01c1e21042682a21936ebff4a815d70e52c8cf08"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/viewporter.xml": {
+  "mode": "100644",
+  "sha": "d1048d1f3327603af92ceaa446843f8fc354f819"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/wlr-data-control-unstable-v1.xml": {
+  "mode": "100644",
+  "sha": "567a09e529b6931fdc3b71d4b24cb5fc94e6d8d9"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/xdg-shell.xml": {
+  "mode": "100644",
+  "sha": "1df700146019b9a9bd02e05d618d440c6f209495"
+ },
+ "app/src/main/cpp/waylandcomp/protocols/xdg-toplevel-icon-v1.xml": {
+  "mode": "100644",
+  "sha": "985c3f3da60784e15a99cf2c9dd1648d98e54ce6"
+ },
+ "app/src/main/cpp/waylandcomp/src/ahb_swapchain.c": {
+  "mode": "100644",
+  "sha": "83212173a400f98d27d0c3315c1197813f139635"
+ },
+ "app/src/main/cpp/waylandcomp/src/ahb_swapchain.h": {
+  "mode": "100644",
+  "sha": "fff1bf2f7b476f1aaee235e2be5ea84fe27d770f"
+ },
+ "app/src/main/cpp/waylandcomp/src/banner_color.h": {
+  "mode": "100644",
+  "sha": "e39a81bfbdb7571dde5e31c5e10e257f8958495d"
+ },
+ "app/src/main/cpp/waylandcomp/src/banner_ext.c": {
+  "mode": "100644",
+  "sha": "26b88ffedccfe924f2f7987e92bec7bf3dd47a99"
+ },
+ "app/src/main/cpp/waylandcomp/src/banner_ext.h": {
+  "mode": "100644",
+  "sha": "f982b95332f522c9c9ed05a37cac5010a36bec78"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend.frag": {
+  "mode": "100644",
+  "sha": "88739de2554f35951928f0cfb28b147ed0ee5008"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend.vert": {
+  "mode": "100644",
+  "sha": "5c87cc3528228d825919ff4b84de3884a16056e5"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend_frag.h": {
+  "mode": "100644",
+  "sha": "9d2af54a3876c4f8fb7de89ecb9a94477ace58de"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend_pass.c": {
+  "mode": "100644",
+  "sha": "16f27fe6234f9329e0c19f26d2f6fed23bb2ce60"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend_pass.h": {
+  "mode": "100644",
+  "sha": "2faade252187a12f0991b0399dcbb8166ac8277d"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend_vert.h": {
+  "mode": "100644",
+  "sha": "f402c6a926d5739565467721fd6e48abe9afe437"
+ },
+ "app/src/main/cpp/waylandcomp/src/compositor.c": {
+  "mode": "100644",
+  "sha": "5607d944f3c5db50af8dac028e8fa96a65c0e077"
+ },
+ "app/src/main/cpp/waylandcomp/src/compositor_internal.h": {
+  "mode": "100644",
+  "sha": "db739132afc1240629366a60218d19f419a032fa"
+ },
+ "app/src/main/cpp/waylandcomp/src/effects_chain.c": {
+  "mode": "100644",
+  "sha": "40a631f1f1de68d394c7742a0233b987834afebf"
+ },
+ "app/src/main/cpp/waylandcomp/src/effects_chain.h": {
+  "mode": "100644",
+  "sha": "74203bccc1bd07a18b03a6741ca6fd967444e56b"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_bridge.c": {
+  "mode": "100644",
+  "sha": "afc4c250bbf6c5bd6a2c1c02d7ba1cfe644ecf37"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_bridge.h": {
+  "mode": "100644",
+  "sha": "2d4d6d99a5d1f71f12cafe641b93912a89bf8687"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_engine.cpp": {
+  "mode": "100644",
+  "sha": "5f2a58d46b0fef06a7a6361388d2b6cf2d27a3a0"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_engine.h": {
+  "mode": "100644",
+  "sha": "ecc9e30d19a40876d1d3af06104fd1bfea4bf379"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_engine_stub.c": {
+  "mode": "100644",
+  "sha": "45bd27dfff54f54aee5224cb142bed4d5059145f"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_jni.c": {
+  "mode": "100644",
+  "sha": "c693ad25c75dbeb3d7e8dfd3188ae7b4200c8f2b"
+ },
+ "app/src/main/cpp/waylandcomp/src/hdr_compose.c": {
+  "mode": "100644",
+  "sha": "40466780db53d43beb914cb3fe72eddeaca570e1"
+ },
+ "app/src/main/cpp/waylandcomp/src/hdr_compose.h": {
+  "mode": "100644",
+  "sha": "cfeef7497274f57115aa017db03ce7ec0ce04e59"
+ },
+ "app/src/main/cpp/waylandcomp/src/hdr_encode.frag": {
+  "mode": "100644",
+  "sha": "4b75ed5861434db7f0a4867a165b8a789e3d2d5e"
+ },
+ "app/src/main/cpp/waylandcomp/src/hdr_encode_frag.h": {
+  "mode": "100644",
+  "sha": "eb1536f1f3dfe563f3e9214b7de6ef50aa173d5f"
+ },
+ "app/src/main/cpp/waylandcomp/src/sc_layer.c": {
+  "mode": "100644",
+  "sha": "75d3fbbb57e4e76c8ee3f85c4ac94af9f74d79fb"
+ },
+ "app/src/main/cpp/waylandcomp/src/sc_layer.h": {
+  "mode": "100644",
+  "sha": "f2f12a704f5fb0b2252d9e83b2b5bd8a2856d349"
+ },
+ "app/src/main/cpp/waylandcomp/src/vk_loader.c": {
+  "mode": "100644",
+  "sha": "c88b980fc9ac81df0147f1f867a578e31536669b"
+ },
+ "app/src/main/cpp/waylandcomp/src/vk_loader.h": {
+  "mode": "100644",
+  "sha": "32a15ae874f090e186bee19c1002cdad133ec2d9"
+ },
+ "app/src/main/cpp/waylandcomp/src/vk_present.c": {
+  "mode": "100644",
+  "sha": "9aa3e34ec65101b1f787693ab43f728c922ae307"
+ },
+ "app/src/main/cpp/waylandcomp/src/vk_present.h": {
+  "mode": "100644",
+  "sha": "eef9c80cca54c9a54dbb04ceef14c4f4dd343583"
+ },
+ "app/src/main/cpp/waylandcomp/src/waylandcomp_jni.c": {
+  "mode": "100644",
+  "sha": "65c99b07dc08570243ee09ef6478b493ef0f1244"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_clipboard.c": {
+  "mode": "100644",
+  "sha": "e6a43717d0346fe84b5d92ba3ac83bc8e291f6ee"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_color_mgmt.c": {
+  "mode": "100644",
+  "sha": "e24be4461054a876c9274862dea09448a4654e68"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_dmabuf.c": {
+  "mode": "100644",
+  "sha": "5ce91dbc0f0d953987830ef61f9c583b79100102"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_text_input.c": {
+  "mode": "100644",
+  "sha": "cad88e4906c414eb695d2ac4e01fad6ed690f0b0"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_toplevel_icon.c": {
+  "mode": "100644",
+  "sha": "17a9f59e088b983379c21e7971ed80f6400b1af7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/App.kt": {
+  "mode": "100644",
+  "sha": "8caeae18286cd6f644ee27f85846e92f1239e215"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ComponentsMenu.kt": {
+  "mode": "100644",
+  "sha": "9c288cb559c47b3b1b4347cf4e600803be54d7e8"
+ },
+ "app/src/main/java/com/droiddeck/launcher/DeckyMenu.kt": {
+  "mode": "100644",
+  "sha": "0607dc7c5519307cb4d25bdbaa47b631df2bbd68"
+ },
+ "app/src/main/java/com/droiddeck/launcher/DriverMenus.kt": {
+  "mode": "100644",
+  "sha": "64c73b7f54f2837cda3bbeaf7bc6e7e64fb9f94f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/HomeActivity.kt": {
+  "mode": "100644",
+  "sha": "14921e1b32920fe2f89947a0a62338c3f4d32a75"
+ },
+ "app/src/main/java/com/droiddeck/launcher/HomeApp.kt": {
+  "mode": "100644",
+  "sha": "cc1b2afc0aa5012e3b13ce552b0ef509b631c81a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/MainActivity.kt": {
+  "mode": "100644",
+  "sha": "1a26ecb8ccb4f900883034b7bd25e309439ed935"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ProtonMenu.kt": {
+  "mode": "100644",
+  "sha": "8c9e73a4cf8583b34f0036591f0499860e5e526a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/SessionActivity.kt": {
+  "mode": "100644",
+  "sha": "d619fc3d4cd337de1addf7f6b03a2ac0c8edcb24"
+ },
+ "app/src/main/java/com/droiddeck/launcher/audio/DirectAudioRelayComponent.java": {
+  "mode": "100644",
+  "sha": "75f2c7ecba7d83dc776b443fa864e7440fd70ecb"
+ },
+ "app/src/main/java/com/droiddeck/launcher/audio/PulseAudioComponent.java": {
+  "mode": "100644",
+  "sha": "fb66bb1413d00213a6bbd4d65d5822c68dbcafba"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/ArchivePaths.java": {
+  "mode": "100644",
+  "sha": "3f9eaee443eb59711e327ba750965a8fce7d674f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/CpuCores.kt": {
+  "mode": "100644",
+  "sha": "5b0b82209e7b690a2f7eb45412bada0a2604719b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt": {
+  "mode": "100644",
+  "sha": "2a0d391017384d43406e67c4b0bb3c12919b3b4d"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/DeviceSupport.kt": {
+  "mode": "100644",
+  "sha": "71ef3f94eea7800e18d02c5be282fbcd7d2b1608"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/Downloader.java": {
+  "mode": "100644",
+  "sha": "b7043e00aec921c5c56e219bab4edc0f5ba8b3de"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/FexPreset.kt": {
+  "mode": "100644",
+  "sha": "f0c0feb3f56f5b1da500f23aa69e17848a75853f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/FileUtils.java": {
+  "mode": "100644",
+  "sha": "9a48010a8717352cdfa71868f6ccf35dba48e9e7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/GameEnvironment.kt": {
+  "mode": "100644",
+  "sha": "11975edd38d216b0db32e6b01225a5cb38f02b40"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/GameEnvironmentOptions.kt": {
+  "mode": "100644",
+  "sha": "0904c5b2a75672de6222d697fabd96ec7b407f10"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/Hashes.kt": {
+  "mode": "100644",
+  "sha": "072874c8760a38af02681158796bdb1601c38e19"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/HostEnvironment.kt": {
+  "mode": "100644",
+  "sha": "f40c93f82377284415ede09d4fa9b6875dc84b6c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/HostProcess.kt": {
+  "mode": "100644",
+  "sha": "584dee665f011c74a72401f7ba2c88d91139c245"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/LogRedactor.kt": {
+  "mode": "100644",
+  "sha": "4712f65e427704b09756a494eab76efb05c1abc3"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/NetworkReport.kt": {
+  "mode": "100644",
+  "sha": "5382dbfc6ca560f732a71703d4e639edaf4a7af9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/PhantomProcessLimit.kt": {
+  "mode": "100644",
+  "sha": "afad392e1084450561a88c8cc334dc139dc39b10"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/SessionLogCapture.kt": {
+  "mode": "100644",
+  "sha": "d9293db333008508d0677af43a19a461d9b4338a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/SessionPart.java": {
+  "mode": "100644",
+  "sha": "86f4380aa92dc404587e430484d5de5e43b26487"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/TarZst.java": {
+  "mode": "100644",
+  "sha": "c85d7a634fd83420238dc22dc4443411fe837d6c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/WirelessAdbFix.kt": {
+  "mode": "100644",
+  "sha": "f541725818b1b4e3e0cced12e64087e255f3118e"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/WirelessAdbPairingService.kt": {
+  "mode": "100644",
+  "sha": "cc8b95f1dfb1077194d23ddd2a0406c5dcd2dc56"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/AppFilesProvider.kt": {
+  "mode": "100644",
+  "sha": "2a6b3d049743e9b630a14e7c3bfbeb0cca004410"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/CollapsibleRail.kt": {
+  "mode": "100644",
+  "sha": "bd180835fbd5415bd945f22f504390e37ac6d665"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FavoritesStore.kt": {
+  "mode": "100644",
+  "sha": "de38b7a4f736455a27970cb03aa5b14f7dcbc20d"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileAttributes.kt": {
+  "mode": "100644",
+  "sha": "60c359bf4ba17f78b43ffa03fc2f6f1a0ecf2550"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileManagerActivity.kt": {
+  "mode": "100644",
+  "sha": "88c2462ed071d842a53117daf259b485eca683ad"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileManagerItems.kt": {
+  "mode": "100644",
+  "sha": "fa6c989f6090c0b92b1b4b33070fd5215a9ad360"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileManagerModel.kt": {
+  "mode": "100644",
+  "sha": "7fdc869ef3bc9212b74e0ea9d2baa335550f3ce5"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileManagerScreen.kt": {
+  "mode": "100644",
+  "sha": "303f2b9809b40f3f7b63d33067bf555dd78d2dbd"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FileOps.kt": {
+  "mode": "100644",
+  "sha": "210c46d5dc57291a5b3af7db741f10b86453bed2"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FilePickerActivity.kt": {
+  "mode": "100644",
+  "sha": "87b8a1de132c1e8f7ae2d5dadb40742f7d75b583"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/FilePropertiesDialog.kt": {
+  "mode": "100644",
+  "sha": "73e82b6d235a704e5b16b6f6a12c93f66b1e6edc"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/InAppFilePicker.kt": {
+  "mode": "100644",
+  "sha": "f53ffd26fff90e49dc84800e8fb1728cce8caa3b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/MenuStyle.kt": {
+  "mode": "100644",
+  "sha": "4435c3795bed0d4c0e7de696a9ee8c672cf2b77d"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/OutlinedAlertDialog.kt": {
+  "mode": "100644",
+  "sha": "3159d361cee922553d8b295ceb2d8516597deaaa"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/PeIconExtractor.kt": {
+  "mode": "100644",
+  "sha": "dc65b5e0cd2aeaf1bcf2aeae8207d867796963a5"
+ },
+ "app/src/main/java/com/droiddeck/launcher/files/StorageRoots.kt": {
+  "mode": "100644",
+  "sha": "03266cdab91e5741272e36ff6c5ac519fb26e98e"
+ },
+ "app/src/main/java/com/droiddeck/launcher/frontend/AddedGameArt.kt": {
+  "mode": "100644",
+  "sha": "ecc92a1db69de3afb256f9c9511912b82e2df5e9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/frontend/AddedGames.kt": {
+  "mode": "100644",
+  "sha": "6d833d9318c252828569573622f0e30684d4e226"
+ },
+ "app/src/main/java/com/droiddeck/launcher/frontend/CoverArt.kt": {
+  "mode": "100644",
+  "sha": "cf7f151aa35d20e3d72ffc4be8f075510e1a9be7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/frontend/Library.kt": {
+  "mode": "100644",
+  "sha": "50c93e9d0e9b544add98043c52d08dc3ea8d422a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/FrameGen.kt": {
+  "mode": "100644",
+  "sha": "81e77c7552901f8658b531574634593d1a85bb2c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/LinuxVulkanDriver.java": {
+  "mode": "100644",
+  "sha": "3b98dda0b1ed7bc411a55c291cbe7d0c6e96d7ab"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/LinuxVulkanDriverManager.java": {
+  "mode": "100644",
+  "sha": "60a4e19423b74b8f5e7daa596b26c20d51115c81"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/LsfgNative.java": {
+  "mode": "100644",
+  "sha": "4e6a813d14986edd1e8a480a752317c520b4aaf0"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/TurnipDriver.java": {
+  "mode": "100644",
+  "sha": "ff0e7d34396d1d021f20283cf9715dd4bcdd93d6"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/TurnipReleases.kt": {
+  "mode": "100644",
+  "sha": "bb65066b897f7f204dffe4447859778a5916f814"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/ControllerEditorActivity.kt": {
+  "mode": "100644",
+  "sha": "c26d5f43303057355c9a011540dbbd80afea58f0"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/ControllerPrefs.kt": {
+  "mode": "100644",
+  "sha": "7b51ecdb6a26c2397d8e8854bdfe64d0d93f512f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/DeckControls.kt": {
+  "mode": "100644",
+  "sha": "23146be37446eda4dabfef7e2aabc491847cb573"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/EvdevKeys.java": {
+  "mode": "100644",
+  "sha": "23aae64be7871ddb1001ca9018f7627f44783f84"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/FakeInputWriter.java": {
+  "mode": "100644",
+  "sha": "bd5de01c81f405362ff74f462457d2057380829e"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/KeyboardHost.kt": {
+  "mode": "100644",
+  "sha": "48e54c7918082a0d9f34e59c9e7dc277963ea319"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/OnScreenControls.kt": {
+  "mode": "100644",
+  "sha": "e14ac7ccc714361191f6ffd0c1baf4455e53a667"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/PadBridge.java": {
+  "mode": "100644",
+  "sha": "e343663f32955051aa8cabd48ca3fb46db9886db"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/PadMotion.kt": {
+  "mode": "100644",
+  "sha": "22f7fc54440e73142836807883c1e7371095fb53"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/PadState.kt": {
+  "mode": "100644",
+  "sha": "c798b682f0e26b9541319567a79304b52166a5e0"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/PointerGestures.kt": {
+  "mode": "100644",
+  "sha": "9183578d1e132458179c698df587c5d4c26dc1b3"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/SecondScreenMode.kt": {
+  "mode": "100644",
+  "sha": "43e84c3604ca9a44c50c41175b3d55f7c0366b28"
+ },
+ "app/src/main/java/com/droiddeck/launcher/input/TouchpadGestures.kt": {
+  "mode": "100644",
+  "sha": "48e4642a6e87fe09396bdcfe32545402ad00b056"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/AppImageManager.kt": {
+  "mode": "100644",
+  "sha": "5198732200ff0a4b4f7ab02c0301a513ab37245b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/BwrapSpawner.kt": {
+  "mode": "100644",
+  "sha": "704e3ec70f308050233581cc4926e2ec6a341221"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/DeckyManager.kt": {
+  "mode": "100644",
+  "sha": "2448710dcee993f9a2678c1c8eebbc6fa33ae9c1"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/DesktopCatalog.kt": {
+  "mode": "100644",
+  "sha": "4eb1bc5f81353b64359009f105bf7379210a385d"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/FlatpakManager.kt": {
+  "mode": "100644",
+  "sha": "f0c2df40d311d8b0aac6ad1235dc9fd5441cdaec"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/GuestCommand.kt": {
+  "mode": "100644",
+  "sha": "d420d5771d3f8e84d0d64d251991cf3cb671c1ac"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/LinuxNetworkLinkComponent.kt": {
+  "mode": "100644",
+  "sha": "50183e4c5df7001e7cc332c0b161e285fbfaaeed"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/LinuxRuntime.java": {
+  "mode": "100644",
+  "sha": "6ad52da27fcbc5f837b7b7529e595133b7517ce2"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/LinuxRuntimeInstaller.java": {
+  "mode": "100644",
+  "sha": "aff89728c5cff449712649143c2a487f2275df5c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/RuntimeInstallService.kt": {
+  "mode": "100644",
+  "sha": "0342c2defebacddc61f9e413e88d93d934965362"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/BatteryComponent.kt": {
+  "mode": "100644",
+  "sha": "42d4bad94fcd914e835958324e4987b16f24b7d8"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/ComponentsManager.kt": {
+  "mode": "100644",
+  "sha": "cfa3c7343091d4bd4cd9927ec3d8edf287e25000"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/CrashHandler.kt": {
+  "mode": "100644",
+  "sha": "68ce10e47709288d60c7b60129e28d528da6540d"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/GameEnvironmentStore.kt": {
+  "mode": "100644",
+  "sha": "4210d07e6a3fd9aa3d0149d34a83a4d0ddab479a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/GameSaves.kt": {
+  "mode": "100644",
+  "sha": "602f77f16d375d67f4efdc176b67a37de0e9cc6c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/GameStorage.kt": {
+  "mode": "100644",
+  "sha": "a9d8d5ad01f9baf29b6983f81e67fba7d8d186ee"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/LoadingState.kt": {
+  "mode": "100644",
+  "sha": "9de62e818cd9cb749f21c74d5791f9dbf1c4694b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/OfflineMode.kt": {
+  "mode": "100644",
+  "sha": "1cc7cb4b3bbbd4e002eb3433540b7c724c6b65fe"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/OrphanReaper.kt": {
+  "mode": "100644",
+  "sha": "22c6c923fc6df00f91aadd8bd560bac644bd45c7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/PerfHud.kt": {
+  "mode": "100644",
+  "sha": "14dc7099e858aee1889db0387b2d02e30fdf96ca"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/PerfMode.kt": {
+  "mode": "100644",
+  "sha": "0b5f28d4f73fa18b42557a3539b3e4f6e64ccb82"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/ProtonExtras.kt": {
+  "mode": "100644",
+  "sha": "930652b651d7cbd2e36673c4af2b8af564bf5ed9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/RivalClients.kt": {
+  "mode": "100644",
+  "sha": "5fe5d05ca89110b18b6a55e709cc623a06b4197a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/RumbleComponent.kt": {
+  "mode": "100644",
+  "sha": "053beda3648ee4e87b3217753392b5091b72f120"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionArtifacts.kt": {
+  "mode": "100644",
+  "sha": "9323f4ed8306f6b8b8d8fa71b90eb3b055630dc8"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionEvents.kt": {
+  "mode": "100644",
+  "sha": "0288514b0baaec167ccc4ffeffbd206d8c4b2aac"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionFiles.kt": {
+  "mode": "100644",
+  "sha": "fcd4526ca6e929a903ad3f922aee1111ec685e97"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionLogShare.kt": {
+  "mode": "100644",
+  "sha": "e1eed1529e4d01e5e334e43c72f046889e7ae652"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionPaths.kt": {
+  "mode": "100644",
+  "sha": "771e51bb31c29760acb248e3cda81fd779d1889a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionPrefs.kt": {
+  "mode": "100644",
+  "sha": "3c09a8a9d1705df509f96cf309dc3aa71c0e17bd"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionService.kt": {
+  "mode": "100644",
+  "sha": "18f3585de1b5905e3c7f323048abd5e2e1780b3b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionState.kt": {
+  "mode": "100644",
+  "sha": "71245d3fc03ab445604da506b60ee6d957ec3e91"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionSuspendController.kt": {
+  "mode": "100644",
+  "sha": "662d44e710d7989427eb69ca4258cfd73b86a318"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionTerminal.kt": {
+  "mode": "100644",
+  "sha": "4cc1b38365868866d27ebc1e9b580d184a80d095"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SteamDeckPad.kt": {
+  "mode": "100644",
+  "sha": "6b94e9d8af31917ca82179dc90510b91395712df"
+ },
+ "app/src/main/java/com/droiddeck/launcher/store/AppImageState.kt": {
+  "mode": "100644",
+  "sha": "cad0908d2c1afda340d375c5836d229808ee7dae"
+ },
+ "app/src/main/java/com/droiddeck/launcher/store/FlathubApi.kt": {
+  "mode": "100644",
+  "sha": "599927da4f5aebfc4a12ceda1774f4c683c430ed"
+ },
+ "app/src/main/java/com/droiddeck/launcher/store/StoreState.kt": {
+  "mode": "100644",
+  "sha": "915a0e6ad487dfd17f09090ae142878b6da038dd"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ComponentsPage.kt": {
+  "mode": "100644",
+  "sha": "865eba2bed418331fafbcb2954d3b6613f5894e4"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ControllerSettings.kt": {
+  "mode": "100644",
+  "sha": "d3c6058fcad9eda73d90f5fe72219c130327fab7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/CursorOverlay.kt": {
+  "mode": "100644",
+  "sha": "6b527c97c2d70e660cd22838be811466e3479aca"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/DeckControlsPanel.kt": {
+  "mode": "100644",
+  "sha": "14bfe5362970abd1f9252b1c70a6e9b0b725ea9b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/DriverPage.kt": {
+  "mode": "100644",
+  "sha": "80142ac59a74c17b69359054f8a6752ebdd494bb"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrameGenMenu.kt": {
+  "mode": "100644",
+  "sha": "4ce4248ba71770922ac1b25256163faba0089569"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndArt.kt": {
+  "mode": "100644",
+  "sha": "a49df3698c40c3258448c2cdd69130565f966eff"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndContent.kt": {
+  "mode": "100644",
+  "sha": "771e5a8dc944852ffdb3ee56844512b27547c198"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndGames.kt": {
+  "mode": "100644",
+  "sha": "54b2be98706db78d37c997026e2afbb828356659"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndRail.kt": {
+  "mode": "100644",
+  "sha": "6ebb638c146a8d6004f212b1165e8cbc13ba720f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndScreen.kt": {
+  "mode": "100644",
+  "sha": "0fd424a81f9c80d33f96956f46f16554af1c3cf6"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndSetup.kt": {
+  "mode": "100644",
+  "sha": "34c56b40d7a7a256ff8fb9bdfb18f3088a7c9276"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndWidgets.kt": {
+  "mode": "100644",
+  "sha": "c95b3afa0f1468a2bba811884c625dfa89db1088"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/GameEnvironmentEditor.kt": {
+  "mode": "100644",
+  "sha": "c871ac84722f3617b21d98eb0b8262d68c5ee818"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/LaunchFlood.kt": {
+  "mode": "100644",
+  "sha": "59d257273d8280ad8cf170e623564efc07798ebd"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/Layout.kt": {
+  "mode": "100644",
+  "sha": "3ddef26c310b65038ca821f245090b7ecd8b06a9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/MainScreen.kt": {
+  "mode": "100644",
+  "sha": "b5752b5e4495443f1dfc19e4d1f2dca089df32fc"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ModeSettingsDialog.kt": {
+  "mode": "100644",
+  "sha": "1bbdc0019a27eddfd73e475ce1b556b9f97694b6"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PackageRow.kt": {
+  "mode": "100644",
+  "sha": "2bf44f30c0fb862a4fce7a3ef1097dbe9552517f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PcKeyboard.kt": {
+  "mode": "100644",
+  "sha": "ebe5ee7ac3db73cb2825b55126c97603d1e343fe"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PerformanceDialog.kt": {
+  "mode": "100644",
+  "sha": "9945262d0abcadd0d3fd23b43aeb2d86ae2055b5"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PhantomProcessGatePage.kt": {
+  "mode": "100644",
+  "sha": "6350a70ccddfffe9144451a7f1671e115ceac837"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ProtonPage.kt": {
+  "mode": "100644",
+  "sha": "30eb0cf644ca74a88902b3d504a8c85c7a2f0b65"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/RomsDialog.kt": {
+  "mode": "100644",
+  "sha": "a633d43fab42638f293fde171b8a69b88e339c42"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SecondScreenPresentation.kt": {
+  "mode": "100644",
+  "sha": "7822877e0fd825d285d65c0c11901a453857e7fa"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SessionLoading.kt": {
+  "mode": "100644",
+  "sha": "c0349c7e45dfdffee0fd3c54e4aadbe23aaa5496"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SessionOverlay.kt": {
+  "mode": "100644",
+  "sha": "1aa6d77c91c145fb943e7b9d1e99fd7e17b176d0"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SettingsWidgets.kt": {
+  "mode": "100644",
+  "sha": "602ecbe5c474a39edbfc5afcdbb35b809ecb8757"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SteamHome.kt": {
+  "mode": "100644",
+  "sha": "f4a967e9dab0a488c91e2327dc6434ffd44f464e"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/StorePage.kt": {
+  "mode": "100644",
+  "sha": "306c479bdc230af9012a20f27cd4d7ea93de4960"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/Theme.kt": {
+  "mode": "100644",
+  "sha": "782e55bcdc013eb85aec2010d63fb817f4d297fa"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/Throbber.kt": {
+  "mode": "100644",
+  "sha": "c58be35e29e77e5f9bdcf76b95a8d73434f9bb7c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/WirelessAdbFixPage.kt": {
+  "mode": "100644",
+  "sha": "1ddfc94fb0df3f3c3bbddceb6f1ee17015b37cc0"
+ },
+ "app/src/main/java/com/droiddeck/launcher/wayland/CompositorHost.kt": {
+  "mode": "100644",
+  "sha": "4a28f4a8555e83999893f189d29d2f7526a5ab61"
+ },
+ "app/src/main/java/com/droiddeck/launcher/wayland/HdrSupport.kt": {
+  "mode": "100644",
+  "sha": "b660da0719acf8a15dd985c8825ce5533134a0c1"
+ },
+ "app/src/main/java/com/droiddeck/launcher/wayland/WaylandCompositor.java": {
+  "mode": "100644",
+  "sha": "048ff2ef167eaf494e4c4c2c3781051809c9b3f5"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libdirectaudiorelay.so": {
+  "mode": "100644",
+  "sha": "d530b848ff722ac830212e25a6028260b675a132"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libffi.so": {
+  "mode": "100644",
+  "sha": "eceb85edf5da4613cfebe759c18d1b65766f7cf9"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libltdl.so": {
+  "mode": "100644",
+  "sha": "100b64c2a894c34b995756b69282e62ff8ce0986"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libpulse.so": {
+  "mode": "100644",
+  "sha": "5791e2a2908fa7277b8a2b0350adbc9f5166488d"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libpulseaudio.so": {
+  "mode": "100644",
+  "sha": "f13a308c58f135d96173eee01424c731ca0fb763"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libpulsecommon-13.0.so": {
+  "mode": "100644",
+  "sha": "798caa1715804f23eeafb3ce90b2fa0375873e4b"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libpulsecore-13.0.so": {
+  "mode": "100644",
+  "sha": "dd5fa7f709704817d25981e2a3fc80904fd39eff"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libsndfile.so": {
+  "mode": "100644",
+  "sha": "edc92020af2833c1546366624b5d5234a7444edd"
+ },
+ "app/src/main/jniLibs/arm64-v8a/libwayland-server.so": {
+  "mode": "100644",
+  "sha": "4eda476851f71811079e6518749e9c6b720b631b"
+ },
+ "app/src/main/res/anim/session_hold.xml": {
+  "mode": "100644",
+  "sha": "60e4638f6f517f3714d176b360b7693b62ba16d6"
+ },
+ "app/src/main/res/anim/session_rise.xml": {
+  "mode": "100644",
+  "sha": "7aa0b707445c3311df3bfaa4b8013e2b61dd5740"
+ },
+ "app/src/main/res/anim/session_sink.xml": {
+  "mode": "100644",
+  "sha": "6854de13dec628efc80c3a218f78786964dfa17d"
+ },
+ "app/src/main/res/drawable-nodpi/emu_cemu.png": {
+  "mode": "100644",
+  "sha": "6f65507248160cd5f649d43be8295e90b5aa1622"
+ },
+ "app/src/main/res/drawable-nodpi/emu_dolphin.png": {
+  "mode": "100644",
+  "sha": "5a1b09cdbbcf73f005ef043efa480af1e384d4f5"
+ },
+ "app/src/main/res/drawable-nodpi/emu_duckstation.png": {
+  "mode": "100644",
+  "sha": "f039412f225406ba4f8b5ef379a7d39c19fa5aa2"
+ },
+ "app/src/main/res/drawable-nodpi/emu_melonds.png": {
+  "mode": "100644",
+  "sha": "412505fafb6a4c2a86e13d0fdfbb23940af20000"
+ },
+ "app/src/main/res/drawable-nodpi/emu_pcsx2.png": {
+  "mode": "100644",
+  "sha": "60ed12d7837a637763aac24fce976f99863de2c3"
+ },
+ "app/src/main/res/drawable-nodpi/emu_ppsspp.png": {
+  "mode": "100644",
+  "sha": "9ffcbdc1d8e2688446838f481ed6f5ff904aaf00"
+ },
+ "app/src/main/res/drawable-nodpi/emu_retroarch.png": {
+  "mode": "100644",
+  "sha": "2d2ef4bdfcabb7faf110de10fac5870270c7d3cf"
+ },
+ "app/src/main/res/drawable-nodpi/emu_rpcs3.png": {
+  "mode": "100644",
+  "sha": "aa294825c202dc1d211fb8332268bec24143ac6a"
+ },
+ "app/src/main/res/drawable-nodpi/logo.png": {
+  "mode": "100644",
+  "sha": "f9cb240ccc7558b77244c58d3c064dfd92c95637"
+ },
+ "app/src/main/res/drawable/ic_stat_session.xml": {
+  "mode": "100644",
+  "sha": "0efa80f6cff7c9468337334a0a7251de135e100b"
+ },
+ "app/src/main/res/drawable/icon_menu_container.xml": {
+  "mode": "100644",
+  "sha": "c75cafd2b28277242df2622805cd38368f2e5b39"
+ },
+ "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": {
+  "mode": "100644",
+  "sha": "8ae0e296151364d42e967cf1bae459d69ff8fa7b"
+ },
+ "app/src/main/res/mipmap-hdpi/ic_launcher_background.png": {
+  "mode": "100644",
+  "sha": "4d43523810b281fb16c937a87921ae44f310a6eb"
+ },
+ "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png": {
+  "mode": "100644",
+  "sha": "fac0ce1597b217454757fcfbb92346cdfd763151"
+ },
+ "app/src/main/res/mipmap-mdpi/ic_launcher_background.png": {
+  "mode": "100644",
+  "sha": "adcd0243a0f6a70f06342e0c9dcdc3218d3087f4"
+ },
+ "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png": {
+  "mode": "100644",
+  "sha": "2e204d6508d26bc59a0fbfc82554a9ce8dd5939c"
+ },
+ "app/src/main/res/mipmap-xhdpi/ic_launcher_background.png": {
+  "mode": "100644",
+  "sha": "1ef58344be79091da632bc6a78b8261fd638b211"
+ },
+ "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png": {
+  "mode": "100644",
+  "sha": "6579c62e6a9e680e5ce86e417113424c98e6c2a3"
+ },
+ "app/src/main/res/mipmap-xxhdpi/ic_launcher_background.png": {
+  "mode": "100644",
+  "sha": "abac9697ece4f121aa0de45ae81bbaa8082631eb"
+ },
+ "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png": {
+  "mode": "100644",
+  "sha": "cb9f1c443e064a5e194f3464c35064dccbc6ccb8"
+ },
+ "app/src/main/res/mipmap-xxxhdpi/ic_launcher_background.png": {
+  "mode": "100644",
+  "sha": "8ab6e6ea4c517c3c9a1e2a9e90f20ed5cb340103"
+ },
+ "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png": {
+  "mode": "100644",
+  "sha": "617b5db6371ff1d3dd41ac53cc14bb3b68818ef6"
+ },
+ "app/src/main/res/values-zh-rCN/strings.xml": {
+  "mode": "100644",
+  "sha": "1c5f7624aceb763f3503de7a6f253b61de38cd4d"
+ },
+ "app/src/main/res/values/strings.xml": {
+  "mode": "100644",
+  "sha": "1c5f7624aceb763f3503de7a6f253b61de38cd4d"
+ },
+ "app/src/main/res/values/themes.xml": {
+  "mode": "100644",
+  "sha": "bf4532ceac3aa34c0ecbf07a153fc3b69c553472"
+ },
+ "app/src/main/res/xml/game_mode_config.xml": {
+  "mode": "100644",
+  "sha": "b3f3e0d31340dce9771e1e642119223de0f0ea3b"
+ },
+ "app/src/main/res/xml/log_share_paths.xml": {
+  "mode": "100644",
+  "sha": "cc98eee1e5465af7db25ca160e1abd975dfea3b2"
+ },
+ "app/src/test/java/com/droiddeck/launcher/core/ArchivePathsTest.kt": {
+  "mode": "100644",
+  "sha": "0f8ac08b49e89097fa8ffdfe8a29042025ee2c2b"
+ },
+ "app/src/test/java/com/droiddeck/launcher/core/GameEnvironmentTest.kt": {
+  "mode": "100644",
+  "sha": "320f573338bbb333ec6066a78711a85ed0c17ae5"
+ },
+ "app/src/test/java/com/droiddeck/launcher/core/HashesTest.kt": {
+  "mode": "100644",
+  "sha": "dda2151fea13ebf09fbca8e5032db4339ef0a1e4"
+ },
+ "app/src/test/java/com/droiddeck/launcher/core/LogRedactorTest.kt": {
+  "mode": "100644",
+  "sha": "88f2a8703681a9554e43f44c2fdaf6613adaac20"
+ },
+ "app/src/test/java/com/droiddeck/launcher/core/PhantomProcessLimitTest.kt": {
+  "mode": "100644",
+  "sha": "e930f85e51b59c9ffd550bf379176b5fcc169188"
+ },
+ "app/src/test/java/com/droiddeck/launcher/input/OnScreenControlsTest.kt": {
+  "mode": "100644",
+  "sha": "1064ab2b8ed68117cff8887e9ccdae5a5980f4d6"
+ },
+ "app/src/test/java/com/droiddeck/launcher/runtime/AppImageManagerTest.kt": {
+  "mode": "100644",
+  "sha": "1cd246ab4a8670ab248888e01ba45678ded8b64e"
+ },
+ "app/src/test/java/com/droiddeck/launcher/runtime/BwrapSpawnerTest.kt": {
+  "mode": "100644",
+  "sha": "364c3ef9edc2b5cd587a5c08e49f538c64c1f9cc"
+ },
+ "app/src/test/java/com/droiddeck/launcher/session/GameEnvironmentStoreTest.kt": {
+  "mode": "100644",
+  "sha": "604c9456aeee85d5262311dd439a51175de86618"
+ },
+ "app/src/test/java/com/droiddeck/launcher/session/GuestHostnameTest.kt": {
+  "mode": "100644",
+  "sha": "23329a6af244bcc203c665c66d304b32352798ae"
+ },
+ "app/src/test/java/com/droiddeck/launcher/store/FlathubApiTest.kt": {
+  "mode": "100644",
+  "sha": "5aa2dfc2f90fa666f6fdd99a918d577adea38b77"
+ },
+ "artwork/README.md": {
+  "mode": "100644",
+  "sha": "b53b1335efae1c1a87224dff2416c450c2fa856b"
+ },
+ "artwork/boot-animation-source/README.md": {
+  "mode": "100644",
+  "sha": "dd283902678036288f035c504c09111d997f4e74"
+ },
+ "artwork/boot-animation-source/droiddeck-boot-sound.wav": {
+  "mode": "100644",
+  "sha": "a3f50bb11b7d245629d32d7960460c55007e4e5c"
+ },
+ "artwork/boot-animation-source/droiddeck-boot.html": {
+  "mode": "100644",
+  "sha": "353ebc0a93c287c8cbe90c8a3a6387ff23a0edaf"
+ },
+ "artwork/boot-animation-source/embed_sound.py": {
+  "mode": "100644",
+  "sha": "7354e3c32675ff18eb8432b6d4059eb925acdad9"
+ },
+ "artwork/boot-animation-source/events.py": {
+  "mode": "100644",
+  "sha": "1aa51e34043bcb5ba71533fba67e007e4cda2a51"
+ },
+ "artwork/boot-animation-source/render.py": {
+  "mode": "100644",
+  "sha": "ee85ea06a5218f7b6a73d62a78fc531e227d94dd"
+ },
+ "artwork/boot-animation-source/sound.py": {
+  "mode": "100644",
+  "sha": "f0f7eb1b83c8c722f8a7b8bb3a6328ea07de38f5"
+ },
+ "artwork/droiddeck-banner-dark.svg": {
+  "mode": "100644",
+  "sha": "020d3a7ba8d2644bf301ce7f753aa30b87b26e42"
+ },
+ "artwork/droiddeck-banner-light.svg": {
+  "mode": "100644",
+  "sha": "e74565f94d8e3fa0dc83ae7bed1f5f22706a7a4a"
+ },
+ "artwork/droiddeck-mark.svg": {
+  "mode": "100644",
+  "sha": "d748fc32605f7ef7756150dba004ffa832d14937"
+ },
+ "artwork/droiddeck-social-preview.png": {
+  "mode": "100644",
+  "sha": "a7b0962eeb21d228a59f86737ad9f58e6e0cd4f8"
+ },
+ "build.gradle": {
+  "mode": "100644",
+  "sha": "70c4e053239fe5f48fc13d9634733f2655b2332e"
+ },
+ "docs/agent-control.md": {
+  "mode": "100644",
+  "sha": "f812f1fe3ae2f6999e19c21771e9b1b54e281479"
+ },
+ "docs/development/flatpak.md": {
+  "mode": "100644",
+  "sha": "f4d15a453566d322d8cb3db8f0cf5fdf92ed6634"
+ },
+ "docs/development/game-environment.md": {
+  "mode": "100644",
+  "sha": "efebde71a1acd00e9665838a1b861e11520314e2"
+ },
+ "docs/development/steam-game-imports.md": {
+  "mode": "100644",
+  "sha": "d24f9b72073570922ba7f999679d37ca1e951aa5"
+ },
+ "docs/progress-log.md": {
+  "mode": "100644",
+  "sha": "3eb747dc958010c68d57c6c597c9f1f29dc6fba7"
+ },
+ "docs/releases/0.1.0.md": {
+  "mode": "100644",
+  "sha": "4462b6b82031a7522e26f692b740c6e32c6fc2b0"
+ },
+ "docs/releases/0.1.1.md": {
+  "mode": "100644",
+  "sha": "e341c8f7ae1e60d10f8c477b406cc94ca51207cf"
+ },
+ "docs/releases/0.1.2.md": {
+  "mode": "100644",
+  "sha": "5771793f540b9417462fad38770984ae58826ec7"
+ },
+ "docs/releases/0.1.3.md": {
+  "mode": "100644",
+  "sha": "93cec24481a273f6d0642bfebd06bc9165faf2dc"
+ },
+ "docs/releases/0.1.4.md": {
+  "mode": "100644",
+  "sha": "bbf1b6a0069b133cd0c6f80af696f47757528279"
+ },
+ "docs/releases/0.1.5.md": {
+  "mode": "100644",
+  "sha": "48befa128d4d8e93fe9e69b75c5fe9ea0791d4db"
+ },
+ "docs/releases/0.1.6.md": {
+  "mode": "100644",
+  "sha": "aa56dcdd2e0748e55da19bc0cab712a3d5a23727"
+ },
+ "docs/releases/0.2.0.md": {
+  "mode": "100644",
+  "sha": "9de2ec4027cc815d6629ae44d73132edb9af2703"
+ },
+ "docs/releases/media/0.2.0/components.jpg": {
+  "mode": "100644",
+  "sha": "c044fd6be5d992ff411e0aca5b9d990f9409a1ee"
+ },
+ "docs/releases/media/0.2.0/controller-editor.jpg": {
+  "mode": "100644",
+  "sha": "14dd9a22675114bdbdaa8c328f22208b4e915849"
+ },
+ "docs/releases/media/0.2.0/desktop-apps.jpg": {
+  "mode": "100644",
+  "sha": "1dc0d018ce829d42db3bf4415b36bdccd0e4855b"
+ },
+ "docs/releases/media/0.2.0/drawer-android-apps.jpg": {
+  "mode": "100644",
+  "sha": "932f57b28cc9d333d2612e45bdef0e5d1d7d00a3"
+ },
+ "docs/releases/media/0.2.0/dual-screen-app.gif": {
+  "mode": "100644",
+  "sha": "964bc59e9b00ae2d1dab421eafbadc61f52c3feb"
+ },
+ "docs/releases/media/0.2.0/launch-into-steam.gif": {
+  "mode": "100644",
+  "sha": "ecddf2d284d11bdc0e3704e2249ad8f7b9bd7f85"
+ },
+ "docs/releases/media/0.2.0/launcher-games.jpg": {
+  "mode": "100644",
+  "sha": "27fad9cdfffe5b4d3891092d5b116eed652ac01b"
+ },
+ "docs/releases/media/0.2.0/launcher-steam.jpg": {
+  "mode": "100644",
+  "sha": "8cb34ae6514afcbfcbf56b3b04900c43b5ee1b5f"
+ },
+ "docs/releases/media/0.2.0/linux-desktop.jpg": {
+  "mode": "100644",
+  "sha": "db70bc23b62e0410e5d2d3ffbd34f6984c8703c2"
+ },
+ "docs/releases/media/0.2.0/second-screen-terminal.jpg": {
+  "mode": "100644",
+  "sha": "36f25aae9f08387983a6b566132f151c1acc7f06"
+ },
+ "docs/releases/media/0.2.0/second-screen-trackpad.gif": {
+  "mode": "100644",
+  "sha": "8345d811b993f98f3b8cd16275c57e9255fd535f"
+ },
+ "docs/releases/media/0.2.0/session-drawer.gif": {
+  "mode": "100644",
+  "sha": "d8f06417068efd2ec351b7123310504e022cf882"
+ },
+ "findings.md": {
+  "mode": "100644",
+  "sha": "d03cd060431564a504e61c3e13051b7b59cc8de6"
+ },
+ "gradle.properties": {
+  "mode": "100644",
+  "sha": "68abc99e09fc83db57996c8d768c333942e2b334"
+ },
+ "gradle/wrapper/gradle-wrapper.jar": {
+  "mode": "100644",
+  "sha": "e708b1c023ec8b20f512888fe07c5bd3ff77bb8f"
+ },
+ "gradle/wrapper/gradle-wrapper.properties": {
+  "mode": "100644",
+  "sha": "5f070938058e68c6b3915fe3e6ebbcbfe356454b"
+ },
+ "gradlew": {
+  "mode": "100755",
+  "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+ },
+ "gradlew.bat": {
+  "mode": "100644",
+  "sha": "ac1b06f93825db68fb0c0b5150917f340eaa5d02"
+ },
+ "keystore/release-signer.sha256": {
+  "mode": "100644",
+  "sha": "21b21479168d702811bd02bc49710eafea09f716"
+ },
+ "keystore/testkey.p12": {
+  "mode": "100644",
+  "sha": "7c1682861d9cea341ca18c941ddeb7c1b963e28e"
+ },
+ "phase6-loading-pipeline.md": {
+  "mode": "100644",
+  "sha": "e793e56b4d4f97a5379ef9c2d35e1f6dc758f155"
+ },
+ "progress.md": {
+  "mode": "100644",
+  "sha": "4be4874442996d118d465fddbf1d1f4630b87303"
+ },
+ "settings.gradle": {
+  "mode": "100644",
+  "sha": "d6148649895919bb5ebf363973804014364cb114"
+ },
+ "task_plan.md": {
+  "mode": "100644",
+  "sha": "e7728d91645607ec11f4853daca5d9acc205ec40"
+ },
+ "tools/aaudio-sink/build.sh": {
+  "mode": "100755",
+  "sha": "87623901998ad9c9accb487fe7f904662f99737c"
+ },
+ "tools/aaudio-sink/config.h": {
+  "mode": "100644",
+  "sha": "4615ca53fc1e511c881b1423418929533027b52f"
+ },
+ "tools/aaudio-sink/da_relay_proto.h": {
+  "mode": "100644",
+  "sha": "351cdfb607b22f52a67e286e13256600a9ab76dc"
+ },
+ "tools/aaudio-sink/ltdl.h": {
+  "mode": "100644",
+  "sha": "84b3985c058df72d902c76f15571b7b2fe90b2b1"
+ },
+ "tools/aaudio-sink/module-aaudio-sink.c": {
+  "mode": "100644",
+  "sha": "657eeb278063972f58787d59005acd0ce74b23d5"
+ },
+ "tools/aaudio-sink/module-directaudio-sink.c": {
+  "mode": "100644",
+  "sha": "b17520f0a314c60cc6264c4fe88c81011b92d333"
+ },
+ "tools/adb_device.py": {
+  "mode": "100644",
+  "sha": "5e2990399696811ec8c5bb18387d92cae87a05da"
+ },
+ "tools/build_local.sh": {
+  "mode": "100644",
+  "sha": "484e1f47b90a6486a0b13a7b5a64271162fe2f95"
+ },
+ "tools/deploy_local.sh": {
+  "mode": "100644",
+  "sha": "94b3692d433cdbc0997943e40a8c94749ccc9f72"
+ },
+ "tools/droiddeckctl": {
+  "mode": "100644",
+  "sha": "b73c5ac29fbbf82622a7076205d25e89ff2b7353"
+ },
+ "tools/gamescope/PATCHES.md": {
+  "mode": "100644",
+  "sha": "4330eb10c6a6b3407fd0f59aae04c165067ffe5a"
+ },
+ "tools/gamescope/build-in-arch.sh": {
+  "mode": "100644",
+  "sha": "2078592aa0773452a7c41e17104f3d99db5aa082"
+ },
+ "tools/gamescope/patches/0002-steamcompmgr-fallback-appid-focus.patch": {
+  "mode": "100644",
+  "sha": "1489a25d9c6695fcea208a7f61e730d6d19303c7"
+ },
+ "tools/gamescope/patches/0009-fix-arm64-steam-night-mode.patch": {
+  "mode": "100644",
+  "sha": "a218e39f4e29983d51c9da571f44499220c374c2"
+ },
+ "tools/gamescope/patches/0019-steamcompmgr-arm64-virtual-white.patch": {
+  "mode": "100644",
+  "sha": "62914a426d6cbe563f63014074effd2609e56c8c"
+ },
+ "tools/gamescope/patches/0020-color-p3-red-is-wide-gamut.patch": {
+  "mode": "100644",
+  "sha": "047ea2d3727f923c867ed614a5d34477ec4265a0"
+ },
+ "tools/gamescope/patches/0100-realtime-queue-and-gamepad-cursor.patch": {
+  "mode": "100644",
+  "sha": "0e390b0998be2c3b0496e5d5afce386e96eb79de"
+ },
+ "tools/gamescope/patches/0110-wayland-backend-touch.patch": {
+  "mode": "100644",
+  "sha": "5a270e74937fc4e57f3b0d7fd90fc61747ce470a"
+ },
+ "tools/gamescope/patches/0111-wayland-pointer-warps-in-passthrough.patch": {
+  "mode": "100644",
+  "sha": "466d0a781f29681f67ff15741a26bfb3772a8a76"
+ },
+ "tools/gamescope/patches/0112-restore-iconified-game-on-resume.patch": {
+  "mode": "100644",
+  "sha": "2eee045e4e8930b3993b193479a33d13418388f6"
+ },
+ "tools/gamescope/release.env": {
+  "mode": "100644",
+  "sha": "48f7f270a9b2af846de7ed895675523f4dfbb6b2"
+ },
+ "tools/gamescope/runtime-sonames.txt": {
+  "mode": "100644",
+  "sha": "dd68253b9f0e15cdd534b1de5dfd400625265df2"
+ },
+ "tools/linuxfs/desktop/autostart": {
+  "mode": "100644",
+  "sha": "96d2b2c9d44c54af502d40e5ffeb217b892a0e0e"
+ },
+ "tools/linuxfs/desktop/droiddeck-desktop": {
+  "mode": "100644",
+  "sha": "27fa09c2b994dc6421d8c729f3d42fb46cc13a15"
+ },
+ "tools/linuxfs/desktop/droiddeck-desktop-gpu": {
+  "mode": "100644",
+  "sha": "d8fbc298025af83ec8d72d7eb0bf8255638e52a8"
+ },
+ "tools/linuxfs/desktop/droiddeck-gpu": {
+  "mode": "100644",
+  "sha": "057599040ed1b2a80a71ba5c8f0b1ca25ebd647f"
+ },
+ "tools/linuxfs/desktop/firefox-droiddeck.js": {
+  "mode": "100644",
+  "sha": "ad6b1e40f22e60b9248f6f18c8cca40abb4ec744"
+ },
+ "tools/linuxfs/desktop/panel.conf": {
+  "mode": "100644",
+  "sha": "06c940f749fffb70b3d38eca85cb6842e32429e9"
+ },
+ "tools/linuxfs/desktop/rc.xml": {
+  "mode": "100644",
+  "sha": "e32c083d62aceb0e5ce7453e9d43f2b5492a0f88"
+ },
+ "tools/linuxfs/overlay/usr/bin/jupiter-biosupdate": {
+  "mode": "100644",
+  "sha": "7feebb74ab9ae2813f3a25544fdc4b8a58f949df"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/jupiter-biosupdate": {
+  "mode": "100644",
+  "sha": "7feebb74ab9ae2813f3a25544fdc4b8a58f949df"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/jupiter-dock-updater": {
+  "mode": "100644",
+  "sha": "dadcac7146b43802ed424bbaa6be4014c9c14632"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/steamos-priv-write": {
+  "mode": "100644",
+  "sha": "c875c2474fbcbd5e2085072ca6600bbac8911581"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/steamos-select-branch": {
+  "mode": "100644",
+  "sha": "6f0c9d8062d92c61358c42829f8e89ca96e28ee9"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/steamos-set-timezone": {
+  "mode": "100644",
+  "sha": "f60c992817ab2f335d206a97117e2ac0a40d8e5c"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-polkit-helpers/steamos-update": {
+  "mode": "100644",
+  "sha": "fa99b087a17c35a129467911e7324af1cbd17e88"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-select-branch": {
+  "mode": "100644",
+  "sha": "6f0c9d8062d92c61358c42829f8e89ca96e28ee9"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-session-select": {
+  "mode": "100644",
+  "sha": "29013222d52799b7f5e2435b61bfd325d785b3e2"
+ },
+ "tools/linuxfs/overlay/usr/bin/steamos-update": {
+  "mode": "100644",
+  "sha": "f7536a443e2cca9fecd18f8bb7a2bd5c6631dcc7"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-appimage-run": {
+  "mode": "100644",
+  "sha": "a67847f9d7165a1a8c7203988673443385fc420a"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-bwrap": {
+  "mode": "100644",
+  "sha": "3fbc5213b3fb85fa397068fb9a0a0cad66c79050"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-desktop-games": {
+  "mode": "100644",
+  "sha": "90d3daa7486e8a8aeeb082c346b665b8300afcfd"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak": {
+  "mode": "100644",
+  "sha": "6f8887700e9bdc886e328988ffae05c2b612d4c6"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak-run": {
+  "mode": "100644",
+  "sha": "524173a570b930fba2cad9b95242590586f60bb7"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak-setup": {
+  "mode": "100644",
+  "sha": "407dbcbad9c4b101d300b1c5585661f44be70bb2"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-game-env": {
+  "mode": "100644",
+  "sha": "45c102a8ac17254248e3737dff117ff223873f3c"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-netmanager": {
+  "mode": "100644",
+  "sha": "276193e719963a336c45b07eba262d72cf0afa78"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-pad-defaults": {
+  "mode": "100644",
+  "sha": "ac9a9d6ed2a6bd81093b33655fdeafc4d466bc67"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-proton-extra": {
+  "mode": "100644",
+  "sha": "fb00a04fab0ff77f124d7fab240e7b95944d5cbf"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-seed-redists": {
+  "mode": "100644",
+  "sha": "11e55e02e18e2c6c45fd3d4e62bf9f988d59b593"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-session": {
+  "mode": "100644",
+  "sha": "c4178513415eb31d5755e233d5d2a1fa6527f060"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-compat": {
+  "mode": "100644",
+  "sha": "773e42caf57507ef4c82edf32ca071c7d8e718bd"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-games": {
+  "mode": "100644",
+  "sha": "0253bc1ab138543c0a9e39c707c1e30f93ec7597"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-install": {
+  "mode": "100644",
+  "sha": "5379e03826d32d40b86883be000498831a842ef1"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-launch": {
+  "mode": "100644",
+  "sha": "0dc9b9fbe6d8074d3eafcc872e11fc17e55ca238"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-library": {
+  "mode": "100644",
+  "sha": "8702e27206882f45ab5faba036386b6086552de8"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-shim": {
+  "mode": "100644",
+  "sha": "a30c2c8d88f5fd11004d3d3ec57582a6ae921a17"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-shortcuts": {
+  "mode": "100644",
+  "sha": "7f7625a6f2312114685ce96f75e0bab263ab4df0"
+ },
+ "tools/linuxfs/preload/drm.c": {
+  "mode": "100644",
+  "sha": "f2d3ae1926864c19872be4b80c9c0f9c3b0876fa"
+ },
+ "tools/linuxfs/preload/inputudev.c": {
+  "mode": "100644",
+  "sha": "c1d04f02980eafc669f421ef8974f2679b2b6650"
+ },
+ "tools/linuxfs/preload/lock.c": {
+  "mode": "100644",
+  "sha": "a11d024e263c9e3bcc6bf91c91577b72495aa04a"
+ },
+ "tools/linuxfs/preload/net.c": {
+  "mode": "100644",
+  "sha": "babe95bddaa974d0953e4be4b14fbe9d4c8bee65"
+ },
+ "tools/linuxfs/preload/netif.c": {
+  "mode": "100644",
+  "sha": "4b79c3f3f9a9d1efa156551585955d88ddc941db"
+ },
+ "tools/linuxfs/preload/opens.c": {
+  "mode": "100644",
+  "sha": "4c8b6e1657d9a9912633c778dd6ef14ef9734f63"
+ },
+ "tools/linuxfs/preload/pathcache.c": {
+  "mode": "100644",
+  "sha": "2f2cfd3d40a20cfd98873d842391d2e90eb06ce4"
+ },
+ "tools/linuxfs/preload/perms.c": {
+  "mode": "100644",
+  "sha": "96f1540c29c5220a917f55f975c1f747ac2b8b55"
+ },
+ "tools/linuxfs/preload/robust.c": {
+  "mode": "100644",
+  "sha": "0f0b581ca96d30a6c87c9a8ea6ab3604632e0d7a"
+ },
+ "tools/linuxfs/preload/space.c": {
+  "mode": "100644",
+  "sha": "5edc0bd3540aa689f717397016c884cef463f5d6"
+ },
+ "tools/linuxfs/preload/sysv.c": {
+  "mode": "100644",
+  "sha": "36d7bdd70e691b8b52c3f940060745ea7983467e"
+ },
+ "tools/linuxfs/preload/tracefs.c": {
+  "mode": "100644",
+  "sha": "17d45a01a50b17768d5de05072e2ba6564192197"
+ },
+ "tools/linuxfs/preload/tracer.c": {
+  "mode": "100644",
+  "sha": "afcd37ee19e542e52d11f54edf609ffb867a5bdb"
+ },
+ "tools/linuxfs/preload/udevmon.c": {
+  "mode": "100644",
+  "sha": "39e568b3be89fcc0b464347a47c56f5bf14873b6"
+ },
+ "tools/local-cross.Dockerfile": {
+  "mode": "100644",
+  "sha": "ccfd37f760bdd6e1a4013827f16cea38d39011fa"
+ },
+ "tools/mangoapp/mangoapp": {
+  "mode": "100644",
+  "sha": "e912be1a83e008e47a7b212467d65a489f8df659"
+ },
+ "tools/mangoapp/packages.txt": {
+  "mode": "100644",
+  "sha": "5df866be0c76669513f7e38da4400f90f3eee834"
+ },
+ "tools/proot/PATCHES.md": {
+  "mode": "100644",
+  "sha": "eacc3365d4f28081523225e3c83b608e69777019"
+ },
+ "tools/proot/build.sh": {
+  "mode": "100755",
+  "sha": "897e2e0172663399019074e2407828bf14af413f"
+ },
+ "tools/proot/patches/0001-tracee-lookup-by-pid.patch": {
+  "mode": "100644",
+  "sha": "3b181ced64bd2c6aa5b5510d33ab3718164584f0"
+ },
+ "tools/proot/patches/0002-canon-resolve-parent-at-once.patch": {
+  "mode": "100644",
+  "sha": "8965ba61fc57602b6065c87c6dfd45a7e36fb2f0"
+ },
+ "tools/proot/patches/0003-clone3-flags-read-guard.patch": {
+  "mode": "100644",
+  "sha": "7732979516748ce49ab75add07afa8ab8311704a"
+ },
+ "tools/proot/patches/0004-seccomp-filter-by-argument.patch": {
+  "mode": "100644",
+  "sha": "302a97eba26825e6baab70f54b1fca8223cddaa3"
+ },
+ "tools/proot/patches/0005-seccomp-skip-unneeded-sysexit.patch": {
+  "mode": "100644",
+  "sha": "9e4c0bf2123911e201cc9c60e0b8a92f21eef14e"
+ },
+ "tools/proot/patches/0006-clone3-exit-signal.patch": {
+  "mode": "100644",
+  "sha": "8424a63dd10a9176a18045cceccb1e563ec6f25d"
+ },
+ "tools/proot/patches/0007-proc-self-thread-group.patch": {
+  "mode": "100644",
+  "sha": "03c3dbfb542eef981bb73c186436c788e5ef40e6"
+ },
+ "tools/proot/patches/0008-fchmodat2-openat2.patch": {
+  "mode": "100644",
+  "sha": "e900561bb28d09d6464bd27b8abfa5f14507fe52"
+ },
+ "tools/proot/patches/0009-tracee-relatives-sweep.patch": {
+  "mode": "100644",
+  "sha": "6aea9411e7412c939b88054cab624d201fa1f9c9"
+ },
+ "tools/proot/patches/0010-new-mount-api-enosys.patch": {
+  "mode": "100644",
+  "sha": "87fd43d1f65761c4e8b9614f829f24b41568fed1"
+ },
+ "tools/proot/patches/0011-kompat-utsname-only.patch": {
+  "mode": "100644",
+  "sha": "9c1949cce51f1a8b3179cd4a10d05ec5cb6afa27"
+ },
+ "tools/proot/patches/0012-android-hardlink-denial.patch": {
+  "mode": "100644",
+  "sha": "e2d089fb3166a5b10ca4d85f947b81b7a6cc9519"
+ },
+ "tools/proot/patches/0012-fake_id0-identity-only.patch": {
+  "mode": "100644",
+  "sha": "155b62b8e902559dd2759269ca5cf8c4c068543a"
+ },
+ "tools/proot/patches/0013-seccomp-ioctl-by-request-and-kernel-exit-stops.patch": {
+  "mode": "100644",
+  "sha": "eaf62c5653b8ca53f71053ecf4009f9bebedaf69"
+ },
+ "tools/proot/source.env": {
+  "mode": "100644",
+  "sha": "1d705b893a0b3db071b27e51f00cb3a3dfaf2f98"
+ },
+ "tools/proot/talloc-config.h": {
+  "mode": "100644",
+  "sha": "ef7a805f1b8658fd3d2f4ac8c13e81dbdf39dfaa"
+ },
+ "tools/release/axml_rename.py": {
+  "mode": "100644",
+  "sha": "92da2753af41805f6030a1167def6f875fa091e2"
+ },
+ "tools/release/make-release-key.sh": {
+  "mode": "100644",
+  "sha": "1278ff8003a834d619309288f1b7bbd04da15980"
+ },
+ "tools/release/sign-apk.sh": {
+  "mode": "100644",
+  "sha": "1337b9d7660837e8abca18fa93996d872ed7f32c"
+ },
+ "tools/release/variants.txt": {
+  "mode": "100644",
+  "sha": "6071068008aa3843bfb8cb21c0abd25d88ef5779"
+ },
+ "tools/tests/test_game_environment.py": {
+  "mode": "100644",
+  "sha": "8c37d1123c97471724fa9aab959ea433ad53d3ca"
+ },
+ "tools/tests/test_steam_games.py": {
+  "mode": "100644",
+  "sha": "26220319d9e2d79e13777d37f83d773a261731f6"
+ },
+ "tools/wlroots/build-in-arch.sh": {
+  "mode": "100644",
+  "sha": "8d39c5dfadb73a1397a545a9523582239e8fc0aa"
+ },
+ "tools/wlroots/patches/0001-vulkan-allocator-for-non-drm-gpu-nodes.patch": {
+  "mode": "100644",
+  "sha": "658233f4fad7c1e7de494d7cb1f5a365b9afde51"
+ },
+ "tools/wlroots/release.env": {
+  "mode": "100644",
+  "sha": "b233303d656cf6269c17bc792368d2b9154d5bef"
+ }
+}

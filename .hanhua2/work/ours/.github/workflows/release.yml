@@ -1,0 +1,64 @@
+name: Release APKs
+run-name: release ${{ inputs.version }} from main ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version for the file names, e.g. 0.1.7
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  find:
+    name: find the main build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    outputs:
+      run_id: ${{ steps.find.outputs.run_id }}
+      variants: ${{ steps.find.outputs.variants }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          [[ $VERSION =~ ^[0-9A-Za-z._-]+$ ]] || { echo "::error::version '$VERSION': letters, digits, . _ - only"; exit 1; }
+          name=$(sed -n 's/^ *versionName "\(.*\)"$/\1/p' app/build.gradle)
+          [[ $VERSION == "$name" || $VERSION == "$name"-* ]] || {
+            echo "::error::version '$VERSION' does not match versionName '$name' in app/build.gradle: bump versionName and versionCode first"; exit 1;
+          }
+          runs=$(gh run list -R "$GITHUB_REPOSITORY" --workflow build.yml --branch main --commit "$GITHUB_SHA" \
+                   --status success --json databaseId,event,headSha -L 20)
+          id=$(jq -r --arg sha "$GITHUB_SHA" \
+                 '[.[] | select(.headSha == $sha and (.event == "push" or .event == "workflow_dispatch"))][0].databaseId // empty' <<<"$runs")
+          if [ -z "$id" ]; then
+            echo "::error::main ${GITHUB_SHA::7} has no successful Build APK run yet: wait for it, then release"
+            exit 1
+          fi
+          variants=$(awk '!/^#/ && NF { print $1 }' tools/release/variants.txt | jq -R . | jq -sc .)
+          echo "run_id=$id" >> "$GITHUB_OUTPUT"
+          echo "variants=$variants" >> "$GITHUB_OUTPUT"
+          echo "Signing Build APK run $id (main ${GITHUB_SHA::7}) as $VERSION: $variants" >> "$GITHUB_STEP_SUMMARY"
+
+  sign:
+    needs: find
+    uses: ./.github/workflows/sign.yml
+    with:
+      environment: release
+      variants: ${{ needs.find.outputs.variants }}
+      run_id: ${{ needs.find.outputs.run_id }}
+      label: ${{ inputs.version }}
+      artifact: droiddeck-release
+    secrets: inherit

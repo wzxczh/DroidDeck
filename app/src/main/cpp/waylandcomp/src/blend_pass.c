@@ -2,7 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include "blend_pass.h"
 #include "vk_loader.h"
-#include "vk_present.h" /* banner_log, vkp_gpu_name */
+#include "vk_present.h" /* droiddeck_log, vkp_gpu_name */
 #include <string.h>
 
 /* SPIR-V, pre-compiled (glslangValidator -V blend.vert --vn blend_vert_code, the same for blend.frag)
@@ -168,12 +168,12 @@ static int objects_ensure(void) {
     if (!(g_vert = shader(blend_vert_code, sizeof(blend_vert_code)))) goto fail;
     if (!(g_frag = shader(blend_frag_code, sizeof(blend_frag_code)))) goto fail;
     g_ready = 1;
-    banner_log("gpu", "%s 上的 Alpha 合成已就绪：半透明表面会与其下方内容混合",
+    droiddeck_log("gpu", "%s 上的 Alpha 合成已就绪：半透明表面会与其下方内容混合",
             vkp_gpu_name());
     return 0;
 fail:
     objects_destroy();
-    banner_log("error", "gpu: 无法在该驱动上构建 Alpha 合成通道；本次会话中半透明表面"
+    droiddeck_log("error", "gpu: 无法在该驱动上构建 Alpha 合成通道；本次会话中半透明表面"
                "以不透明方式绘制");
     return -1;
 }

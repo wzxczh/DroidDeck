@@ -14,10 +14,8 @@ import java.net.Inet6Address
  * `network.txt`: what the session was given to work with, for the reports that say "the client
  * thinks WiFi is off" or "Firefox cannot resolve anything".
  *
- * The runtime has no NetworkManager, so the client's own network panel is blind by design and says
- * so in ways that read like a fault. What actually matters is further down: whether the phone had
- * a validated link, which DNS servers the app wrote into the runtime's `resolv.conf`, and whether
- * the session can reach a name and an address at all.
+ * The runtime's NetworkManager bridge reports Android's active link. Include whether the phone
+ * had a validated link and which DNS servers the app wrote into the runtime's `resolv.conf`.
  *
  * **No network names.** The SSID is identifying and is deliberately not collected; the transport
  * type, the addresses' families and the DNS servers are what a diagnosis needs.
@@ -93,14 +91,14 @@ object NetworkReport {
         } else {
             append("etc/resolv.conf 尚不存在 — 会话链路发布时才会写入。\n")
         }
-        val netdev = File(LinuxRuntime.rootDir(context), "etc/bannerlator-net")
+        val netdev = File(LinuxRuntime.rootDir(context), "etc/droiddeck-net")
         if (netdev.isFile) {
-            append("\netc/bannerlator-net（会话视角下的链路）：\n")
+            append("\netc/droiddeck-net（会话视角下的链路）：\n")
             FileUtils.readString(netdev)?.lines()?.forEach { append("    ").append(it).append('\n') }
         }
-        append("\nproot 不创建网络命名空间，会话直接使用手机的连接：\n")
-        append("IPv4 与 IPv6 都直接通行，没有任何转发。\n")
-        append("Steam 客户端自己的网络面板通过 D-Bus 驱动 NetworkManager，而本运行时\n")
-        append("没有 NetworkManager —— 那里显示的 “wifi 已关闭” 只是外观，并非证据。\n")
+        append("\nproot 不创建网络命名空间，会话直接使用手机的\n")
+        append("连接：IPv4 与 IPv6 都直接通行，没有任何转发。\n")
+        append("Steam 通过运行时的 NetworkManager D-Bus 桥读取 Android 的传输类型、\n")
+        append("连接与计费状态；Wi-Fi 和移动网络由 Android 设置管理。\n")
     }
 }

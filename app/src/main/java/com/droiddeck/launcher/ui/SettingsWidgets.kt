@@ -1,11 +1,18 @@
 package com.droiddeck.launcher.ui
 
+import com.droiddeck.launcher.R
+import androidx.compose.ui.res.stringResource
 import android.view.KeyEvent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -22,6 +29,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,6 +39,7 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -52,6 +61,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +75,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.setProgress
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.style.TextAlign
+import kotlin.math.roundToInt
 import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInputModeManager
@@ -130,7 +155,7 @@ internal fun TabStrip(
     val pal = LocalPalette.current
     val shape = RoundedCornerShape(12.dp)
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = modifier) {
-        BumperKey("LB", "上一页签") { onSelect((selected + tabs.size - 1) % tabs.size) }
+        BumperKey("LB", stringResource(R.string.widgets_prev_tab)) { onSelect((selected + tabs.size - 1) % tabs.size) }
         Row(
             modifier = Modifier.weight(1f, fill = false).clip(shape).background(colors.surfaceVariant).border(1.dp, pal.line2, shape)
                 .horizontalScroll(rememberScrollState()).padding(3.dp),
@@ -148,14 +173,14 @@ internal fun TabStrip(
                         .then(focusRequesters?.getOrNull(i)?.let { Modifier.focusRequester(it) } ?: Modifier)
                         .clip(tabShape)
                         .background(if (on) pal.signal else if (hot) pal.signal.copy(alpha = 0.16f) else Color.Transparent)
-                        .border(2.dp, if (!hot) Color.Transparent else if (on) colors.onBackground else pal.signal, tabShape)
+                        .glideBorder(hot, tabShape, if (on) colors.onBackground else pal.signal)
                         .hoverable(src).clickable(interactionSource = src, indication = null, role = Role.Tab, onClick = pick)
                         .controllerConfirm(onClick = pick)
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                 )
             }
         }
-        BumperKey("RB", "下一页签") { onSelect((selected + 1) % tabs.size) }
+        BumperKey("RB", stringResource(R.string.widgets_next_tab)) { onSelect((selected + 1) % tabs.size) }
     }
 }
 
@@ -297,7 +322,6 @@ fun ValueChip(text: String, open: Boolean, enabled: Boolean = true, modifier: Mo
     val src = remember { MutableInteractionSource() }
     val hot = src.collectIsFocusedAsState().value || src.collectIsHoveredAsState().value
     val pal = LocalPalette.current
-    val edge by animateColorAsState(if (open || hot) pal.signal else pal.line2, Motion.tw(200), label = "chipEdge")
     val rot by animateFloatAsState(if (open) 180f else 0f, Motion.sp(0.6f), label = "chipCaret")
     Row(
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
@@ -306,7 +330,7 @@ fun ValueChip(text: String, open: Boolean, enabled: Boolean = true, modifier: Mo
             .heightIn(min = 44.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(colors.surfaceVariant)
-            .border(1.dp, edge, RoundedCornerShape(10.dp))
+            .glideBorder(hot, RoundedCornerShape(10.dp), pal.signal, if (open) pal.signal else pal.line2)
             .alpha(if (enabled) 1f else 0.5f)
             .hoverable(src).clickable(interactionSource = src, indication = LocalIndication.current, enabled = enabled, onClick = onClick)
             .controllerConfirm(enabled = enabled, onClick = onClick)
@@ -337,17 +361,26 @@ fun SettingsGroup(title: String, compact: Boolean = false, content: @Composable 
     Column(modifier = Modifier.fillMaxWidth().clip(GroupShape).background(colors.surface).border(1.dp, pal.line, GroupShape)) { content() }
 }
 
+/**
+ * One setting: its label and [hint] with the [control] beside them. [hintLines] fixes the hint to
+ * that many lines, for a hint that changes with the value - the row keeps its height, so the rows
+ * under it stay put.
+ */
 @Composable
-fun SettingsRow(label: String, hint: String?, highlighted: Boolean = false, control: @Composable () -> Unit) {
+fun SettingsRow(label: String, hint: String?, highlighted: Boolean = false, hintLines: Int? = null, control: @Composable () -> Unit) {
     val colors = MaterialTheme.colorScheme
     val pal = LocalPalette.current
     val bg by animateColorAsState(if (highlighted) pal.signal.copy(alpha = 0.10f) else Color.Transparent, Motion.tw(200), label = "rowBg")
+    val hintText: @Composable (androidx.compose.ui.unit.TextUnit) -> Unit = { size ->
+        Text(hint ?: "", fontSize = size, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp),
+            minLines = hintLines ?: 1, maxLines = hintLines ?: Int.MAX_VALUE, overflow = TextOverflow.Ellipsis)
+    }
     // A narrow page stacks the control under its label, so neither squeezes the other.
     if (LocalNarrowPane.current) Column(
         modifier = Modifier.fillMaxWidth().background(bg).padding(start = 14.dp, end = 14.dp, top = 11.dp, bottom = 12.dp),
     ) {
         Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
-        if (hint != null) Text(hint, fontSize = 13.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp))
+        if (hint != null || hintLines != null) hintText(13.sp)
         Box(Modifier.padding(top = 8.dp)) { control() }
     } else Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -355,7 +388,7 @@ fun SettingsRow(label: String, hint: String?, highlighted: Boolean = false, cont
     ) {
         Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
             Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground)
-            if (hint != null) Text(hint, fontSize = 12.5.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp))
+            if (hint != null || hintLines != null) hintText(12.5.sp)
         }
         control()
     }
@@ -368,10 +401,12 @@ fun <T> ChoiceRow(
     options: List<Pair<T, String>>, selected: T, enabled: Boolean = true, note: String? = null,
     /** For the box itself - a page's FocusRequester for its first control. */
     chipModifier: Modifier = Modifier,
+    /** See SettingsRow: a fixed height for a hint that changes with the choice. */
+    hintLines: Int? = null,
     onPick: (T) -> Unit,
 ) {
     val open = host.open == key
-    SettingsRow(label, hint, highlighted = open) {
+    SettingsRow(label, hint, highlighted = open, hintLines = hintLines) {
         Box {
             ValueChip(options.firstOrNull { it.first == selected }?.second ?: "-", open, enabled, modifier = chipModifier) { host.open = if (open) null else key }
             AnchoredMenu(open, onDismiss = { if (host.open == key) host.open = null }, title = label, note = note) { firstItemFocus ->
@@ -400,9 +435,10 @@ fun ToggleSwitch(checked: Boolean, enabled: Boolean = true, label: String? = nul
     val src = remember { MutableInteractionSource() }
     val hot = src.collectIsFocusedAsState().value || src.collectIsHoveredAsState().value
     val track by animateColorAsState(if (checked) pal.signal else colors.surfaceVariant, Motion.tw(180), label = "switchTrack")
-    val edge by animateColorAsState(if (hot) pal.signal else if (checked) pal.signal else pal.line2, Motion.tw(180), label = "switchEdge")
     val knob by animateFloatAsState(if (checked) 1f else 0f, Motion.sp(0.7f), label = "switchKnob")
     val flip = { onChange(!checked) }
+    val onLabel = stringResource(R.string.widgets_on)
+    val offLabel = stringResource(R.string.widgets_off)
     val shape = RoundedCornerShape(99.dp)
     // 48dp tall to touch; the visible track sits inside it.
     Box(
@@ -413,11 +449,11 @@ fun ToggleSwitch(checked: Boolean, enabled: Boolean = true, label: String? = nul
             .hoverable(src)
             .clickable(interactionSource = src, indication = null, enabled = enabled, role = Role.Switch, onClick = flip)
             .controllerConfirm(enabled = enabled, onClick = flip)
-            .semantics { stateDescription = if (checked) "开" else "关"; if (label != null) contentDescription = label },
+            .semantics { stateDescription = if (checked) onLabel else offLabel; if (label != null) contentDescription = label },
     ) {
         Box(
             Modifier.size(width = 52.dp, height = 30.dp).clip(shape).background(track)
-                .border(if (hot) 2.dp else 1.dp, if (hot && checked) colors.onBackground else edge, shape),
+                .glideBorder(hot, shape, if (checked) colors.onBackground else pal.signal, if (checked) pal.signal else pal.line2),
         ) {
             Box(
                 Modifier.padding(4.dp).size(22.dp)
@@ -425,6 +461,106 @@ fun ToggleSwitch(checked: Boolean, enabled: Boolean = true, label: String? = nul
                     .clip(CircleShape)
                     .background(if (checked) pal.onSignal else colors.onSurfaceVariant),
             )
+        }
+    }
+}
+
+/**
+ * A bounded value as a track: the d-pad's left and right step it by [step] (held, it keeps
+ * going), a finger drags or taps it, and [format] prints the value beside it. [modifier] goes on
+ * the focusable part, for a page's focus tracking.
+ */
+@Composable
+fun SliderRow(
+    label: String, hint: String?, value: Int, range: IntRange, step: Int = 1, enabled: Boolean = true,
+    format: (Int) -> String = { it.toString() }, modifier: Modifier = Modifier, onChange: (Int) -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    val pal = LocalPalette.current
+    Column(Modifier.fillMaxWidth()) {
+        ValueSlider(value, range, step, enabled, label, format,
+            modifier = modifier.padding(horizontal = 6.dp, vertical = 3.dp), onChange = onChange)
+        if (hint != null) Text(hint, fontSize = 12.5.sp, color = colors.onSurfaceVariant,
+            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 8.dp))
+        Box(Modifier.fillMaxWidth().height(1.dp).background(pal.line))
+    }
+}
+
+@Composable
+fun ValueSlider(
+    value: Int, range: IntRange, step: Int, enabled: Boolean, label: String?, format: (Int) -> String,
+    modifier: Modifier = Modifier, onChange: (Int) -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    val pal = LocalPalette.current
+    val source = remember { MutableInteractionSource() }
+    val hot = source.collectIsFocusedAsState().value || source.collectIsHoveredAsState().value
+    val currentOnChange by rememberUpdatedState(onChange)
+    val span = (range.last - range.first).coerceAtLeast(1)
+    val fraction = ((value - range.first).toFloat() / span).coerceIn(0f, 1f)
+    val thumbInset = with(LocalDensity.current) { 8.dp.toPx() }
+    var trackPx by remember { mutableIntStateOf(0) }
+    val text = format(value)
+    val shape = RoundedCornerShape(8.dp)
+    // Preserve off-grid preset values until the user adjusts; every input snaps to the same step.
+    fun stepped(v: Int) = (((v - range.first).toFloat() / step).roundToInt() * step + range.first).coerceIn(range.first, range.last)
+    fun fromX(x: Float) {
+        val width = trackPx - 2 * thumbInset
+        if (width > 0) {
+            val position = ((x - thumbInset) / width).coerceIn(0f, 1f)
+            currentOnChange(stepped(range.first + (position * span).roundToInt()))
+        }
+    }
+    Column(
+        modifier = modifier.fillMaxWidth().heightIn(min = 72.dp)
+            .clip(shape).background(if (hot) pal.signal.copy(alpha = 0.12f) else Color.Transparent)
+            .glideBorder(hot, shape, pal.signal)
+            .alpha(if (enabled) 1f else 0.5f)
+            .hoverable(source).focusable(enabled, source)
+            .onPreviewKeyEvent { event ->
+                val keyEvent = event.nativeKeyEvent
+                val left = keyEvent.keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                if (!left && keyEvent.keyCode != KeyEvent.KEYCODE_DPAD_RIGHT) false
+                else {
+                    // Repeated key-down events let a held direction keep adjusting.
+                    if (enabled && keyEvent.action == KeyEvent.ACTION_DOWN) {
+                        val next = stepped(value + if (left) -step else step)
+                        if (next != value) currentOnChange(next)
+                    }
+                    true
+                }
+            }
+            .semantics {
+                stateDescription = text
+                progressBarRangeInfo = ProgressBarRangeInfo(value.toFloat(), range.first.toFloat()..range.last.toFloat())
+                if (label != null) contentDescription = label
+                if (!enabled) disabled()
+                setProgress { next ->
+                    if (!enabled) false else { currentOnChange(stepped(next.roundToInt())); true }
+                }
+            }
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (label != null) Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold,
+                color = colors.onBackground, modifier = Modifier.weight(1f))
+            else Spacer(Modifier.weight(1f))
+            Text(text, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1)
+        }
+        Canvas(
+            Modifier.fillMaxWidth().height(40.dp).onSizeChanged { trackPx = it.width }
+                .pointerInput(enabled, range, step, thumbInset) { if (enabled) detectTapGestures { fromX(it.x) } }
+                .pointerInput(enabled, range, step, thumbInset) {
+                    if (enabled) detectHorizontalDragGestures { change, _ -> fromX(change.position.x); change.consume() }
+                },
+        ) {
+            val start = Offset(thumbInset, size.height / 2f)
+            val end = Offset(size.width - thumbInset, start.y)
+            val thumb = Offset(start.x + (end.x - start.x) * fraction, start.y)
+            val fill = if (hot) pal.signal else colors.onBackground
+            drawLine(colors.onSurfaceVariant.copy(alpha = 0.35f), start, end, strokeWidth = 4.dp.toPx(), cap = StrokeCap.Round)
+            if (fraction > 0) drawLine(fill, start, thumb, strokeWidth = 4.dp.toPx(), cap = StrokeCap.Round)
+            drawCircle(fill, radius = 7.dp.toPx(), center = thumb)
         }
     }
 }
@@ -437,9 +573,9 @@ fun MultiRow(
 ) {
     val open = host.open == key
     val summary = when {
-        selected.size >= items.size -> "全部 ${items.size}"
-        selected.isEmpty() -> "全不选"
-        else -> "${selected.size}/${items.size}"
+        selected.size >= items.size -> stringResource(R.string.widgets_all_n, items.size)
+        selected.isEmpty() -> stringResource(R.string.widgets_none)
+        else -> stringResource(R.string.widgets_n_of_m, selected.size, items.size)
     }
     SettingsRow(label, hint, highlighted = open) {
         Box {
@@ -472,6 +608,9 @@ fun SettingsPage(
     scroll: androidx.compose.foundation.ScrollState? = null,
     scrollContent: Boolean = true,
     compactLayout: Boolean = false,
+    /** Controls that remain below the title while the settings scroll, such as a tab strip. */
+    header: (@Composable () -> Unit)? = null,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val scrollState = scroll ?: rememberScrollState()
@@ -479,7 +618,7 @@ fun SettingsPage(
     val dim by animateFloatAsState(if (host.open != null) 0.6f else 1f, Motion.tw(220), label = "pageDim")
     val narrow = LocalNarrowPane.current && !compactLayout
     Column(
-        modifier = Modifier.fillMaxSize().padding(
+        modifier = modifier.fillMaxSize().padding(
             horizontal = if (compactLayout) 14.dp else if (narrow) 16.dp else 22.dp,
             vertical = if (compactLayout) 6.dp else if (narrow) 12.dp else 18.dp,
         ),
@@ -492,7 +631,7 @@ fun SettingsPage(
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(bottom = 6.dp),
                 ) {
-                    BackLink("返回", compact = true, onClick = onBack)
+                    BackLink(stringResource(R.string.mode_back), compact = true, onClick = onBack)
                     Text(
                         title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = colors.onBackground,
                         maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f),
@@ -504,7 +643,7 @@ fun SettingsPage(
         } else {
             Rise(0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    BackLink("返回", compact = compactLayout, onClick = onBack)
+                    BackLink(stringResource(R.string.mode_back), compact = compactLayout, onClick = onBack)
                     if (eyebrow != null) {
                         Spacer(Modifier.width(10.dp))
                         Eyebrow(eyebrow)
@@ -544,6 +683,7 @@ fun SettingsPage(
                 }
             }
         }
+        if (header != null) header()
         Rise(3, Modifier.weight(1f).fillMaxWidth()) {
             Column(
                 modifier = Modifier
@@ -552,6 +692,65 @@ fun SettingsPage(
                     .then(if (scrollContent) Modifier.verticalScroll(scrollState) else Modifier)
                     .padding(bottom = if (compactLayout) 0.dp else 24.dp),
             ) { content() }
+        }
+    }
+}
+
+/**
+ * A short row of tabs with one chosen: a pill in the signal blue slides under the choice and its
+ * label turns to sit on it. Left and right move between tabs; a tap or A picks one. [selected]
+ * null leaves no tab chosen.
+ */
+@Composable
+fun <T> SegmentedTabs(options: List<Pair<T, String>>, selected: T?, modifier: Modifier = Modifier, onPick: (T) -> Unit) {
+    val colors = MaterialTheme.colorScheme
+    val pal = LocalPalette.current
+    val index = options.indexOfFirst { it.first == selected }
+    val shape = RoundedCornerShape(12.dp)
+    val pillShape = RoundedCornerShape(9.dp)
+    BoxWithConstraints(modifier) {
+        val segment = minOf(92.dp, (maxWidth - 8.dp) / options.size)
+        val slide by animateDpAsState(segment * index.coerceAtLeast(0), Motion.sp(0.75f), label = "tabPill")
+        val shown by animateFloatAsState(if (index >= 0) 1f else 0f, Motion.tw(180), label = "tabPillShown")
+        Box(
+            modifier = Modifier
+                .height(48.dp).width(segment * options.size + 8.dp)
+                .clip(shape).background(colors.surfaceVariant).border(1.dp, pal.line2, shape)
+                .padding(4.dp),
+        ) {
+            Box(
+                Modifier.offset(x = slide).width(segment).fillMaxHeight()
+                    .graphicsLayer { alpha = shown }
+                    .clip(pillShape).background(pal.signal),
+            )
+            Row {
+                options.forEachIndexed { i, (value, label) ->
+                    val src = remember { MutableInteractionSource() }
+                    val hot = src.collectIsFocusedAsState().value || src.collectIsHoveredAsState().value
+                    val chosen = i == index
+                    val ink by animateColorAsState(
+                        when {
+                            chosen -> pal.onSignal
+                            hot -> colors.onBackground
+                            else -> colors.onSurfaceVariant
+                        },
+                        Motion.tw(220), label = "tabInk",
+                    )
+                    val pick = { onPick(value) }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.width(segment).fillMaxHeight()
+                            .clip(pillShape)
+                            .glideBorder(hot, pillShape, if (chosen) pal.onSignal else pal.signal)
+                            .semantics { role = Role.Tab; this.selected = chosen }
+                            .hoverable(src)
+                            .clickable(interactionSource = src, indication = LocalIndication.current, onClick = pick)
+                            .controllerConfirm(onClick = pick),
+                    ) {
+                        Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = ink, maxLines = 1, softWrap = false)
+                    }
+                }
+            }
         }
     }
 }

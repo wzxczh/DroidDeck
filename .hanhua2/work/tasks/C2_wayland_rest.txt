@@ -1,0 +1,16 @@
+app/src/main/cpp/fakeinput_steam.cpp
+app/src/main/cpp/waylandcomp/CMakeLists.txt
+app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md
+app/src/main/cpp/waylandcomp/src/blend_pass.c
+app/src/main/cpp/waylandcomp/src/droiddeck_color.h
+app/src/main/cpp/waylandcomp/src/droiddeck_ext.c
+app/src/main/cpp/waylandcomp/src/effects_chain.c
+app/src/main/cpp/waylandcomp/src/framegen_bridge.c
+app/src/main/cpp/waylandcomp/src/hdr_compose.c
+app/src/main/cpp/waylandcomp/src/sc_layer.h
+app/src/main/cpp/waylandcomp/src/vk_present.h
+app/src/main/cpp/waylandcomp/src/waylandcomp_jni.c
+app/src/main/cpp/waylandcomp/src/wl_clipboard.c
+app/src/main/cpp/waylandcomp/src/wl_dmabuf.c
+app/src/main/cpp/waylandcomp/src/wl_text_input.c
+app/src/main/cpp/waylandcomp/src/wl_toplevel_icon.c

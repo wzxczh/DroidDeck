@@ -1,0 +1,15 @@
+tools/linuxfs/clipboard/clipboard.c
+tools/linuxfs/fex/faultreport.c
+tools/linuxfs/fex/thunkaudit.c
+tools/linuxfs/preload/fsync.c
+tools/linuxfs/preload/kgslid.c
+tools/linuxfs/preload/kgslpoll.c
+tools/linuxfs/preload/net.c
+tools/linuxfs/preload/netif.c
+tools/linuxfs/preload/ntsync.c
+tools/linuxfs/preload/storage.c
+tools/mangoapp/libtracefs-shim.c
+tools/proot/bench/mechbench.c
+tools/proot/bench/parstat.c
+tools/proot/bench/sysbench.c
+tools/proot/fastpath/fastpath.c

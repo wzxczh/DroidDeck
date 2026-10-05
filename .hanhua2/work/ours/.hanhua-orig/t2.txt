@@ -1,0 +1,150 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\framegen_bridge.c
+#OLD
+    FGLOG("engines ready on the compositor's device: LSFG Native %s (%s), Win-FG Native %s",
+          fge_caps_ok(VKP_FG_ENGINE_LSFG) ? "available" : "unavailable", fge_caps_reason(),
+          fge_caps_ok(VKP_FG_ENGINE_WINFG) ? "available" : "unavailable");
+#NEW
+    FGLOG("合成器设备上的引擎就绪：LSFG Native %s（%s），Win-FG Native %s",
+          fge_caps_ok(VKP_FG_ENGINE_LSFG) ? "可用" : "不可用", fge_caps_reason(),
+          fge_caps_ok(VKP_FG_ENGINE_WINFG) ? "可用" : "不可用");
+#OLD
+LOGD("framegen: generation ring %ux%u x%u", w, h, n);
+#NEW
+LOGD("framegen: 生成环 %ux%u x%u", w, h, n);
+#OLD
+    FGLOG("%s could not %s in format %d (the HDR picture's FP16) at %dx%d: it restarts, and HDR frames go through "
+          "it in 8 bits from the next frame", fge_engine_name(kind), what, (int)fmt, w, h);
+#NEW
+    FGLOG("%s 无法%s，格式 %d（HDR 画面的 FP16），分辨率 %dx%d：引擎将重启，HDR 帧从下一帧起经由它以 "
+          "8 位处理", fge_engine_name(kind), what, (int)fmt, w, h);
+#OLD
+"build its chain"
+#NEW
+"构建其管线"
+#OLD
+"make its generation ring"
+#NEW
+"创建其生成环"
+#OLD
+"LSFG Native can't start: no shader cache (import Lossless.dll in Settings)"
+#NEW
+"LSFG Native 无法启动：没有着色器缓存（在设置中导入 Lossless.dll）"
+#OLD
+        FGLOG("%s failed to start on the compositor's driver; frame generation stays off",
+              fge_engine_name(kind));
+#NEW
+        FGLOG("%s 在合成器驱动上启动失败；帧生成保持关闭",
+              fge_engine_name(kind));
+#OLD
+"%s engine ready (%s)"
+#NEW
+"%s 引擎就绪（%s）"
+#OLD
+"%s multiplier changed to x%d (%d interpolated frames per game frame)"
+#NEW
+"%s 倍数改为 x%d（每个游戏帧插入 %d 帧）"
+#OLD
+        FGLOG("%s x%d armed (flow scale %.2f, panel %.0f Hz): real frames are presented one slot late "
+              "with the interpolated frames ahead of them", fge_engine_name(kind), mult, (double)flow, (double)hz);
+#NEW
+        FGLOG("%s x%d 已启用（光流缩放 %.2f，面板 %.0f Hz）：真实帧延后一格呈现，"
+              "插值帧排在它们前面", fge_engine_name(kind), mult, (double)flow, (double)hz);
+#OLD
+"frame generation off (%llu frames generated this session)"
+#NEW
+"帧生成已关闭（本次会话共生成 %llu 帧）"
+#OLD
+"%s could not build its chain at %dx%d; frame generation stays off"
+#NEW
+"%s 无法在 %dx%d 构建管线；帧生成保持关闭"
+#OLD
+"no memory for the generation ring (%dx%d x%u); frame generation stays off"
+#NEW
+"生成环内存不足（%dx%d x%u）；帧生成保持关闭"
+#OLD
+            FGLOG("generating: %s x%d at %dx%d (%u interpolated frame%s per game frame%s)",
+                  fge_engine_name(kind), mult, w, h, n_gen, n_gen == 1 ? "" : "s",
+                  fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? ", FP16: the HDR picture" : "");
+#NEW
+            FGLOG("生成中：%s x%d，%dx%d（每个游戏帧插入 %u 帧%s%s）",
+                  fge_engine_name(kind), mult, w, h, n_gen, n_gen == 1 ? "" : "",
+                  fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "，FP16：HDR 画面" : "");
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\framegen_engine.cpp
+#OLD
+"device gates for the LSFG chain fail: %s"
+#NEW
+"LSFG 链的设备门槛未通过：%s"
+#OLD
+"device ready: lsfg caps '%s', storage on ring format %d"
+#NEW
+"设备就绪：lsfg 能力 '%s'，生成环格式可作存储=%d"
+#OLD
+"winfg-native: engine init failed"
+#NEW
+"winfg-native: 引擎初始化失败"
+#OLD
+"chain %s, src %s"
+#NEW
+"链 %s，源 %s"
+#OLD
+"embedded chain"
+#NEW
+"内嵌链"
+#OLD
+"lsfg-native: dispatch incomplete"
+#NEW
+"lsfg-native: 分发表不完整"
+#OLD
+"lsfg-native: engine init failed (cache %s, spirv target 0x%x)"
+#NEW
+"lsfg-native: 引擎初始化失败（缓存 %s，spirv 目标 0x%x）"
+#OLD
+"spirv target 0x%x, cache %s"
+#NEW
+"spirv 目标 0x%x，缓存 %s"
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\wl_text_input.c
+#OLD
+"text input enabled by %s (cursor rect %d,%d %dx%d)"
+#NEW
+"%s 启用了文本输入（光标矩形 %d,%d %dx%d）"
+#OLD
+"cursor rect from %s: %d,%d %dx%d"
+#NEW
+"%s 的光标矩形：%d,%d %dx%d"
+#OLD
+"text input disabled%s%s"
+#NEW
+"文本输入已停用%s%s"
+#OLD
+g_told_ti ? " by " : ""
+#NEW
+g_told_ti ? "，由 " : ""
+#OLD
+"typed text (%zu chars) dropped: no program accepts text input"
+#NEW
+"输入的文本（%zu 字符）已丢弃：没有程序接受文本输入"
+#OLD
+"committed %zu chars to %s"
+#NEW
+"%zu 个字符已提交给 %s"
+#OLD
+"deleted %d before / %d after the caret (as key presses)"
+#NEW
+"已删除光标前 %d 个、光标后 %d 个字符（以按键方式）"
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\vk_loader.c
+#OLD
+"adrenotools Turnip handle=%p (%s / %s)"
+#NEW
+"adrenotools Turnip 句柄=%p（%s / %s）"
+#OLD
+"no adrenotools driver -> system libvulkan handle=%p "
+#NEW
+"没有 adrenotools 驱动 -> 系统 libvulkan 句柄=%p "
+#OLD
+" (dmabuf import likely unsupported)"
+#NEW
+"（dmabuf 导入大概率不受支持）"
+#OLD
+"no vkGetInstanceProcAddr"
+#NEW
+"找不到 vkGetInstanceProcAddr"

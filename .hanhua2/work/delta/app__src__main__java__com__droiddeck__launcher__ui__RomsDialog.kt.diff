@@ -1,0 +1,49 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/RomsDialog.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/RomsDialog.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.ui.Modifier
+ import androidx.compose.foundation.layout.Spacer
+@@ -15,31 +17,31 @@
+ fun RomsDialog(path: String?, onChoose: () -> Unit, onClear: () -> Unit, onDismiss: () -> Unit) {
+     AlertDialog(
+         onDismissRequest = onDismiss,
+-        title = { Text("ROM 文件夹") },
++        title = { Text(stringResource(R.string.setup_tool_roms)) },
+         text = {
+             Column {
+                 Text(
+-                    "此文件夹在每个会话中显示为 /root/ROMs，内部存储位于 /root/Storage。",
++                    stringResource(R.string.roms_text),
+                     style = MaterialTheme.typography.bodyMedium,
+                 )
+                 Spacer(Modifier.height(10.dp))
+                 Text(
+-                    path ?: "尚未选择文件夹",
++                    path ?: stringResource(R.string.roms_none),
+                     style = MaterialTheme.typography.bodySmall,
+                     color = if (path != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                 )
+                 Spacer(Modifier.height(6.dp))
+                 Text(
+-                    "下次会话生效，支持 SD 卡。",
++                    stringResource(R.string.roms_applies),
+                     style = MaterialTheme.typography.bodySmall,
+                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                 )
+             }
+         },
+-        confirmButton = { TextButton(onClick = onChoose) { Text(if (path == null) "选择文件夹" else "更改文件夹") } },
++        confirmButton = { TextButton(onClick = onChoose) { Text(if (path == null) stringResource(R.string.roms_choose) else stringResource(R.string.roms_change)) } },
+         dismissButton = {
+-            if (path != null) TextButton(onClick = onClear) { Text("忘记") }
+-            else TextButton(onClick = onDismiss) { Text("取消") }
++            if (path != null) TextButton(onClick = onClear) { Text(stringResource(R.string.common_forget)) }
++            else TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+         },
+     )
+ }

@@ -1,5 +1,7 @@
 package com.droiddeck.launcher.ui
 
+import com.droiddeck.launcher.R
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.hoverable
@@ -92,17 +94,17 @@ fun DriverPage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp))
                     .background(if (refreshHot) pal.signal.copy(alpha = 0.16f) else Color.Transparent)
-                    .border(if (refreshHot) 2.dp else 1.dp, if (refreshHot) pal.signal else pal.line, RoundedCornerShape(10.dp))
+                    .glideBorder(refreshHot, RoundedCornerShape(10.dp), pal.signal, pal.line)
                     .focusRequester(refreshFocus)
                     .hoverable(refreshSrc)
                     .clickable(interactionSource = refreshSrc, indication = null, enabled = !checking, onClick = onRefresh),
             ) {
                 if (checking) CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
-                else Icon(Icons.Outlined.Refresh, contentDescription = "检查新驱动", tint = colors.onBackground, modifier = Modifier.size(20.dp))
+                else Icon(Icons.Outlined.Refresh, contentDescription = stringResource(R.string.comp_check_drivers), tint = colors.onBackground, modifier = Modifier.size(20.dp))
             }
         },
     ) {
-        SettingsGroup("已安装") {
+        SettingsGroup(stringResource(R.string.driver_installed)) {
             val focusRow = rows.firstOrNull { it.id == selected } ?: rows.firstOrNull()
             rows.forEachIndexed { i, row ->
                 InstalledRow(
@@ -113,14 +115,14 @@ fun DriverPage(
                 )
             }
         }
-        SettingsGroup("可下载") {
+        SettingsGroup(stringResource(R.string.driver_available)) {
             if (downloads.isEmpty()) Text(
-                "上次检查没有新内容。点按刷新按钮查找新版本。",
+                stringResource(R.string.driver_nothing_new),
                 fontSize = 12.5.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
             ) else for (d in downloads) {
                 SettingsRow(d.label, d.detail) {
                     val p = d.progress
-                    if (p == null) SecondaryButton("下载") { onDownload(d.key) }
+                    if (p == null) SecondaryButton(stringResource(R.string.common_download)) { onDownload(d.key) }
                     else Column(horizontalAlignment = Alignment.End, modifier = Modifier.width(120.dp)) {
                         Text("$p%", fontSize = 12.sp, color = colors.onSurfaceVariant)
                         Spacer(Modifier.height(4.dp))
@@ -131,26 +133,27 @@ fun DriverPage(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 14.dp)) {
             SecondaryButton(importLabel, onClick = onImport)
-            if (canRestore) FocusText("恢复内置驱动", pal.signal, onClick = onRestore)
+            if (canRestore) FocusText(stringResource(R.string.driver_restore_builtin), pal.signal, onClick = onRestore)
         }
     }
     confirm?.let { row ->
         AlertDialog(
             onDismissRequest = { confirm = null },
-            title = { Text("删除 ${row.name}？") },
+            title = { Text(stringResource(R.string.common_delete_named, row.name) + "？") },
             text = {
                 Text(
-                    if (row.tag == DriverRow.BUNDLED) "它内置在应用中，删除只会清除其解包文件并将其隐藏。“恢复内置驱动”可将其找回，“自动”在需要它的 GPU 上仍会使用它。"
-                    else "其文件会从应用中删除。" + if (row.id == selected) " 当前正在使用该驱动，删除后将回退到默认驱动。" else "",
+                    if (row.tag == DriverRow.BUNDLED) stringResource(R.string.driver_delete_builtin)
+                    else if (row.tag == DriverRow.BUNDLE) stringResource(R.string.driver_delete_bundle)
+                    else if (row.id == selected) stringResource(R.string.driver_delete_in_use) else stringResource(R.string.driver_delete_plain),
                     fontSize = 13.sp,
                 )
             },
             // Opens on Cancel, so a stray A press on a controller never deletes anything.
-            confirmButton = { FocusText("删除", colors.error) { confirm = null; onDelete(row.id) } },
+            confirmButton = { FocusText(stringResource(R.string.common_delete), colors.error) { confirm = null; onDelete(row.id) } },
             dismissButton = {
                 val cancelFocus = remember { FocusRequester() }
                 LaunchedEffect(Unit) { runCatching { cancelFocus.requestFocus() } }
-                FocusText("取消", colors.onBackground, modifier = Modifier.focusRequester(cancelFocus)) { confirm = null }
+                FocusText(stringResource(R.string.common_cancel), colors.onBackground, modifier = Modifier.focusRequester(cancelFocus)) { confirm = null }
             },
         )
     }
@@ -173,7 +176,7 @@ private fun InstalledRow(row: DriverRow, selected: Boolean, onSelect: () -> Unit
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().padding(3.dp).clip(shape)
             .background(if (hot) pal.signal.copy(alpha = 0.14f) else if (selected) pal.signal.copy(alpha = 0.08f) else Color.Transparent)
-            .border(2.dp, if (hot) pal.signal else Color.Transparent, shape),
+            .glideBorder(hot, shape, pal.signal),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -209,11 +212,11 @@ private fun InstalledRow(row: DriverRow, selected: Boolean, onSelect: () -> Unit
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(end = 8.dp).size(40.dp).clip(RoundedCornerShape(10.dp))
                     .background(if (delHot) colors.error.copy(alpha = 0.16f) else Color.Transparent)
-                    .border(2.dp, if (delHot) colors.error else Color.Transparent, RoundedCornerShape(10.dp))
+                    .glideBorder(delHot, RoundedCornerShape(10.dp), colors.error)
                     .focusRequester(delFocus)
                     .focusProperties { left = mainFocus }
                     .hoverable(delSrc).clickable(interactionSource = delSrc, indication = null, onClick = onDelete),
-            ) { Icon(Icons.Outlined.Delete, contentDescription = "删除 ${row.name}", tint = if (delHot) colors.error else colors.onSurfaceVariant, modifier = Modifier.size(20.dp)) }
+            ) { Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.common_delete_named, row.name), tint = if (delHot) colors.error else colors.onSurfaceVariant, modifier = Modifier.size(20.dp)) }
         }
     }
     Box(Modifier.fillMaxWidth().height(1.dp).background(pal.line))
@@ -229,7 +232,7 @@ internal fun FocusText(text: String, color: Color, modifier: Modifier = Modifier
         text, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = color,
         modifier = modifier.clip(shape)
             .background(if (hot) color.copy(alpha = 0.14f) else Color.Transparent)
-            .border(2.dp, if (hot) color else Color.Transparent, shape)
+            .glideBorder(hot, shape, color)
             .hoverable(src).clickable(interactionSource = src, indication = null, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),
     )

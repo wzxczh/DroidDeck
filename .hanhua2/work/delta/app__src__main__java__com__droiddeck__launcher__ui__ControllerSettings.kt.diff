@@ -1,0 +1,100 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/ControllerSettings.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/ControllerSettings.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.border
+ import androidx.compose.foundation.layout.Arrangement
+@@ -22,6 +24,10 @@
+     val onSize: (Int) -> Unit,
+     val onStickClick: (Boolean) -> Unit,
+     val onAdaptiveSticks: (Boolean) -> Unit,
++    val onRumble: (Boolean) -> Unit,
++    val onSteamButton: (Boolean) -> Unit,
++    val onQamButton: (Boolean) -> Unit,
++    val onKeyboardButton: (Boolean) -> Unit,
+     val onEditLayout: () -> Unit,
+     val onResetLayout: () -> Unit,
+     val onMapping: () -> Unit,
+@@ -36,17 +42,17 @@
+ @Composable
+ fun ColumnScope.ControllerRows(host: MenuHost, oscMode: String, c: ControllerPrefs.Settings, a: ControllerActions) {
+     ChoiceRow(
+-        host, "controller-osc", "屏幕控件", "会话中触控板何时出现",
+-        listOf(SessionPrefs.OSC_AUTO to "自动", SessionPrefs.OSC_ALWAYS to "始终", SessionPrefs.OSC_STEAM_QAM to "Steam + QAM", SessionPrefs.OSC_NEVER to "从不"),
+-        oscMode, note = "“自动”在没有手柄时显示全部控件。“Steam + QAM”仅显示这些按钮。", onPick = a.onOsc,
++        host, "controller-osc", stringResource(R.string.mode_osc), stringResource(R.string.ctrl_osc_hint),
++        listOf(SessionPrefs.OSC_AUTO to stringResource(R.string.common_auto), SessionPrefs.OSC_ALWAYS to stringResource(R.string.common_always), SessionPrefs.OSC_STEAM_QAM to stringResource(R.string.mode_osc_qam), SessionPrefs.OSC_NEVER to stringResource(R.string.common_never)),
++        oscMode, note = stringResource(R.string.mode_osc_note), onPick = a.onOsc,
+     )
+     val tintOpen = host.open == "controller-tint"
+-    SettingsRow("颜色", "屏幕按钮的色调", highlighted = tintOpen) {
++    SettingsRow(stringResource(R.string.ctrl_color), stringResource(R.string.ctrl_color_hint), highlighted = tintOpen) {
+         Box {
+-            ValueChip(ControllerPrefs.tints.firstOrNull { it.first == c.tint }?.second ?: "自定义", tintOpen) {
++            ValueChip(ControllerPrefs.tints.firstOrNull { it.first == c.tint }?.second ?: stringResource(R.string.ctrl_custom), tintOpen) {
+                 host.open = if (tintOpen) null else "controller-tint"
+             }
+-            AnchoredMenu(tintOpen, onDismiss = { if (host.open == "controller-tint") host.open = null }, title = "颜色") { firstItemFocus ->
++            AnchoredMenu(tintOpen, onDismiss = { if (host.open == "controller-tint") host.open = null }, title = stringResource(R.string.ctrl_color)) { firstItemFocus ->
+                 ControllerPrefs.tints.forEachIndexed { index, (color, name) ->
+                     MenuItem(name, checked = c.tint == color, leading = { Swatch(color) }, focusRequester = if (index == 0) firstItemFocus else null) {
+                         a.onTint(color)
+@@ -56,36 +62,40 @@
+             }
+         }
+     }
+-    ChoiceRow(host, "controller-opacity", "不透明度", null, ControllerPrefs.opacities.map { it to "$it%" }, c.opacity, onPick = a.onOpacity)
+-    ChoiceRow(host, "controller-size", "按钮大小", "100% 为标准大小", ControllerPrefs.sizes.map { it to "$it%" }, c.size, onPick = a.onSize)
+-    ToggleRow(host, "controller-stick-click", "摇杆点按", "双击摇杆并按住可触发 L3 或 R3", c.stickClick, onChange = a.onStickClick)
+-    ToggleRow(host, "controller-adaptive", "自适应摇杆", "触碰已保存位置附近时显示摇杆，松开后隐藏", c.adaptiveSticks, onChange = a.onAdaptiveSticks)
+-    SettingsRow("布局", if (c.customLayout) "已保存自定义位置" else "已按本屏幕尺寸与握持方式摆放") {
++    ChoiceRow(host, "controller-opacity", stringResource(R.string.ctrl_opacity), null, ControllerPrefs.opacities.map { it to stringResource(R.string.ctrl_percent, it) }, c.opacity, onPick = a.onOpacity)
++    ChoiceRow(host, "controller-size", stringResource(R.string.ctrl_size), stringResource(R.string.ctrl_size_hint), ControllerPrefs.sizes.map { it to stringResource(R.string.ctrl_percent, it) }, c.size, onPick = a.onSize)
++    ToggleRow(host, "controller-stick-click", stringResource(R.string.ctrl_stick_click), stringResource(R.string.ctrl_stick_click_hint), c.stickClick, onChange = a.onStickClick)
++    ToggleRow(host, "controller-adaptive", stringResource(R.string.ctrl_adaptive), stringResource(R.string.ctrl_adaptive_hint), c.adaptiveSticks, onChange = a.onAdaptiveSticks)
++    ToggleRow(host, "controller-rumble", stringResource(R.string.ctrl_rumble), null, c.rumble, onChange = a.onRumble)
++    ToggleRow(host, "controller-steam", stringResource(R.string.ctrl_steam_button), null, c.steamButton, onChange = a.onSteamButton)
++    ToggleRow(host, "controller-qam", stringResource(R.string.ctrl_qam_button), null, c.qamButton, onChange = a.onQamButton)
++    ToggleRow(host, "controller-keyboard", stringResource(R.string.ctrl_keyboard_button), null, c.keyboardButton, onChange = a.onKeyboardButton)
++    SettingsRow(stringResource(R.string.ctrl_layout), if (c.customLayout) stringResource(R.string.ctrl_layout_custom) else stringResource(R.string.ctrl_layout_default)) {
+         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+-            SecondaryButton("编辑") { a.onEditLayout() }
+-            SecondaryButton("重置", enabled = c.customLayout) { a.onResetLayout() }
++            SecondaryButton(stringResource(R.string.ctrl_edit)) { a.onEditLayout() }
++            SecondaryButton(stringResource(R.string.ctrl_reset), enabled = c.customLayout) { a.onResetLayout() }
+         }
+     }
+     val remapped = c.mapping.count { (id, target) -> id != target }
+-    ActionRow("按钮映射", if (remapped == 0) "每个按钮发送各自的输入" else "已重映射 ${c.mapping.size} 个按钮中的 $remapped 个", "配置", a.onMapping)
+-    ActionRow("重置手柄", "恢复默认颜色、不透明度、大小、摇杆行为、映射与布局", "重置", a.onResetAll)
++    ActionRow(stringResource(R.string.ctrl_mapping), if (remapped == 0) stringResource(R.string.ctrl_mapping_default) else stringResource(R.string.ctrl_mapping_count, remapped, c.mapping.size), stringResource(R.string.ctrl_configure), a.onMapping)
++    ActionRow(stringResource(R.string.ctrl_reset_all), stringResource(R.string.ctrl_reset_all_hint), stringResource(R.string.ctrl_reset), a.onResetAll)
+ }
+ 
+ @Composable
+ fun ControllerMappingPage(mapping: Map<String, String>, onPick: (String, String) -> Unit, onReset: () -> Unit, onBack: () -> Unit) {
+     val host = rememberMenuHost()
+     SettingsPage(
+-        host, title = "按钮映射", eyebrow = "手柄",
+-        lede = "选择每个屏幕按钮向游戏发送的内容。“隐藏”会移除该按钮。",
++        host, title = stringResource(R.string.ctrl_mapping), eyebrow = stringResource(R.string.setup_controller),
++        lede = stringResource(R.string.ctrl_mapping_lede),
+         onBack = onBack,
+     ) {
+-        SettingsGroup("屏幕按钮") {
++        SettingsGroup(stringResource(R.string.ctrl_onscreen_buttons)) {
+             for ((id, name) in ControllerPrefs.mappable) {
+                 ChoiceRow(host, "map-$id", name, null, ControllerPrefs.targets, mapping[id] ?: id) { onPick(id, it) }
+             }
+         }
+-        SettingsGroup("默认") {
+-            ActionRow("重置映射", "每个按钮重新发送各自的输入", "重置", onReset)
++        SettingsGroup(stringResource(R.string.ctrl_defaults)) {
++            ActionRow(stringResource(R.string.ctrl_reset_mapping), stringResource(R.string.ctrl_mapping_default), stringResource(R.string.ctrl_reset), onReset)
+         }
+     }
+ }

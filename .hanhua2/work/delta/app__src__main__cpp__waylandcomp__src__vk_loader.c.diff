@@ -1,0 +1,11 @@
+--- ours/app/src/main/cpp/waylandcomp/src/vk_loader.c
++++ final/app/src/main/cpp/waylandcomp/src/vk_loader.c
+@@ -8,7 +8,7 @@
+ #include <sys/stat.h>
+ #include <android/log.h>
+ 
+-#define TAG "BannerWayland"
++#define TAG "DroidDeckWayland"
+ 
+ struct vk_api g_vk;
+ static void *g_handle;

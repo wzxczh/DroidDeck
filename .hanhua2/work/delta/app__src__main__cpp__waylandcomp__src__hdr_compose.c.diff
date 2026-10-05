@@ -1,0 +1,29 @@
+--- ours/app/src/main/cpp/waylandcomp/src/hdr_compose.c
++++ final/app/src/main/cpp/waylandcomp/src/hdr_compose.c
+@@ -2,7 +2,7 @@
+ #define _POSIX_C_SOURCE 200809L
+ #include "hdr_compose.h"
+ #include "vk_loader.h"
+-#include "vk_present.h" /* banner_log, vkp_gpu_name */
++#include "vk_present.h" /* droiddeck_log, vkp_gpu_name */
+ #include <stdio.h>
+ #include <string.h>
+ 
+@@ -190,7 +190,7 @@
+         if (!(g_out[i].pipe = make_pipe(g_out[i].rp))) goto fail;
+     }
+     g_ready = 1;
+-    banner_log("color", "%s 上的 HDR 合成已就绪：混合 HDR 与 SDR 内容的场景会被放入同一"
++    droiddeck_log("color", "%s 上的 HDR 合成已就绪：混合 HDR 与 SDR 内容的场景会被放入同一"
+                "编码（PQ BT.2020，或色调映射后的 sRGB），而不再显示为发白", vkp_gpu_name());
+     return 0;
+ fail:
+@@ -200,7 +200,7 @@
+         g_dev = keep;
+     }
+     g_ready = -1;
+-    banner_log("error", "color: 无法在该驱动上构建 HDR 合成通道；无法留在游戏自身图层上的 HDR 场景"
++    droiddeck_log("error", "color: 无法在该驱动上构建 HDR 合成通道；无法留在游戏自身图层上的 HDR 场景"
+                "本次会话按旧方式显示（发白）");
+     return -1;
+ }

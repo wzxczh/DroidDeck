@@ -20,8 +20,8 @@
 #include "lsfg/lsfg_vkd.h"
 #include "winfg/winfg_engine.h"
 
-#define ELOG(...) __android_log_print(ANDROID_LOG_INFO, "BannerWayland", "framegen: " __VA_ARGS__)
-#define ELOGE(...) __android_log_print(ANDROID_LOG_ERROR, "BannerWayland", "framegen: " __VA_ARGS__)
+#define ELOG(...) __android_log_print(ANDROID_LOG_INFO, "DroidDeckWayland", "framegen: " __VA_ARGS__)
+#define ELOGE(...) __android_log_print(ANDROID_LOG_ERROR, "DroidDeckWayland", "framegen: " __VA_ARGS__)
 
 namespace {
 
@@ -197,11 +197,11 @@ int fge_unavailable(void) {
     return g_lsfg && g_lsfg->unavailable() ? 1 : 0;
 }
 
-void fge_configure(uint32_t multiplier, float flow_scale, float refresh_hz, int model,
-                   int perf_preset) {
+void fge_configure(uint32_t multiplier, uint32_t target_fps, float flow_scale, float refresh_hz,
+                   int model, int perf_preset) {
     if (multiplier < 2) multiplier = 2;
     if (g_kind == 1 && g_winfg) g_winfg->configure(multiplier, model, perf_preset, flow_scale);
-    else if (g_lsfg) g_lsfg->configure(multiplier, 0, flow_scale, refresh_hz);
+    else if (g_lsfg) g_lsfg->configure(multiplier, target_fps, flow_scale, refresh_hz);
 }
 
 int fge_prepare(uint32_t w, uint32_t h, VkFormat fmt) {

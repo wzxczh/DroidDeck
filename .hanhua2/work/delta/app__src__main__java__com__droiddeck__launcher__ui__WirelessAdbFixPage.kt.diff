@@ -1,0 +1,205 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/WirelessAdbFixPage.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/WirelessAdbFixPage.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import android.text.Editable
+ import android.text.InputType
+ import android.text.TextWatcher
+@@ -89,22 +91,22 @@
+                 } else {
+                     step = 1
+                     busy = true
+-                    message = "配对成功，正在查找无线调试端口…"
++                    message = context.getString(R.string.wadb_finding_port)
+                     onFindConnectPort(endpoint.host) { discoveredPort ->
+                         if (discoveredPort == null) {
+                             connectionAddress = formatAddressHost(endpoint.host) + ":"
+                             busy = false
+-                            message = "配对成功，请输入“设置”中的端口。"
++                            message = context.getString(R.string.wadb_enter_port)
+                         } else {
+                             connectionAddress = formatAdbAddress(endpoint.host, discoveredPort)
+-                            message = "已找到设备，正在应用设置…"
++                            message = context.getString(R.string.wadb_applying)
+                             onApply(endpoint.host, discoveredPort, desiredEnabled) { applyError ->
+                                 busy = false
+                                 if (applyError == null) {
+                                     step = 2
+                                     message = null
+                                 } else {
+-                                    message = "自动应用失败，请检查下方地址后重试。$applyError"
++                                    message = context.getString(R.string.wadb_apply_failed, applyError)
+                                     messageIsError = true
+                                 }
+                             }
+@@ -172,22 +174,22 @@
+         SettingsPage(
+             host = rememberMenuHost(),
+             title = when {
+-                compactSplit && step < 2 -> "无线调试"
+-                step == 2 -> "子进程限制已更新"
+-                else -> "修改子进程限制"
++                compactSplit && step < 2 -> stringResource(R.string.wadb_title_wireless)
++                step == 2 -> stringResource(R.string.wadb_title_done)
++                else -> stringResource(R.string.wadb_title)
+             },
+-            eyebrow = "设置",
++            eyebrow = stringResource(R.string.setup_title),
+             lede = when {
+-                compactSplit && step == 0 -> "如果没有该选项，请改用无线调试配对。"
+-                compactSplit && step == 1 -> "配对成功，请在无线调试中查看 IP 地址和端口。"
+-                compactSplit -> "子进程限制已更新。"
+-                step == 0 -> "如果开发者选项中没有子进程设置，请使用第 2 步。依次打开 Android“设置 → 开发者选项 → 无线调试 → 使用配对码配对设备”。"
+-                step == 1 -> "配对成功，请使用下方地址；如有变化，请在“无线调试 → IP 地址和端口”中更新。"
+-                else -> "已通过无线调试更新子进程限制。"
++                compactSplit && step == 0 -> stringResource(R.string.wadb_lede_compact0)
++                compactSplit && step == 1 -> stringResource(R.string.wadb_lede_compact1)
++                compactSplit -> stringResource(R.string.wadb_lede_done)
++                step == 0 -> stringResource(R.string.wadb_lede0)
++                step == 1 -> stringResource(R.string.wadb_lede1)
++                else -> stringResource(R.string.wadb_lede_done_long)
+             },
+             onBack = { if (!busy) onBack() },
+             action = if (compactSplit && step < 2) {
+-                { SecondaryButton("开发者选项", compact = true, enabled = !busy, onClick = onOpenDeveloperOptions) }
++                { SecondaryButton(stringResource(R.string.setup_dev_options), compact = true, enabled = !busy, onClick = onOpenDeveloperOptions) }
+             } else null,
+             scrollContent = !compactSplit,
+             compactLayout = compactSplit,
+@@ -199,14 +201,14 @@
+                         modifier = Modifier.widthIn(max = 680.dp).fillMaxWidth(),
+                         verticalArrangement = Arrangement.spacedBy(10.dp),
+                     ) {
+-                        SettingsGroup("子进程限制", compact = compactSplit) {
++                        SettingsGroup(stringResource(R.string.setup_limit), compact = compactSplit) {
+                             Text(
+-                                "Android 已确认限制当前为${if (desiredEnabled) "开启" else "关闭"}状态。",
++                                if (desiredEnabled) stringResource(R.string.wadb_confirmed_on) else stringResource(R.string.wadb_confirmed_off),
+                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                 modifier = Modifier.padding(14.dp),
+                             )
+                         }
+-                        PrimaryButton("完成", enabled = !busy, onClick = onBack)
++                        PrimaryButton(stringResource(R.string.setup_check_done), enabled = !busy, onClick = onBack)
+                     }
+                 } else if (compactSplit) {
+                     Column(
+@@ -267,7 +269,7 @@
+     onPairAgain: () -> Unit,
+ ) {
+     if (step == 0) {
+-        SettingsGroup("2 · 配对无线调试", compact = compact) {
++        SettingsGroup(stringResource(R.string.wadb_pair_group), compact = compact) {
+             Column(
+                 modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 8.dp else 12.dp, vertical = if (compact) 6.dp else 12.dp),
+                 verticalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 6.dp),
+@@ -275,7 +277,7 @@
+                 AdbTextField(
+                     value = pairingAddress,
+                     onValueChange = onPairingAddressChange,
+-                    label = "配对弹窗的 IP 地址和端口",
++                    label = stringResource(R.string.wadb_pair_address),
+                     placeholder = "192.168.1.42:37123",
+                     keyboardType = KeyboardType.Ascii,
+                     imeAction = ImeAction.Next,
+@@ -291,8 +293,8 @@
+                     AdbTextField(
+                         value = pairingCode,
+                         onValueChange = onPairingCodeChange,
+-                        label = "配对码（PIN）",
+-                        placeholder = "6 位数字",
++                        label = stringResource(R.string.wadb_pin),
++                        placeholder = stringResource(R.string.wadb_pin_placeholder),
+                         keyboardType = KeyboardType.Number,
+                         imeAction = ImeAction.Done,
+                         compact = compact,
+@@ -302,13 +304,13 @@
+                         },
+                         modifier = Modifier.weight(1f),
+                     )
+-                    PrimaryButton("配对", compact = compact, enabled = !busy && canPair, onClick = onPair)
++                    PrimaryButton(stringResource(R.string.wadb_pair), compact = compact, enabled = !busy && canPair, onClick = onPair)
+                 }
+                 StatusMessage(busy, message, isError = messageIsError)
+             }
+         }
+     } else {
+-        SettingsGroup("2 · 通过无线调试应用", compact = compact) {
++        SettingsGroup(stringResource(R.string.wadb_apply_group), compact = compact) {
+             Column(
+                 modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 8.dp else 12.dp, vertical = if (compact) 6.dp else 12.dp),
+                 verticalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 6.dp),
+@@ -316,7 +318,7 @@
+                 AdbTextField(
+                     value = connectionAddress,
+                     onValueChange = onConnectionAddressChange,
+-                    label = "连接的 IP 地址和端口",
++                    label = stringResource(R.string.wadb_connect_address),
+                     placeholder = "192.168.1.42:45678",
+                     keyboardType = KeyboardType.Ascii,
+                     imeAction = ImeAction.Done,
+@@ -330,9 +332,9 @@
+                     modifier = Modifier.fillMaxWidth(),
+                 ) {
+                     StatusMessage(busy, message, Modifier.weight(1f), isError = messageIsError)
+-                    SecondaryButton("重新配对", compact = compact, enabled = !busy, onClick = onPairAgain)
++                    SecondaryButton(stringResource(R.string.wadb_pair_again), compact = compact, enabled = !busy, onClick = onPairAgain)
+                     PrimaryButton(
+-                        if (desiredEnabled) "开启限制" else "关闭限制",
++                        if (desiredEnabled) stringResource(R.string.setup_limit_turn_on) else stringResource(R.string.wadb_turn_off),
+                         compact = compact,
+                         enabled = !busy && parseAdbAddress(connectionAddress) != null,
+                         onClick = onApply,
+@@ -381,7 +383,7 @@
+                 .fillMaxWidth()
+                 .height(inputHeight)
+                 .background(colors.surfaceVariant, shape)
+-                .border(1.dp, if (focused) palette.signal else palette.line2, shape)
++                .glideBorder(focused, shape, palette.signal, palette.line2)
+                 .padding(horizontal = 10.dp),
+             contentAlignment = Alignment.CenterStart,
+         ) {
+@@ -453,16 +455,16 @@
+     busy: Boolean,
+     onOpenDeveloperOptions: () -> Unit,
+ ) {
+-    SettingsGroup("其他修改方式") {
++    SettingsGroup(stringResource(R.string.wadb_other_ways)) {
+         Column(
+             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+             verticalArrangement = Arrangement.spacedBy(4.dp),
+         ) {
+-            Text("1 · 开发者选项（优先尝试）", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+-            Text("将“限制子进程”设为${if (desiredEnabled) "开启" else "关闭"}。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+-            SecondaryButton("打开开发者选项", enabled = !busy, onClick = onOpenDeveloperOptions)
+-            Text("3 · 电脑 ADB（最后手段）", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+-            Text("仅在无法使用无线调试时使用。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            Text(stringResource(R.string.wadb_dev_try_first), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
++            Text(if (desiredEnabled) stringResource(R.string.wadb_restrict_on) else stringResource(R.string.wadb_restrict_off), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            SecondaryButton(stringResource(R.string.gate_open_dev), enabled = !busy, onClick = onOpenDeveloperOptions)
++            Text(stringResource(R.string.wadb_computer_last), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
++            Text(stringResource(R.string.wadb_only_if), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+             Text(
+                 PhantomProcessLimit.adbCommand(desiredEnabled),
+                 style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+@@ -474,7 +476,7 @@
+ 
+ @Composable
+ private fun CompactComputerFallback(desiredEnabled: Boolean) {
+-    SettingsGroup("3 · 电脑 ADB（最后手段）", compact = true) {
++    SettingsGroup(stringResource(R.string.wadb_computer_group), compact = true) {
+         Text(
+             PhantomProcessLimit.adbCommand(desiredEnabled),
+             style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
+@@ -489,7 +491,7 @@
+     if (busy) {
+         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+             CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+-            Text(message ?: "处理中…", style = MaterialTheme.typography.bodySmall)
++            Text(message ?: stringResource(R.string.common_working), style = MaterialTheme.typography.bodySmall)
+         }
+     } else {
+         message?.let {

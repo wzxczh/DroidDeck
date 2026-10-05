@@ -1,0 +1,5 @@
+app/src/main/cpp/waylandcomp/src/ahb_swapchain.c
+app/src/main/cpp/waylandcomp/src/compositor.c
+app/src/main/cpp/waylandcomp/src/sc_layer.c
+app/src/main/cpp/waylandcomp/src/vk_present.c
+app/src/main/cpp/waylandcomp/src/wl_color_mgmt.c

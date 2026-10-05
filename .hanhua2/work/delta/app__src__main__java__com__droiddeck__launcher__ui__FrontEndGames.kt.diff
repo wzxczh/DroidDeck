@@ -1,0 +1,226 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/FrontEndGames.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/FrontEndGames.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import androidx.compose.foundation.LocalIndication
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.border
+@@ -66,11 +68,12 @@
+     val current = games.firstOrNull { "app:${it.appId}" == selected } ?: games.firstOrNull()
+     if (current == null) {
+         Column(modifier = modifier.padding(horizontal = if (narrow) 16.dp else 22.dp, vertical = if (narrow) 12.dp else 18.dp)) {
+-            Rise(0) { PageHeader("游戏") }
+-            Rise(1) { Note("在 Steam 中安装的游戏会显示在这里。打开 Steam 安装游戏，会话结束后即会出现。") }
+-            Rise(2) {
+-                Actions { PrimaryButton("启动 Steam", enabled = !s.busy, main = true, icon = Icons.Filled.PlayArrow, modifier = Modifier.padding(top = 12.dp), onClick = a.onPlay) }
+-            }
++            Rise(0) { PageHeader(stringResource(R.string.content_games)) }
++            Rise(1) { Note(stringResource(if (s.shortcutPicker && s.shortcutLibraryScanning) R.string.game_shortcut_scanning else R.string.games_empty)) }
++            if (!s.shortcutPicker) Rise(2) {
++                Actions { PrimaryButton(stringResource(R.string.games_play_steam), enabled = !s.busy, main = true, icon = Icons.Filled.PlayArrow, modifier = Modifier.padding(top = 12.dp), onClick = a.onPlay) }
++            }
++            GameFileFolderActions(s, a)
+         }
+         return
+     }
+@@ -86,8 +89,9 @@
+                     if (!narrow) Poster(current.art, current.name, Modifier.width(168.dp))
+                 }
+             }
+-            Rise(1) { SectionTitle("启动设置", null) }
++            Rise(1) { SectionTitle(stringResource(R.string.games_launch_settings), null) }
+             Rise(2) { LaunchSettings(s, a, host) }
++            Rise(3) { GameFileFolderActions(s, a) }
+         }
+         return
+     }
+@@ -104,8 +108,26 @@
+                 GameHeroCopy(current, if (narrow) 24.sp else 32.sp)
+                 GameActions(current, s, a)
+             }
+-            SectionTitle("启动设置", null)
++            SectionTitle(stringResource(R.string.games_launch_settings), null)
+             LaunchSettings(s, a, host)
++            GameFileFolderActions(s, a)
++        }
++    }
++}
++
++@Composable
++private fun GameFileFolderActions(s: FrontEndState, a: FrontEndActions) {
++    if (s.shortcutPicker) return
++    var open by remember { androidx.compose.runtime.mutableStateOf(false) }
++    Box(Modifier.padding(top = 12.dp)) {
++        SecondaryButton(stringResource(R.string.game_frontend_files), compact = true) { open = !open }
++        AnchoredMenu(open, onDismiss = { open = false }, title = s.gameSyncFolder ?: stringResource(R.string.game_frontend_files)) { first ->
++            MenuItem(stringResource(R.string.game_file_sync), checked = false, focusRequester = first) {
++                open = false; a.onSyncGameFiles()
++            }
++            if (s.gameSyncFolder != null) MenuItem(stringResource(R.string.game_file_stop_sync), checked = false) {
++                open = false; a.onStopGameFileSync()
++            }
+         }
+     }
+ }
+@@ -114,16 +136,36 @@
+ @Composable
+ private fun GameActions(g: Library.SteamGame, s: FrontEndState, a: FrontEndActions) {
+     Actions {
+-        PrimaryButton("启动", enabled = !s.busy, main = true, icon = Icons.Filled.PlayArrow) { a.onSteamGame(g) }
++        PrimaryButton(stringResource(if (s.shortcutPicker) R.string.game_shortcut_choose else R.string.games_launch), enabled = !s.busy, main = true, icon = Icons.Filled.PlayArrow) { a.onSteamGame(g) }
+         g.gameFiles?.takeIf { it.isDirectory }?.let { dir ->
+-            SecondaryButton("游戏文件", compact = true) { a.onBrowseFiles(dir) }
++            SecondaryButton(stringResource(R.string.games_files), compact = true) { a.onBrowseFiles(dir) }
+         }
+         g.protonPrefix?.takeIf { it.isDirectory }?.let { dir ->
+-            SecondaryButton("Proton 前缀", compact = true) { a.onBrowseFiles(dir) }
++            SecondaryButton(stringResource(R.string.games_prefix), compact = true) { a.onBrowseFiles(dir) }
+             // Only games added to the library; Steam titles keep their saves with Steam Cloud.
+             if (g.library == Library.ADDED) ManageSaves(g, dir, a)
+         }
++        if (!s.shortcutPicker) GameShortcutMenu(g, a)
+         BusyChip(s)
++    }
++}
++
++@Composable
++private fun GameShortcutMenu(g: Library.SteamGame, a: FrontEndActions) {
++    var open by remember(g.gameId) { androidx.compose.runtime.mutableStateOf(false) }
++    Box {
++        SecondaryButton(stringResource(R.string.game_shortcut), compact = true) { open = !open }
++        AnchoredMenu(open, onDismiss = { open = false }, title = stringResource(R.string.game_shortcut)) { first ->
++            MenuItem(stringResource(R.string.game_shortcut_add), checked = false, focusRequester = first) {
++                open = false; a.onGameShortcut(g)
++            }
++            MenuItem(stringResource(R.string.game_file_export), checked = false) {
++                open = false; a.onExportGameFile(g)
++            }
++            MenuItem(stringResource(R.string.game_link_copy), checked = false) {
++                open = false; a.onCopyGameLink(g)
++            }
++        }
+     }
+ }
+ 
+@@ -141,28 +183,32 @@
+     }
+     val found = saves
+     val summary = when {
+-        found == null -> "正在查找本游戏的存档…"
+-        found.isEmpty() -> "未按名称找到存档文件夹：导出会包含整个用户文件夹。"
++        found == null -> stringResource(R.string.games_saves_looking)
++        found.isEmpty() -> stringResource(R.string.games_saves_none)
+         else -> {
+             val mb = found.sumOf { it.bytes } / 1048576.0
+-            (if (found.size == 1) found[0].relPath else "${found.size} 个存档文件夹") + " · ${found.sumOf { it.files }} 个文件 · " +
+-                (if (mb < 1) "${(mb * 1024).toInt()} KB" else String.format("%.1f MB", mb))
++            stringResource(
++                R.string.games_saves_summary,
++                if (found.size == 1) found[0].relPath else stringResource(R.string.games_saves_folders, found.size),
++                found.sumOf { it.files },
++                if (mb < 1) stringResource(R.string.games_kb, (mb * 1024).toInt()) else stringResource(R.string.common_size_mb, mb),
++            )
+         }
+     }
+     Box {
+-        SecondaryButton("管理存档", compact = true) { open = !open }
+-        AnchoredMenu(open, onDismiss = { open = false }, title = "游戏存档", note = summary) { first ->
+-            MenuItem("导入存档…", checked = false, detail = "GameHub 或 Winlator 压缩包 · 现有存档会先备份", focusRequester = first) {
++        SecondaryButton(stringResource(R.string.games_manage_saves), compact = true) { open = !open }
++        AnchoredMenu(open, onDismiss = { open = false }, title = stringResource(R.string.games_saves), note = summary) { first ->
++            MenuItem(stringResource(R.string.games_import_saves), checked = false, detail = stringResource(R.string.games_import_saves_hint), focusRequester = first) {
+                 open = false; a.onSaveImport(g)
+             }
+-            MenuItem("导出为 GameHub 压缩包…", checked = false, detail = "steamuser 下的存档，适用于 GameHub 与 BannerHub") {
++            MenuItem(stringResource(R.string.games_export_gamehub), checked = false, detail = stringResource(R.string.games_export_gamehub_hint)) {
+                 open = false; a.onSaveExport(g, com.droiddeck.launcher.session.GameSaves.Layout.GAMEHUB)
+             }
+-            MenuItem("导出为 Winlator 压缩包…", checked = false, detail = "xuser 下的存档，适用于 Winlator、WinNative 与 Bannerlator") {
++            MenuItem(stringResource(R.string.games_export_winlator), checked = false, detail = stringResource(R.string.games_export_winlator_hint)) {
+                 open = false; a.onSaveExport(g, com.droiddeck.launcher.session.GameSaves.Layout.WINLATOR)
+             }
+             found?.firstOrNull()?.let { d ->
+-                MenuItem("打开存档文件夹", checked = false, detail = d.relPath) {
++                MenuItem(stringResource(R.string.games_open_save_folder), checked = false, detail = d.relPath) {
+                     open = false; a.onBrowseFiles(java.io.File(prefix, "drive_c/users/steamuser/" + d.relPath))
+                 }
+             }
+@@ -197,7 +243,7 @@
+         modifier = modifier.verticalScroll(rememberScrollState()).padding(start = 12.dp, end = 10.dp, top = 16.dp, bottom = 16.dp),
+     ) {
+         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(start = 6.dp, bottom = 10.dp)) {
+-            Text("游戏", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = colors.onBackground, maxLines = 1)
++            Text(stringResource(R.string.content_games), fontSize = 22.sp, fontWeight = FontWeight.Bold, color = colors.onBackground, maxLines = 1)
+             Text(games.size.toString(), fontSize = 13.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(bottom = 3.dp))
+         }
+         for (g in games) key(g.appId) {
+@@ -220,7 +266,7 @@
+         modifier = Modifier.fillMaxWidth().paneItem("game:${g.appId}")
+             .clip(Shape12)
+             .background(if (selected) pal.signal.copy(alpha = 0.14f) else if (hovered) Color.White.copy(alpha = 0.05f) else Color.Transparent)
+-            .border(2.dp, if (selected || focused) pal.signal else Color.Transparent, Shape12)
++            .glideBorder(focused, Shape12, pal.signal)
+             .hoverable(src).clickable(interactionSource = src, indication = LocalIndication.current, onClick = onSelect)
+             .controllerConfirm(onClick = onLaunch)
+             .padding(horizontal = 10.dp, vertical = 6.dp),
+@@ -231,7 +277,7 @@
+         Column(modifier = Modifier.weight(1f)) {
+             Text(g.name, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = colors.onBackground, maxLines = 1, overflow = TextOverflow.Ellipsis)
+             Text(
+-                lastPlayedText(g.lastPlayed)?.removePrefix("上次游玩 ")?.replaceFirstChar { it.uppercase() } ?: "从未游玩",
++                playedSpan(g.lastPlayed)?.replaceFirstChar { it.uppercase() } ?: stringResource(R.string.games_never_played),
+                 fontSize = 12.sp, color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis,
+             )
+         }
+@@ -256,30 +302,36 @@
+ /** Why a launch button is greyed out: the runtime is being worked on. Nothing when it is not. */
+ @Composable
+ internal fun BusyChip(s: FrontEndState) {
+-    if (s.busy) ActionChip(if (s.percent >= 0) "运行时处理中 · ${s.percent}%" else "运行时处理中", ok = false)
++    if (s.busy) ActionChip(if (s.percent >= 0) stringResource(R.string.games_runtime_busy_percent, s.percent) else s.stage, ok = false)
+ }
+ 
+ /** Whether Steam can start, said where Play is rather than only in Setup. */
+ @Composable
+ internal fun RuntimeChip(s: FrontEndState) = when {
+-    s.busy -> Chip(if (s.percent >= 0) "${s.stage} · ${s.percent}%" else s.stage, ok = false)
+-    !s.ready -> Chip("运行时将在首次启动时安装", ok = false)
+-    s.available != null && s.available != s.installed -> Chip("有运行时更新可用", ok = false)
+-    else -> Chip("● 运行时就绪", ok = true)
++    s.busy -> Chip(if (s.percent >= 0) stringResource(R.string.setup_runtime_progress, s.stage, s.percent) else s.stage, ok = false)
++    s.removalPending -> Chip(stringResource(R.string.runtime_removal_incomplete), ok = false)
++    !s.ready -> Chip(stringResource(R.string.games_runtime_first_play), ok = false)
++    s.available != null && s.available != s.installed -> Chip(stringResource(R.string.games_runtime_update), ok = false)
++    else -> Chip(stringResource(R.string.games_runtime_ready), ok = true)
+ }
+ 
+ /** "Last played 3 days ago" from Steam's unix seconds; null for a game never played. */
+-private fun lastPlayedText(lastPlayed: Long): String? {
++@Composable
++private fun lastPlayedText(lastPlayed: Long): String? =
++    playedSpan(lastPlayed)?.let { stringResource(R.string.games_last_played, it.replaceFirstChar { c -> c.lowercase() }) }
++
++/** "3 days ago" from Steam's unix seconds; null for a game never played. */
++private fun playedSpan(lastPlayed: Long): String? {
+     if (lastPlayed <= 0L) return null
+-    val span = android.text.format.DateUtils.getRelativeTimeSpanString(
++    return android.text.format.DateUtils.getRelativeTimeSpanString(
+         lastPlayed * 1000L, System.currentTimeMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
+     ).toString()
+-    return "上次游玩 " + span.replaceFirstChar { it.lowercase() }
+-}
+-
++}
++
++@Composable
+ private fun libraryLabel(library: String): String = when (library) {
+-    "internal" -> "内部存储"
+-    Library.ADDED -> "已添加游戏"
++    "internal" -> stringResource(R.string.games_internal)
++    Library.ADDED -> stringResource(R.string.games_added)
+     else -> library
+ }
+ 

@@ -1,0 +1,33 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/DeckyMenu.kt
++++ final/app/src/main/java/com/droiddeck/launcher/DeckyMenu.kt
+@@ -7,6 +7,7 @@
+ import androidx.compose.runtime.setValue
+ import com.droiddeck.launcher.runtime.DeckyManager
+ import com.droiddeck.launcher.session.SessionState
++import java.io.File
+ 
+ /**
+  * Decky Loader's state in the launcher: what is installed, the releases on offer and an install
+@@ -51,5 +52,22 @@
+             }
+         }, "install-decky").start()
+     }
++
++    fun importPluginZip(archive: File) {
++        if (deckyStage != null || SessionState.running || deckyInstalled == null) return
++        deckyStage = "正在开始导入插件…"; deckyPercent = -1
++        Thread({
++            val problem = runCatching {
++                DeckyManager.installPluginZip(activity, archive) { label, value ->
++                    ui.post { deckyStage = label; deckyPercent = value }
++                }
++            }.getOrElse { error -> "插件导入失败：${error.message ?: error.javaClass.simpleName}" }
++            ui.post {
++                deckyStage = null; deckyPercent = -1
++                val message = problem ?: "插件已安装。重启 Steam 后生效。"
++                android.widget.Toast.makeText(activity, message, android.widget.Toast.LENGTH_LONG).show()
++            }
++        }, "import-decky-plugin").start()
++    }
+ }
+ 

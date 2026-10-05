@@ -1,0 +1,146 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\wl_clipboard.c
+#OLD
+"a program never read the clipboard text it asked for; giving up"
+#NEW
+"程序始终未读取其请求的剪贴板文本；放弃"
+#OLD
+"guest copied %zu bytes (%s)"
+#NEW
+"客户机复制了 %zu 字节（%s）"
+#OLD
+"guest copied an empty text; Android clipboard left alone"
+#NEW
+"客户机复制了空文本；Android 剪贴板保持不变"
+#OLD
+"guest text exceeds %d bytes; dropped"
+#NEW
+"客户机文本超过 %d 字节；已丢弃"
+#OLD
+"timed out reading the guest's clipboard text (%zu bytes so far)"
+#NEW
+"读取客户机剪贴板文本超时（已读 %zu 字节）"
+#OLD
+"Android clipboard → guest (%zu bytes) for %s"
+#NEW
+"Android 剪贴板 → 客户机（%zu 字节），目标 %s"
+#OLD
+"%s withdrew its clipboard contents"
+#NEW
+"%s 撤回了其剪贴板内容"
+#OLD
+"selection set by %s (%s)"
+#NEW
+"选择由 %s 设置（%s）"
+#OLD
+*list ? list : "no mime types"
+#NEW
+*list ? list : "没有 mime 类型"
+#OLD
+"%s cleared the clipboard"
+#NEW
+"%s 清空了剪贴板"
+#OLD
+"%s started a drag and drop; not supported, cancelled"
+#NEW
+"%s 发起了拖放；不支持，已取消"
+#OLD
+banner_log("clipboard", len ? "Android clipboard → guest (%zu bytes)" : "Android clipboard cleared (%zu bytes)", len);
+#NEW
+banner_log("clipboard", len ? "Android 剪贴板 → 客户机（%zu 字节）" : "Android 剪贴板已清空（%zu 字节）", len);
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\effects_chain.c
+#OLD
+name && *name ? name : "Custom");
+#NEW
+name && *name ? name : "自定义");
+#OLD
+    static const char *n[] = {"None", "Linear", "Nearest", "SGSR", "FSR", "FSR Fit", "Sharpen", "NIS", "SGSR HQ"};
+#NEW
+    static const char *n[] = {"无", "线性", "最近邻", "SGSR", "FSR", "FSR Fit", "锐化", "NIS", "SGSR HQ"};
+#OLD
+"all off: scaling=%s (plain blit)"
+#NEW
+"全部关闭：缩放=%s（普通拷贝）"
+#OLD
+snprintf(line, sizeof(line), "scaling=%s", scaling_name(s->scaling));
+#NEW
+snprintf(line, sizeof(line), "缩放=%s", scaling_name(s->scaling));
+#OLD
+", CAS on %d%%"
+#NEW
+"，CAS 开启 %d%%"
+#OLD
+", CAS off"
+#NEW
+"，CAS 关闭"
+#OLD
+", colour b=%+.0f c=%+.0f g=%.2f s=%.0f%%"
+#NEW
+"，色彩 b=%+.0f c=%+.0f g=%.2f s=%.0f%%"
+#OLD
+", FXAA on"
+#NEW
+"，FXAA 开启"
+#OLD
+", Toon on"
+#NEW
+"，Toon 开启"
+#OLD
+", HDR on"
+#NEW
+"，HDR 开启"
+#OLD
+", NTSC on"
+#NEW
+"，NTSC 开启"
+#OLD
+", CRT on"
+#NEW
+"，CRT 开启"
+#OLD
+", Deband on %d%%"
+#NEW
+"，Deband 开启 %d%%"
+#OLD
+"effects: %s image %dx%d: vkCreateImage %d"
+#NEW
+"effects: %s 图像 %dx%d：vkCreateImage %d"
+#OLD
+"effects: %s image %dx%d (%llu bytes): vkAllocateMemory %d"
+#NEW
+"effects: %s 图像 %dx%d（%llu 字节）：vkAllocateMemory %d"
+#OLD
+"effects: %s: vkCreateShaderModule failed"
+#NEW
+"effects: %s：vkCreateShaderModule 失败"
+#OLD
+"effects: %s: vkCreateGraphicsPipelines %d"
+#NEW
+"effects: %s：vkCreateGraphicsPipelines %d"
+#OLD
+"chain now works in %s (%s)"
+#NEW
+"效果链现以 %s 工作（%s）"
+#OLD
+"SDR frames"
+#NEW
+"SDR 帧"
+#OLD
+"the HDR picture for frame generation"
+#NEW
+"用于帧生成的 HDR 画面"
+#OLD
+"the HDR composition's picture: PQ, or tone-mapped SDR with HDR output off"
+#NEW
+"HDR 合成的画面：PQ，或关闭 HDR 输出后色调映射的 SDR"
+#OLD
+"effects: no device for the chain"
+#NEW
+"effects: 效果链没有可用设备"
+#OLD
+"chain ready: 13 passes (SGSR, SGSR HQ, NIS, FSR EASU+RCAS, CAS, colour, FXAA, Toon, HDR, NTSC, CRT, deband) on %s"
+#NEW
+"效果链就绪：13 个通道（SGSR、SGSR HQ、NIS、FSR EASU+RCAS、CAS、色彩、FXAA、Toon、HDR、NTSC、CRT、Deband），设备 %s"
+#OLD
+"effects: the screen-effect chain could not be built on this driver; effects are off for this session"
+#NEW
+"effects: 无法在该驱动上构建屏幕效果链；本次会话关闭效果"

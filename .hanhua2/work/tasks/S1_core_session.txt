@@ -1,0 +1,9 @@
+tools/linuxfs/overlay/usr/local/bin/droiddeck-session
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-compat
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-games
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-install
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-launch
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-library
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-shortcuts
+tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-ui-scale
+tools/linuxfs/overlay/usr/local/bin/steam-compatibility

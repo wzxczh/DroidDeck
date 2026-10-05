@@ -8,7 +8,7 @@
 #include "framegen_bridge.h"
 #include "hdr_compose.h"
 #include "blend_pass.h"
-#include "banner_color.h"
+#include "droiddeck_color.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,9 +19,9 @@
 #include <pthread.h>
 #include <android/log.h>
 
-#define TAG "BannerWayland"
+#define TAG "DroidDeckWayland"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
-#define LOGE(...) banner_log("error", __VA_ARGS__)
+#define LOGE(...) droiddeck_log("error", __VA_ARGS__)
 #define MOD_INVALID VKP_MOD_INVALID
 
 struct vkp_image {
@@ -73,7 +73,7 @@ static VkImage *g_images;
 static uint32_t g_nimg;
 static VkExtent2D g_extent;
 
-static int g_first_frame_done; /* one-shot: fire banner_on_first_frame() on first present */
+static int g_first_frame_done; /* one-shot: fire droiddeck_on_first_frame() on first present */
 
 /* The base surface under the display layers (vkp_base_black): 1 once a plain black frame has been
  * presented on the CURRENT swapchain and nothing else since. Every other present clears it, and so does
@@ -179,7 +179,7 @@ static int64_t g_swap_retry_at_ns;
 static int g_swap_fail_logged;
 
 /* Implemented in waylandcomp_jni.c - notifies Java (dismiss launch overlay). */
-extern void banner_on_first_frame(void);
+extern void droiddeck_on_first_frame(void);
 
 static char g_gpu_name[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
 const char *vkp_gpu_name(void) { return g_gpu_name; }
@@ -276,7 +276,7 @@ int vkp_apply_window_request(void) {
     g_window = w;
     g_swap_retry_at_ns = 0;
     g_swap_fail_logged = 0;
-    banner_log("gpu", w ? "屏幕表面已附加" : "屏幕表面已移除：呈现暂停");
+    droiddeck_log("gpu", w ? "屏幕表面已附加" : "屏幕表面已移除：呈现暂停");
     return 1;
 }
 
@@ -353,7 +353,7 @@ static void update_map(int scene_w, int scene_h) {
         g_map.off_y = (float)(g_map.ry + (int)((g_map.rh - scene_h * aspect) * 0.5f));
     }
     g_map.valid = 1;
-    banner_log("screen", "%s，%s：%dx%d 场景以 %dx%d 显示在 %d,%d，位于 %dx%d 输出上",
+    droiddeck_log("screen", "%s，%s：%dx%d 场景以 %dx%d 显示在 %d,%d，位于 %dx%d 输出上",
                mode_name(mode), align_name(align), scene_w, scene_h,
                (int)(scene_w * g_map.kx + 0.5f), (int)(scene_h * g_map.ky + 0.5f),
                (int)g_map.off_x, (int)g_map.off_y, W, H);
@@ -391,10 +391,10 @@ static int dev_init(void) {
     const char *inst_exts[3] = {VK_KHR_SURFACE_EXTENSION_NAME,
                                 VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, NULL};
     uint32_t n_inst_exts = 2;
-    /* HDR sessions only (banner_color.h): the colour-space extension lets the swapchain carry HDR10 for
+    /* HDR sessions only (droiddeck_color.h): the colour-space extension lets the swapchain carry HDR10 for
      * frame generation. Asked for only when the loader has it, and only when HDR was asked for, so
      * every other session creates exactly the instance it always did. */
-    if (banner_color_requested() && g_vk.EnumerateInstanceExtensionProperties) {
+    if (droiddeck_color_requested() && g_vk.EnumerateInstanceExtensionProperties) {
         uint32_t ne = 0;
         g_vk.EnumerateInstanceExtensionProperties(NULL, &ne, NULL);
         VkExtensionProperties *ie = ne ? calloc(ne, sizeof(*ie)) : NULL;
@@ -407,14 +407,14 @@ static int dev_init(void) {
                 }
         }
         free(ie);
-        banner_log("color", "合成器实例 %s VK_EXT_swapchain_colorspace（用于帧生成的 HDR10 交换链 "
+        droiddeck_log("color", "合成器实例 %s VK_EXT_swapchain_colorspace（用于帧生成的 HDR10 交换链 "
                    "%s）", g_colorspace_ext ? "启用" : "没有",
                    g_colorspace_ext ? "在屏幕表面提供时可行" : "不可行：改为色调映射");
     }
     /* 1.3 like the X11 renderer's instance: the frame-generation probe (framegen_engine.cpp)
      * queries VkPhysicalDeviceVulkan12Features, and a 1.1 instance may be answered as 1.1. */
     VkApplicationInfo app = {.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-                             .pApplicationName = "banner-wayland-present",
+                             .pApplicationName = "droiddeck-wayland-present",
                              .apiVersion = VK_API_VERSION_1_3};
     VkInstanceCreateInfo ici = {.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
                                 .pApplicationInfo = &app,
@@ -444,9 +444,9 @@ static int dev_init(void) {
         VkPhysicalDeviceProperties props;
         g_vk.GetPhysicalDeviceProperties(g_pd, &props);
         snprintf(g_gpu_name, sizeof(g_gpu_name), "%s", props.deviceName);
-        banner_log("gpu", "合成器在 %s 上使用 %s 渲染", props.deviceName,
+        droiddeck_log("gpu", "合成器在 %s 上使用 %s 渲染", props.deviceName,
                    g_library_name ? g_library_name : "系统 Vulkan 驱动");
-        if (g_driver_path) banner_log("gpu", "驱动目录 %s", g_driver_path);
+        if (g_driver_path) droiddeck_log("gpu", "驱动目录 %s", g_driver_path);
     }
     g_vk.GetPhysicalDeviceMemoryProperties(g_pd, &g_memprops);
 
@@ -464,7 +464,7 @@ static int dev_init(void) {
             LOGE("present: 驱动缺少 %s（dmabuf 导入将失败）", dev_exts[i]);
     /* HDR sessions only: the HDR10 swapchain (frame generation) can carry the game's metadata. */
     int want_hdr_md = 0;
-    if (banner_color_requested()) {
+    if (droiddeck_color_requested()) {
         want_hdr_md = has_ext(exts, ne, VK_EXT_HDR_METADATA_EXTENSION_NAME);
         if (want_hdr_md) dev_exts[n_dev_exts++] = VK_EXT_HDR_METADATA_EXTENSION_NAME;
     }
@@ -487,7 +487,7 @@ static int dev_init(void) {
                               .enabledExtensionCount = n_dev_exts, .ppEnabledExtensionNames = dev_exts};
     VkResult dr = g_vk.CreateDevice(g_pd, &dci, NULL, &g_dev);
     if (dr != VK_SUCCESS && fg_features) {
-        banner_log("framegen", "驱动拒绝了 LSFG 特性集（%s）；已在没有它的情况下创建设备",
+        droiddeck_log("framegen", "驱动拒绝了 LSFG 特性集（%s）；已在没有它的情况下创建设备",
                    vk_result_name(dr));
         dci.pNext = NULL;
         fg_features = NULL;
@@ -506,13 +506,13 @@ static int dev_init(void) {
             g_wait_sem = VK_NULL_HANDLE;
         }
     }
-    banner_log("perf", "图层缓冲：显示屏的释放围栏在%s等待",
+    droiddeck_log("perf", "图层缓冲：显示屏的释放围栏在%s等待",
                g_import_sem_fd ? "GPU 上（VK_KHR_external_semaphore_fd）"
                                : "CPU 上（该驱动没有 VK_KHR_external_semaphore_fd）");
     if (want_hdr_md)
         g_set_hdr_metadata = (PFN_vkSetHdrMetadataEXT)g_vk.GetDeviceProcAddr(g_dev, "vkSetHdrMetadataEXT");
-    if (banner_color_requested())
-        banner_log("color", "合成器设备 %s VK_EXT_hdr_metadata（用于帧生成的 HDR10 交换链 %s）",
+    if (droiddeck_color_requested())
+        droiddeck_log("color", "合成器设备 %s VK_EXT_hdr_metadata（用于帧生成的 HDR10 交换链 %s）",
                    g_set_hdr_metadata ? "启用" : "没有",
                    g_set_hdr_metadata ? "携带游戏的母版元数据" : "不带游戏的元数据");
 
@@ -641,7 +641,7 @@ static void log_surface_formats(const VkSurfaceFormatKHR *f, uint32_t n) {
                                        vk_colorspace_short(f[i].colorSpace));
             else hdr_cut++;
         }
-    banner_log("color", "屏幕表面列出 %u 组格式/色彩空间（%s）；支持 HDR：%s%s", n, per,
+    droiddeck_log("color", "屏幕表面列出 %u 组格式/色彩空间（%s）；支持 HDR：%s%s", n, per,
                hdr_n ? hdr : "无", hdr_cut ? "（还有更多）" : "");
 }
 
@@ -678,7 +678,7 @@ static int swap_init_locked(void) {
     }
     VkSurfaceFormatKHR chosen = fmts[0];
     const VkSurfaceFormatKHR sdr_choice = fmts[0];
-    if (banner_color_requested() && (!g_surface_formats_said || g_swap_hdr_want)) {
+    if (droiddeck_color_requested() && (!g_surface_formats_said || g_swap_hdr_want)) {
         g_surface_formats_said = 1;
         log_surface_formats(fmts, nfmt);
     }
@@ -702,13 +702,13 @@ static int swap_init_locked(void) {
             g_swap_is_hdr = 1;
             char fname[24];
             vk_format_short(chosen.format, fname, sizeof(fname));
-            banner_log("color", "屏幕交换链按 HDR10 构建（格式 %d %s，HDR10_ST2084）：帧生成的 HDR "
+            droiddeck_log("color", "屏幕交换链按 HDR10 构建（格式 %d %s，HDR10_ST2084）：帧生成的 HDR "
                        "帧以 PQ BT.2020 到达显示屏%s", (int)chosen.format, fname,
                        vk_format_bits(chosen.format) <= 8 ? " - 8 位交换链：平滑渐变可能出现色带"
                                                           : "");
         } else {
             g_swap_hdr_unavailable = 1;
-            banner_log("color", "屏幕表面的 %u 组格式/色彩空间 "
+            droiddeck_log("color", "屏幕表面的 %u 组格式/色彩空间 "
                        "（见上一行）中没有 HDR10 交换链格式：带帧生成的帧改为色调映射为 SDR",
                        nfmt);
         }
@@ -748,7 +748,7 @@ static int swap_init_locked(void) {
     if (cr != VK_SUCCESS && g_swap_is_hdr) {
         /* The surface listed the HDR10 pair but refused the swapchain: say so, never ask again this
          * surface, and build the ordinary one now (frames tone-mapped) - never a black screen. */
-        banner_log("color", "驱动拒绝了 HDR10 交换链（%s）：带帧生成的帧 "
+        droiddeck_log("color", "驱动拒绝了 HDR10 交换链（%s）：带帧生成的帧 "
                    "改为色调映射为 SDR", vk_result_name(cr));
         g_swap_is_hdr = 0;
         g_swap_hdr_unavailable = 1;
@@ -767,7 +767,7 @@ static int swap_init_locked(void) {
     g_images = calloc(g_nimg, sizeof(VkImage));
     g_vk.GetSwapchainImagesKHR(g_dev, g_swapchain, &g_nimg, g_images);
 
-    banner_log("gpu", "屏幕输出 %ux%u，%u 个缓冲，垂直同步%s", g_extent.width, g_extent.height, g_nimg,
+    droiddeck_log("gpu", "屏幕输出 %ux%u，%u 个缓冲，垂直同步%s", g_extent.width, g_extent.height, g_nimg,
                g_swap_extra ? "（帧生成：每帧多次呈现）" : "");
     return 0;
 }
@@ -833,7 +833,7 @@ static void init_black_image(void) {
         g_vk.WaitForFences(g_dev, 1, &g_fence, VK_TRUE, 1000000000ULL) == VK_SUCCESS)
         g_black_state = 1;
     else
-        banner_log("gpu", "黑边黑色图像不可用：走拷贝路径的每一帧都会清空整个输出");
+        droiddeck_log("gpu", "黑边黑色图像不可用：走拷贝路径的每一帧都会清空整个输出");
 }
 
 /* Blit the black image over everything of swapchain image `img` (in TRANSFER_DST_OPTIMAL) OUTSIDE the
@@ -971,7 +971,7 @@ struct vkp_image *vkp_image_import_dmabuf(int fd, uint32_t drm_format, uint64_t 
         LOGE("%s: vkCreateImage(%s, %dx%d, pitch %u, offset %u) -> %s%s", as_blit_dst ? "layer" : "dmabuf",
              vkp_modifier_name(modifier), w, h, stride, offset, vk_result_name(cr),
              (!as_blit_dst && modifier == VKP_MOD_QCOM_COMPRESSED)
-                 ? "：游戏的 UBWC 布局被拒绝；BANNER_WAYLAND_UBWC=0 强制线性缓冲" : "");
+                 ? "：游戏的 UBWC 布局被拒绝；DROIDDECK_WAYLAND_UBWC=0 强制线性缓冲" : "");
         free(img); return NULL;
     }
 
@@ -1182,7 +1182,7 @@ static int ensure_scene_image(int w, int h) {
     if (r != VK_SUCCESS) { LOGE("effects: 场景图像 %dx%d：vkAllocateMemory %s", w, h, vk_result_name(r)); destroy_scene_image(); return -1; }
     g_vk.BindImageMemory(g_dev, g_scene.img, g_scene.mem, 0);
     g_scene.w = w; g_scene.h = h;
-    banner_log("effects", "效果链的场景图像 %dx%d", w, h);
+    droiddeck_log("effects", "效果链的场景图像 %dx%d", w, h);
     return 0;
 }
 
@@ -1218,7 +1218,7 @@ static int ensure_img(struct vkp_img_slot *s, int w, int h, VkFormat fmt, VkImag
     s->w = w; s->h = h; s->fmt = fmt;
     char fname[24];
     vk_format_short(fmt, fname, sizeof(fname));
-    banner_log("color", "%s 图像 %dx%d（%s）", what, w, h, fname);
+    droiddeck_log("color", "%s 图像 %dx%d（%s）", what, w, h, fname);
     return 0;
 }
 
@@ -1249,7 +1249,7 @@ static int compose_hdr(VkCommandBuffer cmd, const struct vkp_draw *draws, int n,
                           .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT};
     g_vk.CmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 1, &mb, 0, NULL, 0, NULL);
 
-    struct hdrc_params p = {.mode = mode, .sdr_white_nits = banner_color_sdr_white(),
+    struct hdrc_params p = {.mode = mode, .sdr_white_nits = droiddeck_color_sdr_white(),
                             .peak_nits = hf->peak_nits > 0.0f ? hf->peak_nits : 1000.0f};
     int lowest_hdr = -1;
     for (int i = 0; i < n; i++) {
@@ -1272,7 +1272,7 @@ static int compose_hdr(VkCommandBuffer cmd, const struct vkp_draw *draws, int n,
         }
         if (i >= lowest_hdr && !truncated_said) {
             truncated_said = 1;
-            banner_log("color", "HDR 合成：叠在 HDR 游戏之上的窗口超过 %d 个 - 最底层的 "
+            droiddeck_log("color", "HDR 合成：叠在 HDR 游戏之上的窗口超过 %d 个 - 最底层的 "
                        "被视为 SDR", HDRC_MAX_RECTS);
         }
     }
@@ -1287,7 +1287,7 @@ static void device_lost(const char *where) {
     g_dev_state = -2;
     g_base_black = 0;
     vkp_framegen_device_lost();
-    banner_log("error", "GPU 设备丢失（%s 处发生 VK_ERROR_DEVICE_LOST）：合成器已停止呈现； "
+    droiddeck_log("error", "GPU 设备丢失（%s 处发生 VK_ERROR_DEVICE_LOST）：合成器已停止呈现； "
                "请重启会话", where);
     for (uint32_t i = 0; i < g_nimg; i++) blendp_forget_image(g_images[i]);
     if (g_swapchain) g_vk.DestroySwapchainKHR(g_dev, g_swapchain, NULL);
@@ -1383,14 +1383,14 @@ static int acquire_image(int k, int first, uint32_t *img, VkResult *ar_out) {
         VkResult ar = g_vk.AcquireNextImageKHR(g_dev, g_swapchain, 1000000000ULL, g_acqs[k], VK_NULL_HANDLE, img);
         perf_add(&g_perf.acquire_ns, &g_perf.acquire_max_ns, &g_perf.acquires, perf_now() - t_acq);
         if (ar == VK_SUCCESS || ar == VK_SUBOPTIMAL_KHR) { *ar_out = ar; return 0; }
-        if (ar == VK_ERROR_DEVICE_LOST) { device_lost("acquire"); return -1; }
+        if (ar == VK_ERROR_DEVICE_LOST) { device_lost("获取"); return -1; }
         if (ar == VK_ERROR_OUT_OF_DATE_KHR || ar == VK_ERROR_SURFACE_LOST_KHR) {
-            banner_log("gpu", "获取时屏幕表面 %s：重建交换链", vk_result_name(ar));
+            droiddeck_log("gpu", "获取时屏幕表面 %s：重建交换链", vk_result_name(ar));
             destroy_swapchain();
             if (first && attempt == 0) continue;
             return -1;
         }
-        banner_log("error", "present: 获取 %d 失败（%s %d）", k, vk_result_name(ar), (int)ar);
+        droiddeck_log("error", "present: 获取 %d 失败（%s %d）", k, vk_result_name(ar), (int)ar);
         if (ar == VK_TIMEOUT || ar == VK_NOT_READY) return -1;
         destroy_swapchain(); /* anything else: start over next frame */
         return -1;
@@ -1422,7 +1422,7 @@ static void check_surface_changed(void) {
     if (caps.currentExtent.width == g_caps_extent.width && caps.currentExtent.height == g_caps_extent.height &&
         caps.currentTransform == g_surface_transform)
         return;
-    banner_log("gpu", "屏幕表面已改变（%ux%u -> %ux%u，变换 %d -> %d）：重建交换链",
+    droiddeck_log("gpu", "屏幕表面已改变（%ux%u -> %ux%u，变换 %d -> %d）：重建交换链",
                g_caps_extent.width, g_caps_extent.height, caps.currentExtent.width, caps.currentExtent.height,
                (int)g_surface_transform, (int)caps.currentTransform);
     destroy_swapchain();
@@ -1464,7 +1464,7 @@ static int take_wait_fd(int fd) {
         static int said;
         if (!said) {
             said = 1;
-            banner_log("perf", "图层缓冲：把释放围栏导入为 GPU 等待失败；改为在 CPU 上等待");
+            droiddeck_log("perf", "图层缓冲：把释放围栏导入为 GPU 等待失败；改为在 CPU 上等待");
         }
     }
     struct pollfd p = {.fd = fd, .events = POLLIN};
@@ -1476,18 +1476,18 @@ static int take_wait_fd(int fd) {
 
 /* The HDR10 swapchain's metadata: the game's SMPTE 2086 / CTA-861.3 values (its image description) via
  * VK_EXT_hdr_metadata, once per swapchain and description. A game that gave none gets none. */
-static void send_hdr_metadata(const struct banner_color *c) {
+static void send_hdr_metadata(const struct droiddeck_color *c) {
     static int said_none, said_nodesc;
     if (!c) return;
     if (!g_set_hdr_metadata) {
-        if (!said_none) { said_none = 1; banner_log("color", "HDR10 交换链没有游戏的元数据：本设备 "
+        if (!said_none) { said_none = 1; droiddeck_log("color", "HDR10 交换链没有游戏的元数据：本设备 "
                                                     "没有 VK_EXT_hdr_metadata（显示屏使用其默认值）"); }
         return;
     }
     if (!c->has_st2086 && !c->has_cta861) {
         if (said_nodesc != (int)c->identity) {
             said_nodesc = (int)c->identity;
-            banner_log("color", "HDR10 交换链：图像描述 #%u 不带 HDR 元数据（游戏未发送）， "
+            droiddeck_log("color", "HDR10 交换链：图像描述 #%u 不带 HDR 元数据（游戏未发送）， "
                        "因此不设置 - 显示屏使用其默认值", c->identity);
         }
         return;
@@ -1506,7 +1506,7 @@ static void send_hdr_metadata(const struct banner_color *c) {
         md.maxFrameAverageLightLevel = c->max_fall;
     }
     g_set_hdr_metadata(g_dev, 1, &g_swapchain, &md);
-    banner_log("color", "HDR10 交换链：已通过 VK_EXT_hdr_metadata 设置游戏的元数据（图像描述 #%u：%s）",
+    droiddeck_log("color", "HDR10 交换链：已通过 VK_EXT_hdr_metadata 设置游戏的元数据（图像描述 #%u：%s）",
                c->identity, c->text);
 }
 
@@ -1522,7 +1522,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
     /* Frame generation queues several presents per scene frame and needs swapchain images for
      * them: rebuild when that changes (armed, disarmed, another multiplier). */
     if (g_swapchain && vkp_framegen_extra_images() != g_swap_extra) {
-        banner_log("gpu", "帧生成现在每帧需要 %d 次呈现%s：重建交换链",
+        droiddeck_log("gpu", "帧生成现在每帧需要 %d 次呈现%s：重建交换链",
                    1 + vkp_framegen_extra_images(), vkp_framegen_extra_images() ? "" : "");
         destroy_swapchain();
     }
@@ -1531,7 +1531,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
      * swapchain (only in HDR sessions: g_colorspace_ext). */
     const int want_hdr = hf && !hf->tonemap && g_colorspace_ext && !g_swap_hdr_unavailable;
     if (g_swapchain && want_hdr != g_swap_is_hdr) {
-        banner_log("color", want_hdr ? "带帧生成的 HDR 帧：把屏幕交换链重建为 HDR10"
+        droiddeck_log("color", want_hdr ? "带帧生成的 HDR 帧：把屏幕交换链重建为 HDR10"
                             : hf     ? "HDR 输出已关闭：把屏幕交换链重建为 SDR（帧被色调映射）"
                                      : "屏幕交换链不再承载 HDR 帧：将其重建为 SDR");
         destroy_swapchain();
@@ -1570,10 +1570,10 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
             char sw[24];
             vk_format_short(g_swap_fmt, sw, sizeof(sw));
             if (deep)
-                banner_log("color", "帧生成以 FP16（RGBA16F）在 HDR 画面上运行：插值保留超过 8 位的 "
+                droiddeck_log("color", "帧生成以 FP16（RGBA16F）在 HDR 画面上运行：插值保留超过 8 位的 "
                            "PQ，进入 HDR10 交换链（%s）", sw);
             else
-                banner_log("color", "帧生成以 8 位在 HDR 画面上运行（引擎在此无法使用 FP16）， "
+                droiddeck_log("color", "帧生成以 8 位在 HDR 画面上运行（引擎在此无法使用 FP16）， "
                            "进入 HDR10 交换链（%s）：平滑渐变可能出现色带", sw);
         }
     }
@@ -1746,7 +1746,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
         if (k > 0) {
             VkResult ark;
             if (acquire_image(k, 0, &img, &ark) != 0) {
-                banner_log("framegen", "present %d/%d：没有交换链图像；本帧提前结束", k + 1, presents);
+                droiddeck_log("framegen", "present %d/%d：没有交换链图像；本帧提前结束", k + 1, presents);
                 pr = VK_ERROR_OUT_OF_DATE_KHR;
                 break;
             }
@@ -1764,7 +1764,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
                            .pCommandBuffers = &g_cmds[k], .signalSemaphoreCount = 1, .pSignalSemaphores = &g_rnds[k]};
         VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, last ? g_fence : VK_NULL_HANDLE);
         if (qr != VK_SUCCESS) {
-            if (qr == VK_ERROR_DEVICE_LOST) device_lost("submit");
+            if (qr == VK_ERROR_DEVICE_LOST) device_lost("提交");
             else LOGE("present: 提交 %d/%d 失败（%d）", k + 1, presents, (int)qr);
             /* The acquired image is never presented; the swapchain would be stuck with it. */
             if (g_dev_state != -2) destroy_swapchain();
@@ -1788,10 +1788,10 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
     }
     VkResult fr = timed_wait(g_fence, UINT64_MAX);
     if (fg) vkp_framegen_presented(presented_gen);
-    if (fr == VK_ERROR_DEVICE_LOST || pr == VK_ERROR_DEVICE_LOST) { device_lost("present"); return -1; }
+    if (fr == VK_ERROR_DEVICE_LOST || pr == VK_ERROR_DEVICE_LOST) { device_lost("呈现"); return -1; }
     if (pr == VK_ERROR_OUT_OF_DATE_KHR || pr == VK_ERROR_SURFACE_LOST_KHR) {
         /* The surface changed or went away under this frame: rebuild before the next one. */
-        banner_log("gpu", "呈现时屏幕表面 %s：重建交换链", vk_result_name(pr));
+        droiddeck_log("gpu", "呈现时屏幕表面 %s：重建交换链", vk_result_name(pr));
         destroy_swapchain();
         return -1;
     } else if (pr == VK_SUBOPTIMAL_KHR || ar == VK_SUBOPTIMAL_KHR) {
@@ -1799,9 +1799,9 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
          * swap_init), so a rotated panel reports SUBOPTIMAL on every frame. Rebuilding would change
          * nothing (and a rebuild per frame would be far worse), so present as is; say so once. */
         static int said;
-        if (!said) { said = 1; banner_log("gpu", "表面报告 SUBOPTIMAL（面板旋转）；按原样呈现"); }
+        if (!said) { said = 1; droiddeck_log("gpu", "表面报告 SUBOPTIMAL（面板旋转）；按原样呈现"); }
     } else if (pr != VK_SUCCESS) {
-        banner_log("error", "present: vkQueuePresentKHR 失败（%s %d）", vk_result_name(pr), (int)pr);
+        droiddeck_log("error", "present: vkQueuePresentKHR 失败（%s %d）", vk_result_name(pr), (int)pr);
         destroy_swapchain();
         return -1;
     }
@@ -1815,7 +1815,7 @@ static int render_impl(int scene_w, int scene_h, const struct vkp_draw *draws, i
      * launch/preloader overlay can dismiss (wayland has no XServer window-content hook). */
     if (drawn && !g_first_frame_done) {
         g_first_frame_done = 1;
-        banner_on_first_frame();
+        droiddeck_on_first_frame();
     }
     if (how) *how = hdr_how;
     return 0;
@@ -1856,7 +1856,7 @@ void vkp_reset_first_frame(void) {
 void vkp_signal_first_frame(void) {
     if (g_first_frame_done) return;
     g_first_frame_done = 1;
-    banner_on_first_frame();
+    droiddeck_on_first_frame();
 }
 
 int vkp_update_map(int scene_w, int scene_h) {
@@ -1942,12 +1942,12 @@ int vkp_blit_image(struct vkp_image *src, struct vkp_image *dst, int wait_fd) {
     g_vk.ResetFences(g_dev, 1, &g_fence);
     VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, g_fence);
     if (qr != VK_SUCCESS) {
-        if (qr == VK_ERROR_DEVICE_LOST) device_lost("layer blit");
+        if (qr == VK_ERROR_DEVICE_LOST) device_lost("图层 blit");
         else LOGE("layer: blit 提交失败（%d）", (int)qr);
         return -1;
     }
     VkResult fr = timed_wait(g_fence, 1000000000ULL);
-    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("layer blit"); return -1; }
+    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("图层 blit"); return -1; }
     if (fr != VK_SUCCESS) { LOGE("layer: blit 围栏等待 -> %s", vk_result_name(fr)); return -1; }
     return 0;
 }
@@ -2038,11 +2038,11 @@ int vkp_image_readback(struct vkp_image *src, uint32_t *out, int max_px) {
     g_vk.ResetFences(g_dev, 1, &g_fence);
     VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, g_fence);
     if (qr != VK_SUCCESS) {
-        if (qr == VK_ERROR_DEVICE_LOST) device_lost("cursor readback");
+        if (qr == VK_ERROR_DEVICE_LOST) device_lost("光标回读");
         return -1;
     }
     VkResult fr = timed_wait(g_fence, 1000000000ULL);
-    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("cursor readback"); return -1; }
+    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("光标回读"); return -1; }
     if (fr != VK_SUCCESS) return -1;
     for (int y = 0; y < src->h; y++)
         memcpy(out + (size_t)y * src->w, (const uint8_t *)g_rb->map + g_rb->offset + (size_t)y * g_rb->row_pitch,
@@ -2237,12 +2237,12 @@ int vkp_pass_copy_to(struct vkp_image *dst, int wait_fd) {
     g_vk.ResetFences(g_dev, 1, &g_fence);
     VkResult qr = g_vk.QueueSubmit(g_queue, 1, &si, g_fence);
     if (qr != VK_SUCCESS) {
-        if (qr == VK_ERROR_DEVICE_LOST) device_lost("layer pass");
+        if (qr == VK_ERROR_DEVICE_LOST) device_lost("图层通道");
         else LOGE("layer: 效果通道提交失败（%d）", (int)qr);
         return -1;
     }
     VkResult fr = timed_wait(g_fence, 1000000000ULL);
-    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("layer pass"); return -1; }
+    if (fr == VK_ERROR_DEVICE_LOST) { device_lost("图层通道"); return -1; }
     if (fr != VK_SUCCESS) { LOGE("layer: 效果通道围栏等待 -> %s", vk_result_name(fr)); return -1; }
     return 0;
 }

@@ -1,0 +1,6 @@
+README.md
+docs/releases/0.3.0.md
+docs/testing/android-clipboard.md
+docs/testing/game-launcher-shortcuts.md
+tools/gamescope/PATCHES.md
+tools/proot/PATCHES.md

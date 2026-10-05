@@ -1,0 +1,51 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/PcKeyboard.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/PcKeyboard.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import android.view.KeyEvent
+ import androidx.compose.animation.animateColorAsState
+ import androidx.compose.foundation.background
+@@ -157,11 +159,11 @@
+         ) {
+             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(24.dp)) {
+-                    Text("PC 键盘", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onSurfaceVariant)
++                    Text(stringResource(R.string.drawer_pc_keyboard), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.onSurfaceVariant)
+                     Spacer(Modifier.weight(1f))
+-                    HeaderButton("Android 键盘", onAndroidKeyboard)
++                    HeaderButton(stringResource(R.string.pckb_android), onAndroidKeyboard)
+                     Spacer(Modifier.width(8.dp))
+-                    HeaderButton("隐藏  ✕", onClose)
++                    HeaderButton(stringResource(R.string.pckb_hide), onClose)
+                 }
+                 ROWS.forEachIndexed { r, row ->
+                     Row(horizontalArrangement = Arrangement.spacedBy(3.dp), modifier = Modifier.fillMaxWidth().height(rowHeight)) {
+@@ -200,14 +202,13 @@
+             down -> pal.signal.copy(alpha = 0.55f)
+             lit -> pal.signal.copy(alpha = if (locked) 0.45f else 0.28f)
+             else -> Color.White.copy(alpha = 0.07f)
+-        }, label = "keyFill",
++        }, Motion.tw(160), label = "keyFill",
+     )
+-    val edge = if (focused) pal.signal else if (lit) pal.signal.copy(alpha = 0.7f) else Color.White.copy(alpha = 0.12f)
+     Box(
+         contentAlignment = Alignment.Center,
+         modifier = modifier.weight(weight).fillMaxHeight()
+             .background(fill, RoundedCornerShape(7.dp))
+-            .border(if (focused) 2.dp else 1.dp, edge, RoundedCornerShape(7.dp))
++            .glideBorder(focused, RoundedCornerShape(7.dp), pal.signal, if (lit) pal.signal.copy(alpha = 0.7f) else Color.White.copy(alpha = 0.12f))
+             .pointerInput(Unit) {
+                 awaitEachGesture {
+                     awaitFirstDown().consume()
+@@ -244,7 +245,7 @@
+         contentAlignment = Alignment.Center,
+         modifier = Modifier.fillMaxHeight()
+             .background(Color.White.copy(alpha = 0.08f), RoundedCornerShape(7.dp))
+-            .border(if (focused) 2.dp else 1.dp, if (focused) pal.signal else Color.White.copy(alpha = 0.14f), RoundedCornerShape(7.dp))
++            .glideBorder(focused, RoundedCornerShape(7.dp), pal.signal, Color.White.copy(alpha = 0.14f))
+             .clickable(interactionSource = src, indication = LocalIndication.current, onClick = onClick)
+             .padding(horizontal = 12.dp),
+     ) { Text(text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White) }

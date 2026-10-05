@@ -1,0 +1,1130 @@
+{
+ "new": [
+  {
+   "path": ".github/workflows/pr-release-cleanup.yml",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/droiddeck_color.h",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/droiddeck_ext.c",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/UpdatesMenu.kt",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/core/TextureFiltering.kt",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/GameFileSync.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/GameFiles.kt",
+   "eng_lines": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/GameLaunchLink.kt",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/LibraryCache.kt",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/DriverBundle.kt",
+   "eng_lines": 8
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/DriverPairs.kt",
+   "eng_lines": 14
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/GpuInfo.kt",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/Lossless.kt",
+   "eng_lines": 10
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/input/SessionClipboard.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/DeckyPluginInstall.kt",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/LegacyNames.kt",
+   "eng_lines": 11
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/ProotFastPath.kt",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/RuntimeFileTree.java",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/UserApps.kt",
+   "eng_lines": 25
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/CpuStatComponent.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/EsyncPacks.kt",
+   "eng_lines": 121
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/GpuClockPin.kt",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/GpuMemComponent.kt",
+   "eng_lines": 9
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/GpuStatsComponent.kt",
+   "eng_lines": 16
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/HwmonComponent.kt",
+   "eng_lines": 11
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/OverlayShown.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/ProtonDefault.kt",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SecondaryLibrary.kt",
+   "eng_lines": 16
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionPipController.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SteamRepair.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/StorageDiagnostics.kt",
+   "eng_lines": 16
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/store/UserAppsState.kt",
+   "eng_lines": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/AddAppDialog.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/EmptyLibrary.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/GpuDriversPanel.kt",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/PageFlood.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/SessionDrawerPage.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/UpdatesPage.kt",
+   "eng_lines": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/Wordmark.kt",
+   "eng_lines": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/update/AppUpdates.kt",
+   "eng_lines": 11
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/update/SelfInstaller.kt",
+   "eng_lines": 9
+  },
+  {
+   "path": "app/src/main/res/values-es/strings.xml",
+   "eng_lines": 895
+  },
+  {
+   "path": "app/src/main/res/values-ja/strings.xml",
+   "eng_lines": 925
+  },
+  {
+   "path": "app/src/main/res/values-ko/strings.xml",
+   "eng_lines": 925
+  },
+  {
+   "path": "app/src/main/res/values-zh-rHK/strings.xml",
+   "eng_lines": 925
+  },
+  {
+   "path": "app/src/main/res/values-zh-rTW/strings.xml",
+   "eng_lines": 925
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/core/TextureFilteringTest.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/frontend/AddedGamesTest.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/frontend/GameFileSyncTest.kt",
+   "eng_lines": 4
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/frontend/GameFilesTest.kt",
+   "eng_lines": 21
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/frontend/GameLaunchLinkTest.kt",
+   "eng_lines": 7
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/gpu/DriverBundleTest.kt",
+   "eng_lines": 16
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/gpu/DriverPairsTest.kt",
+   "eng_lines": 25
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/gpu/FrameGenTest.kt",
+   "eng_lines": 2
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/gpu/LosslessTest.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/runtime/DeckyPluginInstallTest.kt",
+   "eng_lines": 14
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/runtime/LegacyNamesTest.kt",
+   "eng_lines": 4
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/runtime/LinuxFexTest.kt",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/runtime/RuntimeRemovalTest.kt",
+   "eng_lines": 20
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/runtime/RuntimeRemovalUiTest.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/EsyncPacksTest.kt",
+   "eng_lines": 136
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/ProtonDefaultTest.kt",
+   "eng_lines": 10
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/RumbleComponentTest.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/SecondaryLibraryTest.kt",
+   "eng_lines": 9
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/SessionPathsTest.kt",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/SessionScalingPrefsTest.kt",
+   "eng_lines": 3
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/SteamChannelTest.kt",
+   "eng_lines": 5
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/ui/MotionTest.kt",
+   "eng_lines": 1
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/update/AppUpdatesTest.kt",
+   "eng_lines": 15
+  },
+  {
+   "path": "docs/development/proot-performance.md",
+   "eng_lines": 246
+  },
+  {
+   "path": "docs/development/thor-sd-storage-investigation.md",
+   "eng_lines": 274
+  },
+  {
+   "path": "docs/releases/0.3.0.md",
+   "eng_lines": 78
+  },
+  {
+   "path": "docs/testing/android-clipboard.md",
+   "eng_lines": 35
+  },
+  {
+   "path": "docs/testing/game-launcher-shortcuts.md",
+   "eng_lines": 25
+  },
+  {
+   "path": "tools/linuxfs/build-x86-preloads.sh",
+   "eng_lines": 12
+  },
+  {
+   "path": "tools/linuxfs/clipboard/clipboard.c",
+   "eng_lines": 8
+  },
+  {
+   "path": "tools/linuxfs/fex/faultreport.c",
+   "eng_lines": 4
+  },
+  {
+   "path": "tools/linuxfs/fex/thunkaudit.c",
+   "eng_lines": 1
+  },
+  {
+   "path": "tools/linuxfs/licenses/uruntime-LICENSE",
+   "eng_lines": 1
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-appimage-run",
+   "eng_lines": 10
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-bwrap",
+   "eng_lines": 31
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-desktop-bookmarks",
+   "eng_lines": 6
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-desktop-games",
+   "eng_lines": 10
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-esync",
+   "eng_lines": 118
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-fex",
+   "eng_lines": 86
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak",
+   "eng_lines": 12
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak-setup",
+   "eng_lines": 18
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-game-env",
+   "eng_lines": 33
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-login1",
+   "eng_lines": 14
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-netmanager",
+   "eng_lines": 41
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-pad-defaults",
+   "eng_lines": 125
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-proton-extra",
+   "eng_lines": 31
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-script-run",
+   "eng_lines": 3
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-seed-redists",
+   "eng_lines": 9
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-session",
+   "eng_lines": 169
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-compat",
+   "eng_lines": 51
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-games",
+   "eng_lines": 30
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-install",
+   "eng_lines": 36
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-launch",
+   "eng_lines": 8
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-library",
+   "eng_lines": 18
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-shortcuts",
+   "eng_lines": 18
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-ui-scale",
+   "eng_lines": 9
+  },
+  {
+   "path": "tools/linuxfs/overlay/usr/local/bin/steam-compatibility",
+   "eng_lines": 121
+  },
+  {
+   "path": "tools/linuxfs/preload/fsync.c",
+   "eng_lines": 9
+  },
+  {
+   "path": "tools/linuxfs/preload/kgslid.c",
+   "eng_lines": 1
+  },
+  {
+   "path": "tools/linuxfs/preload/kgslpoll.c",
+   "eng_lines": 1
+  },
+  {
+   "path": "tools/linuxfs/preload/ntsync.c",
+   "eng_lines": 5
+  },
+  {
+   "path": "tools/linuxfs/preload/storage.c",
+   "eng_lines": 8
+  },
+  {
+   "path": "tools/mangoapp/libtracefs-shim.c",
+   "eng_lines": 3
+  },
+  {
+   "path": "tools/proot/bench/equiv.py",
+   "eng_lines": 3
+  },
+  {
+   "path": "tools/proot/bench/mechbench.c",
+   "eng_lines": 19
+  },
+  {
+   "path": "tools/proot/bench/parstat.c",
+   "eng_lines": 1
+  },
+  {
+   "path": "tools/proot/bench/run-device.sh",
+   "eng_lines": 2
+  },
+  {
+   "path": "tools/proot/bench/sysbench.c",
+   "eng_lines": 20
+  },
+  {
+   "path": "tools/proot/bench/workloads.sh",
+   "eng_lines": 4
+  },
+  {
+   "path": "tools/proot/fastpath/fastpath.c",
+   "eng_lines": 7
+  },
+  {
+   "path": "tools/release/check_session_assets.py",
+   "eng_lines": 2
+  },
+  {
+   "path": "tools/release/update_catalog.py",
+   "eng_lines": 53
+  },
+  {
+   "path": "tools/tests/test_appimage_run.py",
+   "eng_lines": 47
+  },
+  {
+   "path": "tools/tests/test_desktop_bookmarks.py",
+   "eng_lines": 20
+  },
+  {
+   "path": "tools/tests/test_droiddeck_fex.py",
+   "eng_lines": 166
+  },
+  {
+   "path": "tools/tests/test_esync_packs.py",
+   "eng_lines": 426
+  },
+  {
+   "path": "tools/tests/test_fsync_preload.py",
+   "eng_lines": 25
+  },
+  {
+   "path": "tools/tests/test_login1.py",
+   "eng_lines": 13
+  },
+  {
+   "path": "tools/tests/test_netmanager.py",
+   "eng_lines": 36
+  },
+  {
+   "path": "tools/tests/test_request_fex.py",
+   "eng_lines": 16
+  },
+  {
+   "path": "tools/tests/test_session_assets.py",
+   "eng_lines": 5
+  },
+  {
+   "path": "tools/tests/test_session_log.py",
+   "eng_lines": 5
+  },
+  {
+   "path": "tools/tests/test_steam_compat_live.py",
+   "eng_lines": 30
+  },
+  {
+   "path": "tools/tests/test_steam_install.py",
+   "eng_lines": 45
+  },
+  {
+   "path": "tools/tests/test_steam_ui_scale.py",
+   "eng_lines": 12
+  },
+  {
+   "path": "tools/tests/test_update_catalog.py",
+   "eng_lines": 30
+  }
+ ],
+ "changed": [
+  {
+   "path": ".github/workflows/build-gamescope.yml",
+   "added": 4,
+   "eng": 1
+  },
+  {
+   "path": ".github/workflows/build-wlroots.yml",
+   "added": 4,
+   "eng": 1
+  },
+  {
+   "path": ".github/workflows/build.yml",
+   "added": 84,
+   "eng": 17
+  },
+  {
+   "path": ".github/workflows/pr-release-publish.yml",
+   "added": 228,
+   "eng": 65
+  },
+  {
+   "path": ".github/workflows/release.yml",
+   "added": 56,
+   "eng": 11
+  },
+  {
+   "path": "README.md",
+   "added": 14,
+   "eng": 8
+  },
+  {
+   "path": "app/build.gradle",
+   "added": 35,
+   "eng": 14
+  },
+  {
+   "path": "app/src/main/AndroidManifest.xml",
+   "added": 19,
+   "eng": 9
+  },
+  {
+   "path": "app/src/main/cpp/fakeinput_steam.cpp",
+   "added": 342,
+   "eng": 13
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/CMakeLists.txt",
+   "added": 37,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md",
+   "added": 6,
+   "eng": 0
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/ahb_swapchain.c",
+   "added": 45,
+   "eng": 19
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/blend_pass.c",
+   "added": 3,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/compositor.c",
+   "added": 161,
+   "eng": 15
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/effects_chain.c",
+   "added": 11,
+   "eng": 6
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/framegen_bridge.c",
+   "added": 39,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/hdr_compose.c",
+   "added": 3,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/sc_layer.c",
+   "added": 91,
+   "eng": 24
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/sc_layer.h",
+   "added": 8,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/vk_present.c",
+   "added": 49,
+   "eng": 17
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/vk_present.h",
+   "added": 3,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/waylandcomp_jni.c",
+   "added": 102,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/wl_clipboard.c",
+   "added": 15,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/wl_color_mgmt.c",
+   "added": 112,
+   "eng": 40
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/wl_dmabuf.c",
+   "added": 12,
+   "eng": 8
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/wl_text_input.c",
+   "added": 18,
+   "eng": 8
+  },
+  {
+   "path": "app/src/main/cpp/waylandcomp/src/wl_toplevel_icon.c",
+   "added": 1,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ComponentsMenu.kt",
+   "added": 25,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/DeckyMenu.kt",
+   "added": 18,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/DriverMenus.kt",
+   "added": 280,
+   "eng": 10
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/MainActivity.kt",
+   "added": 454,
+   "eng": 15
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/SessionActivity.kt",
+   "added": 458,
+   "eng": 20
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt",
+   "added": 21,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/core/GameEnvironment.kt",
+   "added": 7,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/core/GameEnvironmentOptions.kt",
+   "added": 4,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/core/NetworkReport.kt",
+   "added": 8,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/AddedGames.kt",
+   "added": 28,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/frontend/Library.kt",
+   "added": 38,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/FrameGen.kt",
+   "added": 50,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/LinuxVulkanDriverManager.java",
+   "added": 27,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/TurnipDriver.java",
+   "added": 32,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/gpu/TurnipReleases.kt",
+   "added": 30,
+   "eng": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/input/PadBridge.java",
+   "added": 50,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/AppImageManager.kt",
+   "added": 111,
+   "eng": 12
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/BwrapSpawner.kt",
+   "added": 1,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/DeckyManager.kt",
+   "added": 127,
+   "eng": 14
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/GuestCommand.kt",
+   "added": 13,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/LinuxNetworkLinkComponent.kt",
+   "added": 197,
+   "eng": 3
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/LinuxRuntime.java",
+   "added": 116,
+   "eng": 12
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/LinuxRuntimeInstaller.java",
+   "added": 118,
+   "eng": 7
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/runtime/RuntimeInstallService.kt",
+   "added": 19,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/BatteryComponent.kt",
+   "added": 22,
+   "eng": 7
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/ComponentsManager.kt",
+   "added": 35,
+   "eng": 6
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/GameEnvironmentStore.kt",
+   "added": 12,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/PerfHud.kt",
+   "added": 15,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/ProtonExtras.kt",
+   "added": 9,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/RumbleComponent.kt",
+   "added": 30,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionArtifacts.kt",
+   "added": 35,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionFiles.kt",
+   "added": 47,
+   "eng": 5
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionPaths.kt",
+   "added": 76,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionPrefs.kt",
+   "added": 323,
+   "eng": 23
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/session/SessionService.kt",
+   "added": 386,
+   "eng": 55
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/ComponentsPage.kt",
+   "added": 122,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/ControllerSettings.kt",
+   "added": 30,
+   "eng": 10
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndContent.kt",
+   "added": 335,
+   "eng": 4
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndGames.kt",
+   "added": 87,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndRail.kt",
+   "added": 31,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndScreen.kt",
+   "added": 57,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndSetup.kt",
+   "added": 99,
+   "eng": 8
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/FrontEndWidgets.kt",
+   "added": 23,
+   "eng": 1
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/GameEnvironmentEditor.kt",
+   "added": 253,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/ModeSettingsDialog.kt",
+   "added": 330,
+   "eng": 9
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/ui/SessionOverlay.kt",
+   "added": 687,
+   "eng": 23
+  },
+  {
+   "path": "app/src/main/java/com/droiddeck/launcher/wayland/WaylandCompositor.java",
+   "added": 38,
+   "eng": 2
+  },
+  {
+   "path": "app/src/main/res/values-zh-rCN/strings.xml",
+   "added": 920,
+   "eng": 902
+  },
+  {
+   "path": "app/src/main/res/values/strings.xml",
+   "added": 1013,
+   "eng": 994
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/core/GameEnvironmentTest.kt",
+   "added": 6,
+   "eng": 2
+  },
+  {
+   "path": "app/src/test/java/com/droiddeck/launcher/session/GameEnvironmentStoreTest.kt",
+   "added": 20,
+   "eng": 4
+  },
+  {
+   "path": "docs/development/flatpak.md",
+   "added": 5,
+   "eng": 4
+  },
+  {
+   "path": "docs/development/game-environment.md",
+   "added": 9,
+   "eng": 4
+  },
+  {
+   "path": "docs/development/steam-game-imports.md",
+   "added": 3,
+   "eng": 2
+  },
+  {
+   "path": "findings.md",
+   "added": 7,
+   "eng": 3
+  },
+  {
+   "path": "progress.md",
+   "added": 30,
+   "eng": 12
+  },
+  {
+   "path": "task_plan.md",
+   "added": 39,
+   "eng": 18
+  },
+  {
+   "path": "tools/build_local.sh",
+   "added": 68,
+   "eng": 12
+  },
+  {
+   "path": "tools/gamescope/PATCHES.md",
+   "added": 11,
+   "eng": 9
+  },
+  {
+   "path": "tools/linuxfs/preload/net.c",
+   "added": 79,
+   "eng": 1
+  },
+  {
+   "path": "tools/linuxfs/preload/netif.c",
+   "added": 12,
+   "eng": 1
+  },
+  {
+   "path": "tools/proot/PATCHES.md",
+   "added": 35,
+   "eng": 33
+  },
+  {
+   "path": "tools/tests/test_game_environment.py",
+   "added": 379,
+   "eng": 156
+  },
+  {
+   "path": "tools/tests/test_steam_games.py",
+   "added": 150,
+   "eng": 23
+  }
+ ],
+ "removed": [
+  ".hanhua-orig/apply.ps1",
+  ".hanhua-orig/fakeinput_steam.cpp",
+  ".hanhua-orig/framegen/VulkanRendererContext.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_alpha.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_alpha.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_beta.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_beta.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_chain.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_chain.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_common.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_common.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_delta.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_delta.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_dll.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_dll.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_dxbc.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_dxbc.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_engine.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_engine.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_gamma.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_gamma.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_generate.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_generate.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_governor.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_governor.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_jni.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_mipmaps.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_mipmaps.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_pacer.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_pacer.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_probe.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_probe.h",
+  ".hanhua-orig/framegen/lsfg/lsfg_shaders.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_shaders.hpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_vkd.cpp",
+  ".hanhua-orig/framegen/lsfg/lsfg_vkd.h",
+  ".hanhua-orig/framegen/winfg/LICENSE.win-fg",
+  ".hanhua-orig/framegen/winfg/NOTICE_FIDELITYFX_OPTICALFLOW.md",
+  ".hanhua-orig/framegen/winfg/config.hpp",
+  ".hanhua-orig/framegen/winfg/embedded_shaders.hpp",
+  ".hanhua-orig/framegen/winfg/framegen.cpp",
+  ".hanhua-orig/framegen/winfg/framegen.hpp",
+  ".hanhua-orig/framegen/winfg/log.hpp",
+  ".hanhua-orig/framegen/winfg/record_impl.inc",
+  ".hanhua-orig/framegen/winfg/vk_dispatch.hpp",
+  ".hanhua-orig/framegen/winfg/winfg_engine.cpp",
+  ".hanhua-orig/framegen/winfg/winfg_engine.h",
+  ".hanhua-orig/framegen/winfg/winfg_vkd.cpp",
+  ".hanhua-orig/framegen/winfg/winfg_vkd.h",
+  ".hanhua-orig/scanout/ScanoutContext.h",
+  ".hanhua-orig/sdnative/sdnative.c",
+  ".hanhua-orig/shaders/cas_frag.h",
+  ".hanhua-orig/shaders/color_frag.h",
+  ".hanhua-orig/shaders/crt_frag.h",
+  ".hanhua-orig/shaders/deband_frag.h",
+  ".hanhua-orig/shaders/fsr_easu_frag.h",
+  ".hanhua-orig/shaders/fsr_rcas_frag.h",
+  ".hanhua-orig/shaders/fxaa_frag.h",
+  ".hanhua-orig/shaders/hdr_frag.h",
+  ".hanhua-orig/shaders/nis_frag.h",
+  ".hanhua-orig/shaders/ntsc_frag.h",
+  ".hanhua-orig/shaders/sgsr_frag.h",
+  ".hanhua-orig/shaders/sgsr_quality_frag.h",
+  ".hanhua-orig/shaders/toon_frag.h",
+  ".hanhua-orig/shaders/upscale_vert.h",
+  ".hanhua-orig/t1.txt",
+  ".hanhua-orig/t10.txt",
+  ".hanhua-orig/t11.txt",
+  ".hanhua-orig/t12.txt",
+  ".hanhua-orig/t13.txt",
+  ".hanhua-orig/t2.txt",
+  ".hanhua-orig/t3.txt",
+  ".hanhua-orig/t4.txt",
+  ".hanhua-orig/t5.txt",
+  ".hanhua-orig/t6.txt",
+  ".hanhua-orig/t7.txt",
+  ".hanhua-orig/t8.txt",
+  ".hanhua-orig/t9.txt",
+  ".hanhua-orig/verify.ps1",
+  ".hanhua-orig/waylandcomp_src/ahb_swapchain.c",
+  ".hanhua-orig/waylandcomp_src/ahb_swapchain.h",
+  ".hanhua-orig/waylandcomp_src/banner_color.h",
+  ".hanhua-orig/waylandcomp_src/banner_ext.c",
+  ".hanhua-orig/waylandcomp_src/banner_ext.h",
+  ".hanhua-orig/waylandcomp_src/blend.frag",
+  ".hanhua-orig/waylandcomp_src/blend.vert",
+  ".hanhua-orig/waylandcomp_src/blend_frag.h",
+  ".hanhua-orig/waylandcomp_src/blend_pass.c",
+  ".hanhua-orig/waylandcomp_src/blend_pass.h",
+  ".hanhua-orig/waylandcomp_src/blend_vert.h",
+  ".hanhua-orig/waylandcomp_src/compositor.c",
+  ".hanhua-orig/waylandcomp_src/compositor_internal.h",
+  ".hanhua-orig/waylandcomp_src/effects_chain.c",
+  ".hanhua-orig/waylandcomp_src/effects_chain.h",
+  ".hanhua-orig/waylandcomp_src/framegen_bridge.c",
+  ".hanhua-orig/waylandcomp_src/framegen_bridge.h",
+  ".hanhua-orig/waylandcomp_src/framegen_engine.cpp",
+  ".hanhua-orig/waylandcomp_src/framegen_engine.h",
+  ".hanhua-orig/waylandcomp_src/framegen_engine_stub.c",
+  ".hanhua-orig/waylandcomp_src/framegen_jni.c",
+  ".hanhua-orig/waylandcomp_src/hdr_compose.c",
+  ".hanhua-orig/waylandcomp_src/hdr_compose.h",
+  ".hanhua-orig/waylandcomp_src/hdr_encode.frag",
+  ".hanhua-orig/waylandcomp_src/hdr_encode_frag.h",
+  ".hanhua-orig/waylandcomp_src/sc_layer.c",
+  ".hanhua-orig/waylandcomp_src/sc_layer.h",
+  ".hanhua-orig/waylandcomp_src/vk_loader.c",
+  ".hanhua-orig/waylandcomp_src/vk_loader.h",
+  ".hanhua-orig/waylandcomp_src/vk_present.c",
+  ".hanhua-orig/waylandcomp_src/vk_present.h",
+  ".hanhua-orig/waylandcomp_src/waylandcomp_jni.c",
+  ".hanhua-orig/waylandcomp_src/wl_clipboard.c",
+  ".hanhua-orig/waylandcomp_src/wl_color_mgmt.c",
+  ".hanhua-orig/waylandcomp_src/wl_dmabuf.c",
+  ".hanhua-orig/waylandcomp_src/wl_text_input.c",
+  ".hanhua-orig/waylandcomp_src/wl_toplevel_icon.c",
+  "app/src/main/cpp/waylandcomp/src/banner_color.h",
+  "app/src/main/cpp/waylandcomp/src/banner_ext.c",
+  "app/src/main/cpp/waylandcomp/src/banner_ext.h",
+  "app/src/main/java/com/droiddeck/launcher/store/AppImageState.kt",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-appimage-run",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-bwrap",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-desktop-games",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak-run",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-flatpak-setup",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-game-env",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-netmanager",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-pad-defaults",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-proton-extra",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-seed-redists",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-session",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-compat",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-games",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-install",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-launch",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-library",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-shim",
+  "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-shortcuts"
+ ]
+}

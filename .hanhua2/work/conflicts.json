@@ -1,0 +1,1278 @@
+{
+ "README.md": {
+  "base": "a7146104516d0b59607e85d52a9e840b2c4ab9b7",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "ff35bdc93bd01408e5d1d402d01ab6af5ccb356f",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "5e6cc4c3903193339ff592e843a5522b6a36c0ac"
+ },
+ "app/src/main/cpp/fakeinput_steam.cpp": {
+  "base": "41d6cfe75913890c2838e1c8f8f55ea65edd7496",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "741a89b17e92975ec26515db1f6e8ae7dde766a7",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "d1c69d2a4d44f8cebfac21b32331027f4c9d9b47"
+ },
+ "app/src/main/cpp/waylandcomp/ZERO_COPY_SPIKE.md": {
+  "base": "f4f7ea50a800f2e6c4c896d350c213f753dd41a6",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "2d5a2a37a00009c8b868d366347989e34ddb8808",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "37b08b2334b76d1bae0ae4f576aa27821d2655aa"
+ },
+ "app/src/main/cpp/waylandcomp/src/ahb_swapchain.c": {
+  "base": "a697ab19b416419a44a7be88a5868763f7140429",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "83212173a400f98d27d0c3315c1197813f139635",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "4a981f1ee1e870a9701b40158e4498efa5c5cf50"
+ },
+ "app/src/main/cpp/waylandcomp/src/blend_pass.c": {
+  "base": "471eedc9ae3ca8fb91db6256272fa7eb0189aebe",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "16f27fe6234f9329e0c19f26d2f6fed23bb2ce60",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "842287b07b613b55f81dc4de0410aa1a9f1b5c0d"
+ },
+ "app/src/main/cpp/waylandcomp/src/compositor.c": {
+  "base": "8b2509a68c97f47b0ec1e9637e1c739361d01e25",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "5607d944f3c5db50af8dac028e8fa96a65c0e077",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "fbbd09886e613a56eb967266c7b0dcb87c17cff1"
+ },
+ "app/src/main/cpp/waylandcomp/src/droiddeck_ext.c": {
+  "base": "0b9c8c4110f5d459aa28e2f675a44208bf275d2e",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "26b88ffedccfe924f2f7987e92bec7bf3dd47a99",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "74ddc6adafaabffd5fdd204e1b6bee5da720936e"
+ },
+ "app/src/main/cpp/waylandcomp/src/effects_chain.c": {
+  "base": "a4227102d854ff0f88cc33dd743b8db693cf2569",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "40a631f1f1de68d394c7742a0233b987834afebf",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "0ab39af658dadc3117af038a5b0bd82c4c915df0"
+ },
+ "app/src/main/cpp/waylandcomp/src/framegen_bridge.c": {
+  "base": "43b94987f19d036ff03889474650ed7f82a29f69",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "afc4c250bbf6c5bd6a2c1c02d7ba1cfe644ecf37",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "ac2100365c7f33b415677d4b3acc0803af288664"
+ },
+ "app/src/main/cpp/waylandcomp/src/hdr_compose.c": {
+  "base": "a927df908865c83f0578682538040371cce8e5d4",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "40466780db53d43beb914cb3fe72eddeaca570e1",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "6f54d4e0cd15dee39d48a5688a1578cfbff1ee9d"
+ },
+ "app/src/main/cpp/waylandcomp/src/sc_layer.c": {
+  "base": "1fcbf3357c6e5496f5408935e658e6d1d2410f24",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "75d3fbbb57e4e76c8ee3f85c4ac94af9f74d79fb",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "3f44a6be8fa144e38b52c41f22d78c0d3f5bc191"
+ },
+ "app/src/main/cpp/waylandcomp/src/vk_present.c": {
+  "base": "7a2ecfd48b76d7a9f2508f7f8b180b7b6004ff61",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "9aa3e34ec65101b1f787693ab43f728c922ae307",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "3af9a8c254b7f2c30f56857151c334dee9907c75"
+ },
+ "app/src/main/cpp/waylandcomp/src/waylandcomp_jni.c": {
+  "base": "10283f570b01cd3313367cf1cd7a976f523d08e1",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "65c99b07dc08570243ee09ef6478b493ef0f1244",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "4d11a54192a13e7d9dc3100993e3aebe5f503798"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_clipboard.c": {
+  "base": "0c6c57304df1fea095bead23d5698abe28f52524",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "e6a43717d0346fe84b5d92ba3ac83bc8e291f6ee",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "7668090f7575ddbb462da357b4fdb7e23e857656"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_color_mgmt.c": {
+  "base": "be4885fd54a49b56853ef71bc7c7af6372e89a4d",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "e24be4461054a876c9274862dea09448a4654e68",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "f18aab9f4c1f10021650dea56c40ca572830993c"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_dmabuf.c": {
+  "base": "bdda9d75ef1129596b7881e41be24d6745b65592",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "5ce91dbc0f0d953987830ef61f9c583b79100102",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "2f8552f1ed5666d353d7c31d2d5e9436df950d19"
+ },
+ "app/src/main/cpp/waylandcomp/src/wl_text_input.c": {
+  "base": "1c424c83ceec13d8b4b75102a5f31285339381e3",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "cad88e4906c414eb695d2ac4e01fad6ed690f0b0",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "631167e9165efa69fd393a09359536e26b91365f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/DriverMenus.kt": {
+  "base": "88c2e8853f12c8405b7ed3199c84d9a5b044410b",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "64c73b7f54f2837cda3bbeaf7bc6e7e64fb9f94f",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "ff5ce18fee9325af38aa5d4391fd7ccbfb0a608f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/MainActivity.kt": {
+  "base": "7686e699e93388eea4443c4d58612cd5bc2ddeca",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1a26ecb8ccb4f900883034b7bd25e309439ed935",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "41e8241baa73d15b2d7495b60bbeeaada7776c70"
+ },
+ "app/src/main/java/com/droiddeck/launcher/SessionActivity.kt": {
+  "base": "2023616d39c28b3262af01df2de9256b61646034",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "d619fc3d4cd337de1addf7f6b03a2ac0c8edcb24",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "8ceab7bb70e4f4a5483323a2ac2017e35389cb01"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt": {
+  "base": "84c1d038bb8cd0fb1f1edd0b1617eb5b3f6cabbd",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "2a0d391017384d43406e67c4b0bb3c12919b3b4d",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "48992e1eb59e7440b1e57ac9acba8f920b6055a7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/core/NetworkReport.kt": {
+  "base": "095f50d333273c4eb7fc589629b7e8cd5b6101c0",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "5382dbfc6ca560f732a71703d4e639edaf4a7af9",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "b8a0e5dae23d6563799cd5c246c5df8948480508"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/FrameGen.kt": {
+  "base": "236c17a008cbb1330f9967ee3fb2290e737d7ddf",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "81e77c7552901f8658b531574634593d1a85bb2c",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "b864e837bd030fc2b716fb1f17c82d7a4277d49a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/LinuxVulkanDriverManager.java": {
+  "base": "077e230cd0f173e30131fa1150c4005acc433052",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "60a4e19423b74b8f5e7daa596b26c20d51115c81",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "c0cb48f08af79559865c1f947858de593301d5b8"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/LsfgNative.java": {
+  "base": "c9b03ef034bf06140556f210aec5ab6812accf6c",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "4e6a813d14986edd1e8a480a752317c520b4aaf0",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "6eb3c3441aa7ae76a5baaee0c71df1d63e880d82"
+ },
+ "app/src/main/java/com/droiddeck/launcher/gpu/TurnipDriver.java": {
+  "base": "8d88639617f1b86407b2a190eeb92dc266339fcc",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "ff0e7d34396d1d021f20283cf9715dd4bcdd93d6",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "52d8129ff44d59d3718c6a6cf75c0de217932ec8"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/AppImageManager.kt": {
+  "base": "a11df690e2393bac3dad5645df08419a79d1fcc0",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "5198732200ff0a4b4f7ab02c0301a513ab37245b",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "50e851db1c0995aebf4687945359153a772a3684"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/LinuxRuntimeInstaller.java": {
+  "base": "4643e9b406a46f7400c188edde224143b8872800",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "aff89728c5cff449712649143c2a487f2275df5c",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "0d4f0595fd707f6c0a9cacc42c130272329769f7"
+ },
+ "app/src/main/java/com/droiddeck/launcher/runtime/RuntimeInstallService.kt": {
+  "base": "31a26fd34dd7fa4979c878fb8419d7f690c14fb6",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "0342c2defebacddc61f9e413e88d93d934965362",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "356dada466b01b21278b03d35e8a5ad655e57235"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/ComponentsManager.kt": {
+  "base": "da00b1b392f1fd8d21cdc1f40e91c483c7ddef2f",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "cfa3c7343091d4bd4cd9927ec3d8edf287e25000",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1f51f666dde0bf808eef9876493959a4969c9e6f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/PerfHud.kt": {
+  "base": "b0d49257bd7abf321af0c8a65c352427b88f121f",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "14dc7099e858aee1889db0387b2d02e30fdf96ca",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "b3c3fd6eaab43d76c6d75299980d859211e7d91f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/RumbleComponent.kt": {
+  "base": "a533a2f2a2b0f024c5f2c45473b65cb874bd58e4",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "053beda3648ee4e87b3217753392b5091b72f120",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "fcf79bd6eaafec46f1f1753b5fd4566ea0ab4316"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionPaths.kt": {
+  "base": "485bdc4575718a0c06f7ccdb2c02bc8c6075d346",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "771e51bb31c29760acb248e3cda81fd779d1889a",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "896d08a19d2e82a70361af7f7cd55ab85185d854"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionPrefs.kt": {
+  "base": "0b52c983010a2917b88d8c264908c4d991228bda",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "3c09a8a9d1705df509f96cf309dc3aa71c0e17bd",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "2205446044aab3d13ee44ea58a9d052d8e034053"
+ },
+ "app/src/main/java/com/droiddeck/launcher/session/SessionService.kt": {
+  "base": "3e4f763996f5dbd597875e8556cc4a9baa3a7e4f",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "18f3585de1b5905e3c7f323048abd5e2e1780b3b",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "584c2c38076ed7598c2dd5cce9a2a2a070dd8ce9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/store/AppImageState.kt": {
+  "base": "91a7ac58cdfda095ed6cf7172dbbd3d2a4860dc2",
+  "modes": {
+   "1": 33188,
+   "2": 33188
+  },
+  "ours": "cad0908d2c1afda340d375c5836d229808ee7dae",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ComponentsPage.kt": {
+  "base": "7822ef44ec98e809e115c36aac6a76f722626fee",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "865eba2bed418331fafbcb2954d3b6613f5894e4",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "47e38d76daf82178a9610cd8e1301ebafbb8bf1b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ControllerSettings.kt": {
+  "base": "ee5ffd4dfa6316e34a3498d80801269e3a9f18a5",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "d3c6058fcad9eda73d90f5fe72219c130327fab7",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "db6f1bbc17f97ec400b39402b6636cecd421d65a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/DeckControlsPanel.kt": {
+  "base": "e1bce83756a7eef88bb92ccb4238b0e371200eaa",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "14bfe5362970abd1f9252b1c70a6e9b0b725ea9b",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "07917d3f7fde2b1b840840d235e92b35e2df3307"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/DriverPage.kt": {
+  "base": "df76a1e819f4678664ef573bc05279146483ac6c",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "80142ac59a74c17b69359054f8a6752ebdd494bb",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1ee6cbc2abaf8a7a1f18bf3e47484daf9f18d1c5"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrameGenMenu.kt": {
+  "base": "2d533fd527c70166ec036995ae4028ac3a63be45",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "4ce4248ba71770922ac1b25256163faba0089569",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1ec0fbfad1a43b1cd9d0ca51ff8da245d0184c70"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndContent.kt": {
+  "base": "e480a96a330482620695e7ac7aebec759601479c",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "771e5a8dc944852ffdb3ee56844512b27547c198",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "e2b79a19895e9b3381bc716577ea47dc429d70ce"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndGames.kt": {
+  "base": "3c279aa8796cfd1301a20a7d47cec087e5db02de",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "54b2be98706db78d37c997026e2afbb828356659",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "33226c3b36b915d3dfbe15cb8e9cde69348a7b22"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndRail.kt": {
+  "base": "88661a11084a9c83fde7fa824be896d08da3c9d6",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "6ebb638c146a8d6004f212b1165e8cbc13ba720f",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "34f50331172aa264d9f16d050b24bbfe5844d57a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndScreen.kt": {
+  "base": "68056606971b2e863a6479b234801bd667837873",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "0fd424a81f9c80d33f96956f46f16554af1c3cf6",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "d8f8b2275c4dcb9f49fc8181f9999468cfe62d4a"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndSetup.kt": {
+  "base": "4ddda06e7cb4def6e740bbddbc11c4167d3d5078",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "34c56b40d7a7a256ff8fb9bdfb18f3088a7c9276",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "c404dab6fd914455d2d63a3d391335dea5546585"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/FrontEndWidgets.kt": {
+  "base": "7d034a138e2f5b31f5d4c544d9d9fcb8a3dd9c54",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "c95b3afa0f1468a2bba811884c625dfa89db1088",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "630fd5de9e7d62ddb4d755f32b86e12f42cd69a5"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/MainScreen.kt": {
+  "base": "f70136020604f6118fc37fe219066dad6f34a731",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "b5752b5e4495443f1dfc19e4d1f2dca089df32fc",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "3d97ca656d48f8efbbc3c112790ff00b5b60e7d6"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ModeSettingsDialog.kt": {
+  "base": "37b4dac97583e54457b7fb64085785fb9ce7af76",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1bbdc0019a27eddfd73e475ce1b556b9f97694b6",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "8b14ec19fc82eee548d64422a4dc2cd99a1b19a9"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PcKeyboard.kt": {
+  "base": "ad3b34405e5e423df25741d28a8e0c26050bf0e1",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "ebe5ee7ac3db73cb2825b55126c97603d1e343fe",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "8bbc4b2d888fdfed7bbf0e71dfb14741bd4ee9b2"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PerformanceDialog.kt": {
+  "base": "1083babe2ff9577d6039965bb8b4a88a0830517a",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "9945262d0abcadd0d3fd23b43aeb2d86ae2055b5",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "b46133463aa15550c8130869bd5a41f96b78cf2b"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/PhantomProcessGatePage.kt": {
+  "base": "cae45fa485fcd2fe5eb16585728be92e7c484a16",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "6350a70ccddfffe9144451a7f1671e115ceac837",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1d20aa661093d8785c64eb523d61dd8dd2319358"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/ProtonPage.kt": {
+  "base": "1d94234d56cce4593d2564de3adbad95b782fd0f",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "30eb0cf644ca74a88902b3d504a8c85c7a2f0b65",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "3515f2180312b7d051c71f52c6bf8d21262c11e6"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/RomsDialog.kt": {
+  "base": "13396135c6cdd1931563d26aef86a73dc1a9d8a1",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "a633d43fab42638f293fde171b8a69b88e339c42",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "0417c5e0985c405a59337210bc7d19dacd86e0cf"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SecondScreenPresentation.kt": {
+  "base": "4ad50ed2e1a3b361fec1b87d0673b65af5147066",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "7822877e0fd825d285d65c0c11901a453857e7fa",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "44f56bad8dbc59bc4618cc42f14a423dc172beee"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SessionLoading.kt": {
+  "base": "1dc793922a6a84df1f896515d377600d2b1da85c",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "c0349c7e45dfdffee0fd3c54e4aadbe23aaa5496",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "d3d1df388f9e1f8393769e923ed20bafc6a2696f"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SessionOverlay.kt": {
+  "base": "f02b0513445d2200ef9296f5b8b868eacd9541b4",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1aa6d77c91c145fb943e7b9d1e99fd7e17b176d0",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "9280845b5b4da831376fa6d16a5a52b00f1170ec"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SettingsWidgets.kt": {
+  "base": "1b36b1c4b9af9d02bcd9cf404934c2b3dd652854",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "602ecbe5c474a39edbfc5afcdbb35b809ecb8757",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "64f56873e89fc086e0e17366ba1a5508dc38ba26"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/SteamHome.kt": {
+  "base": "7be01984ce856abd8112788759d418068ec77106",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "f4a967e9dab0a488c91e2327dc6434ffd44f464e",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1184b3078f86f7d8d9486e937848af61ef89870e"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/StorePage.kt": {
+  "base": "da057cb7205f5f24e8370dc3eb532a633beeadec",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "306c479bdc230af9012a20f27cd4d7ea93de4960",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "d8ea158923e28ecb16c480a35c74bdca5a1d2b9c"
+ },
+ "app/src/main/java/com/droiddeck/launcher/ui/WirelessAdbFixPage.kt": {
+  "base": "52cde55e81db800de082f63372c4211204071164",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1ddfc94fb0df3f3c3bbddceb6f1ee17015b37cc0",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "f369427a03784112aa5ecd95a4644e922dec85fe"
+ },
+ "app/src/main/java/com/droiddeck/launcher/wayland/CompositorHost.kt": {
+  "base": "973332542ff5e4ee7a91e742e5c3a2b192d4f25b",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "4a28f4a8555e83999893f189d29d2f7526a5ab61",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "a19bd858a678a0df0fd6dfb97851a8e7017ed874"
+ },
+ "app/src/main/res/values-zh-rCN/strings.xml": {
+  "base": null,
+  "modes": {
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1c5f7624aceb763f3503de7a6f253b61de38cd4d",
+  "stages": [
+   2,
+   3
+  ],
+  "theirs": "a542b27e74610316d4af304f36ddf72a2bd3a8ff"
+ },
+ "app/src/main/res/values/strings.xml": {
+  "base": "10cf334af2cb236e49de940d048e6629e9ff4ba6",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "1c5f7624aceb763f3503de7a6f253b61de38cd4d",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "19f259ef23fc2bf64fe211e6a56d71c3b4f9e76e"
+ },
+ "docs/development/flatpak.md": {
+  "base": "006bab55acd5c48141e3745e9212020c5d293b4a",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "f4d15a453566d322d8cb3db8f0cf5fdf92ed6634",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "939b8c6be59dd3cb50b78633b80e9da331b41811"
+ },
+ "docs/development/game-environment.md": {
+  "base": "5b9244a6624f62630a236c75dcf36fe0669e545b",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "efebde71a1acd00e9665838a1b861e11520314e2",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "888766aaf36aca4d9da79e6a9edf7340817ba456"
+ },
+ "docs/development/steam-game-imports.md": {
+  "base": "4639afa5bd0d6c85bee432e8cda552a4f1a66876",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "d24f9b72073570922ba7f999679d37ca1e951aa5",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "7967dd6500058fb2bf0fbabe845a61bd4e1be0f0"
+ },
+ "tools/gamescope/PATCHES.md": {
+  "base": "ad4fc4b3481fc05e904c08b46aeba463211e0ced",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "4330eb10c6a6b3407fd0f59aae04c165067ffe5a",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "1952e6c9b6521f3f927dfa9b58e9bc81b147f0ed"
+ },
+ "tools/gamescope/release.env": {
+  "base": "af715c67127156dca61e6a37c3ff29f1fc60b9be",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "48f7f270a9b2af846de7ed895675523f4dfbb6b2",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "55f3940d8755b2160237517113eae1c18aaefdf9"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-appimage-run": {
+  "base": "fbe13caaf6db09fa6d331d62df28dca3e2cfeff7",
+  "modes": {
+   "1": 33261,
+   "2": 33188
+  },
+  "ours": "a67847f9d7165a1a8c7203988673443385fc420a",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-game-env": {
+  "base": "ff9e87449b339aa063d31f4d0944efa6737be7ba",
+  "modes": {
+   "1": 33261,
+   "2": 33188
+  },
+  "ours": "45c102a8ac17254248e3737dff117ff223873f3c",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-netmanager": {
+  "base": "f47fe058c380b9788305090e32f2251e3ebc3411",
+  "modes": {
+   "1": 33261,
+   "2": 33188
+  },
+  "ours": "276193e719963a336c45b07eba262d72cf0afa78",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-seed-redists": {
+  "base": "9d2d60fa72c1bf1ac267b1b4188a89c46ef4ea3b",
+  "modes": {
+   "1": 33261,
+   "2": 33188
+  },
+  "ours": "11e55e02e18e2c6c45fd3d4e62bf9f988d59b593",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "tools/linuxfs/overlay/usr/local/bin/bannerlator-steam-compat": {
+  "base": "28bb1f89d3ef1757a410b2cc72bea3942b764009",
+  "modes": {
+   "1": 33261,
+   "2": 33188
+  },
+  "ours": "773e42caf57507ef4c82edf32ca071c7d8e718bd",
+  "stages": [
+   1,
+   2
+  ],
+  "theirs": null
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-desktop-games": {
+  "base": "16fc736ec209a0c103867aa38c4d05d109b24103",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "90d3daa7486e8a8aeeb082c346b665b8300afcfd",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "2d3c32ff45ee435a90893fadf5263fcee775baca"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak": {
+  "base": "3b322539ff2099eb0606f3e4b4654abdb5583fa7",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "6f8887700e9bdc886e328988ffae05c2b612d4c6",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "9be0267a533c739e51b7f096c0a3ac9d006fd2ea"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak-setup": {
+  "base": "9020b38fe17dd43f1dc439f8f04149242589b393",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "407dbcbad9c4b101d300b1c5585661f44be70bb2",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "2d0b2e790564fa82793a7d6a0f9d9ab87921ec18"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-pad-defaults": {
+  "base": "adba13d6a8f30018290ec5973ed0378b594973ae",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "ac9a9d6ed2a6bd81093b33655fdeafc4d466bc67",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "4e15fae075951b33672564774c050ff29ca37e97"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-proton-extra": {
+  "base": "fd63f6320c5e34486b2d3912d454d5fcda4edb83",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "fb00a04fab0ff77f124d7fab240e7b95944d5cbf",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "415e49a1807238b31ee07aab8581e494dcf22cbf"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-session": {
+  "base": "d579dc73bde0bcf64f4d8c54f34fef93244acfbb",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "c4178513415eb31d5755e233d5d2a1fa6527f060",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "91465d661e420aadd33ca7cb7ab857b66789034b"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-games": {
+  "base": "3ab3e98444aa09d428cfd210d409094b222972bf",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "0253bc1ab138543c0a9e39c707c1e30f93ec7597",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "50802187c0cbab681cd4e73708f9a3419f2f00bc"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-install": {
+  "base": "de6570426a9a4550604ea374ae2c76d160548dbf",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "5379e03826d32d40b86883be000498831a842ef1",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "d2f59ed12fe3cb2bc379d399c08ea01b888ab93b"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-launch": {
+  "base": "92d1c9d22d1247c9a5e916b6f9f31213f4e847f0",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "0dc9b9fbe6d8074d3eafcc872e11fc17e55ca238",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "121c77d907a3ec518c946fed8dd522faf68f1b99"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-library": {
+  "base": "e67878e6e95cea0b89c4fe09ab48967ffde3785a",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "8702e27206882f45ab5faba036386b6086552de8",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "f5d2b59c5f1868d96886ca119655caefefecbae8"
+ },
+ "tools/linuxfs/overlay/usr/local/bin/droiddeck-steam-shortcuts": {
+  "base": "c3fcd4ae3342f21fad75a1b5446338c27e69985f",
+  "modes": {
+   "1": 33261,
+   "2": 33188,
+   "3": 33261
+  },
+  "ours": "7f7625a6f2312114685ce96f75e0bab263ab4df0",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "a08ccb7be3f17182fdbcdc9e9906bee2df2d4504"
+ },
+ "tools/proot/PATCHES.md": {
+  "base": "ef781dc8a2cd45d84b2e95326565b2781b6157b2",
+  "modes": {
+   "1": 33188,
+   "2": 33188,
+   "3": 33188
+  },
+  "ours": "eacc3365d4f28081523225e3c83b608e69777019",
+  "stages": [
+   1,
+   2,
+   3
+  ],
+  "theirs": "342bf79e67d86708e5c39703268faad2deee4744"
+ }
+}

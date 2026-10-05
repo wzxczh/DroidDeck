@@ -1,0 +1,80 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt
++++ final/app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt
+@@ -12,6 +12,7 @@
+ import com.droiddeck.launcher.runtime.DesktopCatalog
+ import com.droiddeck.launcher.runtime.LinuxRuntime
+ import com.droiddeck.launcher.runtime.LinuxRuntimeInstaller
++import com.droiddeck.launcher.session.EsyncPacks
+ import com.droiddeck.launcher.session.SessionPrefs
+ import com.droiddeck.launcher.session.SessionService
+ import com.droiddeck.launcher.session.SessionState
+@@ -106,27 +107,32 @@
+         k("系统 Vulkan ICD", if (File("/vendor/lib64/hw/vulkan.adreno.so").exists()) "/vendor/lib64/hw/vulkan.adreno.so" else "不在常见路径")
+ 
+         h("显示")
+-        k("会话输出分辨率", SessionState.outputSize?.let { "${it.first}x${it.second}" })
++        k("会话输出", SessionState.outputSize?.let { "${it.first}x${it.second}" })
+         k("会话刷新率", String.format(Locale.US, "%.2f Hz", SessionState.refreshHz))
+-        k("形状设置", SessionPrefs.shapeMode(context))
+-        k("自定义分辨率（Steam）", SessionPrefs.customResolution(context, SessionService.MODE_STEAM)?.let { "${it.first}x${it.second}" } ?: "关闭")
+-        k("自定义分辨率（桌面）", SessionPrefs.customResolution(context, SessionService.MODE_DESKTOP)?.let { "${it.first}x${it.second}" } ?: "关闭")
++        val panelSize = com.droiddeck.launcher.session.SessionDisplay.panelSize(context)
++        k("分辨率（Steam）", SessionPrefs.resolutionChoice(context, SessionService.MODE_STEAM, panelSize))
++        k("分辨率（桌面）", SessionPrefs.resolutionChoice(context, SessionService.MODE_DESKTOP, panelSize))
+         k("折叠屏", context.packageManager.hasSystemFeature("android.hardware.sensor.hinge_angle"))
+ 
+         h("驱动")
++        val gpu = com.droiddeck.launcher.gpu.GpuInfo.detect()
++        k("GPU", "${gpu.name} · ${gpu.family.label} · ${gpu.supportText}" + if (gpu.oneUi8Gen2) " · One UI 8 Gen 2" else "")
++        k("驱动模式", SessionPrefs.gpuDriverMode(context) +
++            (com.droiddeck.launcher.gpu.DriverPairs.recommendedKey(gpu, com.droiddeck.launcher.gpu.DriverPairs.from(
++                com.droiddeck.launcher.gpu.TurnipReleases.cached(context)))?.let { "（推荐配对：$it）" } ?: ""))
+         val turnip = TurnipDriver(context)
+         val androidChoice = SessionPrefs.androidDriver(context)
+         k("显示驱动（选定）", if (androidChoice.isEmpty()) "自动 -> ${turnip.autoId()}" else androidChoice)
+         k("  名称 / 版本", "${turnip.displayName(if (androidChoice.isEmpty()) turnip.autoId() else androidChoice)} ${turnip.driverVersion(if (androidChoice.isEmpty()) turnip.autoId() else androidChoice)}".trim())
+         k("  已导入可用项", turnip.enumerateImported().ifEmpty { listOf("无") }.joinToString(", "))
+         val lm = LinuxVulkanDriverManager(context)
+-        for (m in listOf(SessionService.MODE_STEAM, SessionService.MODE_DESKTOP)) {
+-            val id = SessionPrefs.linuxDriver(context, m)
++        run {
++            val id = SessionPrefs.linuxDriver(context)
+             val label = if (id.isEmpty()) "运行时默认（运行时自带的 Turnip）"
+             else "${lm.getDriverName(id)} ${lm.getDriverVersion(id)}".trim() +
+                 lm.getMinGlibc(id).let { if (it.isEmpty()) "" else "（glibc $it+）" } +
+                 if (lm.isInstalled(id)) "" else "  [缺失 — 回退到运行时自带的]"
+-            k("Linux 驱动 ($m)", label)
++            k("Linux 驱动", label)
+         }
+         k("运行时自带的 ICD", LinuxRuntime.vulkanIcd(context)?.path)
+ 
+@@ -146,13 +152,20 @@
+         k("关闭 GL 错误检查", SessionPrefs.noGlError(context))
+         k("Steam Deck 模式", SessionPrefs.steamDeckMode(context))
+         k("Steam 手柄", SessionPrefs.steamController(context))
++        k("缩放滤镜", (SessionPrefs.upscalerChoices.firstOrNull { it.first == SessionPrefs.upscaler(context) }?.second ?: "关闭") +
++            "（锐度 ${SessionPrefs.upscaleSharpness(context)}%）")
+         k("FEX 预设", SessionPrefs.fexPreset(context).ifEmpty { "FEX 默认" })
+         k("跳过 xalia", SessionPrefs.noXalia(context))
++        k("Wine 同步", SessionPrefs.syncBackend(context))
++        EsyncPacks.status(LinuxRuntime.rootDir(context)).let { k("droiddeck-esync 包", "已安装 ${it.installed} 个，需要 ${it.wanted} 个") }
++        k("Linux x86（FEX）", if (com.droiddeck.launcher.runtime.LinuxFex.ready(context)) "已就绪" else "未配置")
+         k("gamescope 实时调度", SessionPrefs.gamescopeRealtime(context))
+         k("proot 不启用 seccomp", SessionPrefs.prootNoSeccomp(context))
++        k("proot 快速路径", SessionPrefs.prootFastPath(context))
+         k("客户机主机名", SessionPrefs.guestHostname(context))
+         k("游戏使用 DirectAudio", SessionPrefs.directAudio(context))
+         k("游戏拉伸填满屏幕", SessionPrefs.forceFullscreen(context))
++        k("16:9 拉伸至面板", SessionPrefs.stretch16x9(context))
+         k("客户端音频", if (SessionPrefs.clientDirectAudio(context)) "DirectAudio" else "经典")
+         k("麦克风", SessionPrefs.micEnabled(context))
+         k("屏幕控件", SessionPrefs.oscMode(context))
+@@ -169,7 +182,7 @@
+ 
+         h("Download 目录中的设备开关文件")
+         for (name in listOf("droiddeck-env", "droiddeck-tu-debug", "droiddeck-driver",
+-                            "droiddeck-osc", "droiddeck-no-pad", "droiddeck-pad-log",
++                            "droiddeck-osc", "droiddeck-no-pad",
+                             "droiddeck-no-hud", "droiddeck-wlr-renderer")) {
+             val f = File(Environment.getExternalStorageDirectory(), "Download/$name")
+             if (f.isFile) k(name, FileUtils.readString(f)?.trim()?.replace('\n', ' ')?.ifEmpty { "（存在，为空）" } ?: "（存在）")

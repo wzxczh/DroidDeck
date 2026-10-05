@@ -1,0 +1,37 @@
+--- ours/docs/development/flatpak.md
++++ final/docs/development/flatpak.md
+@@ -6,11 +6,11 @@
+ 
+ ## 将 Flatpak 放入运行时
+ 
+-`bannerlator-flatpak-setup` 在 proot 的假 root（`-0`）下运行，因为 pacman 和 pacman-key 拒绝任何其他 uid。运行时的 pacman 数据库只列出基础镜像。桌面和模拟器包被解包覆盖在其上而没有注册。因此，普通的 `pacman -S flatpak` 会重新安装约一百个包，其中包含 Mesa，覆盖运行时的 KGSL Turnip 构建，并运行镜像中的每个 hook，包括 mkinitcpio。所以 pacman 使用自己在 `/var/cache/droiddeck-flatpak` 下的数据库，只下载 Flatpak 添加到此镜像的九个包，并根据 Arch Linux ARM keyring 检查它们的签名。脚本然后在不运行 hooks 的情况下解包它们，并检查二进制文件链接了什么。Desktop 包通常会带来的库（PyGObject、json-glib、fuse3 等）也会被获取，但仅在它们的文件缺失时。Flathub 从脚本中携带的其 `.flatpakrepo` 副本添加为每用户 remote，因此该步骤不需要网络。每个商店命令都将其输出写入 `Download/DroidDeck/flatpak-<verb>.log`，紧邻会话日志。设置脚本还会将 Flatpak 自己的错误文本放入应用显示的失败消息中。
++`droiddeck-flatpak-setup` 在 proot 的假 root（`-0`）下运行，因为 pacman 和 pacman-key 拒绝任何其他 uid。运行时的 pacman 数据库只列出基础镜像，桌面与模拟器包是在未注册的情况下解包覆盖上去的。因此普通的 `pacman -S flatpak` 会重新安装约一百个包（其中包括 Mesa），覆盖运行时的 KGSL Turnip 构建，并运行镜像中的每个 hook（包括 mkinitcpio）。所以 pacman 使用位于 `/var/cache/droiddeck-flatpak` 下的专属数据库，只下载 Flatpak 为此镜像新增的九个包，并依据 Arch Linux ARM keyring 校验它们的签名。脚本随后在不运行 hooks 的情况下解包，并检查二进制文件链接了什么。Desktop 包通常带来的库（PyGObject、json-glib、fuse3 等）也会被获取，但仅在文件缺失时。Flathub 通过脚本携带的 `.flatpakrepo` 副本以每用户 remote 的方式添加，因此该步骤无需网络。每个商店命令都把输出写到会话日志旁边的 `Download/DroidDeck/flatpak-<verb>.log`。设置脚本还会把 Flatpak 自身的错误文本放进应用显示的失败消息里。
+ 
+ ## 没有命名空间的 bubblewrap
+ 
+-Android 不给应用用户命名空间，因此 `bwrap` 无法工作。Flatpak 改为指向 `bannerlator-bwrap`（`FLATPAK_BWRAP`，由 `bannerlator-session` 和商店的命令导出）。它读取 bwrap 的命令行，包括 `--args` fd 以及 `--file` 和 `--bind-data` 载荷，然后做两件事之一：
++Android 不给应用提供用户命名空间，因此 `bwrap` 无法工作。Flatpak 被指向 `droiddeck-bwrap`（`FLATPAK_BWRAP`，由 `droiddeck-session` 和商店命令导出）。它读取 bwrap 的命令行，包括 `--args` 文件描述符以及 `--file` 和 `--bind-data` 载荷，然后做两件事之一：
+ 
+ - 一个不重映射任何东西的沙箱直接运行。Flatpak 的安装触发器（`--ro-bind / /`）和 D-Bus 代理（每个顶级目录绑定到自身）就是这种情况，它们保留 Flatpak 交给它们的文件描述符。
+ - 其他任何东西都通过抽象 socket `com.droiddeck.launcher.bwrap` 向应用描述，该 socket 只服务应用自己的 uid。`BwrapSpawner` 在 `cache/bwrap/<n>` 下构建树：一个用于顶级链接、目录和文件的根目录，用于 bind 内 `--tmpfs` 的临时目录，以及每个 `--bind` 通过会话自己的绑定从 guest 路径转换为 host 路径。然后它将其作为自己的 proot 在会话的 proot 旁边启动。输出、pid（用于 `--info-fd`）和退出状态流回，替身退出会杀死沙箱。
+@@ -26,17 +26,17 @@
+ 
+ ## 运行应用
+ 
+-前端将应用作为 `bannerlator-flatpak-run <app-id>` 的 run 模式会话启动，在 gamescope 下全屏。在 gamescope 下，它传递 `--nosocket=wayland --socket=x11` 并设置 `XDG_SESSION_TYPE=x11`。否则 Flatpak 会找到应用合成器的 `wayland-0`，窗口会在 gamescope 后面打开。gamescope 自己的 Wayland socket 不是替代方案：Chromium on Wayland 会向它命名的渲染节点询问 DRM 版本，而 KGSL 无法给出，于是中止。启动器还会在没有 session bus 时启动一个。在 Linux 桌面上，应用导出的菜单项出现在 LXQt 菜单中。当桌面由 pixman 合成时，游戏像 rootfs 自己的游戏一样通过 `droiddeck-gpu` 包装。
++前端把应用作为 `droiddeck-flatpak-run <app-id>` 的运行模式会话启动，在 gamescope 下全屏。在 gamescope 下它传递 `--nosocket=wayland --socket=x11` 并设置 `XDG_SESSION_TYPE=x11`；否则 Flatpak 会找到应用合成器的 `wayland-0`，窗口会开到 gamescope 后面。gamescope 自己的 Wayland socket 并非替代方案：Chromium on Wayland 会向它指定的渲染节点询问 DRM 版本，KGSL 无法给出，于是中止。启动器还会在没有 session bus 时启动一个。在 Linux 桌面上，应用导出的菜单项出现在 LXQt 菜单中。当桌面由 pixman 合成时，游戏像 rootfs 自己的游戏一样经 `droiddeck-gpu` 包装。
+ 
+ ## 商店
+ 
+-`FlathubApi` 读取 flathub.org 的公共 API：collections、过滤为 `aarch64` 的搜索以及 AppStream 详情。`bannerlator-flatpak` 通过 PyGObject 驱动 libflatpak，并每行打印一个 JSON 对象（`op`、`progress`、`error`、`done`）。`FlatpakManager` 将这些行转换为商店的进度条。商店命令在它们自己的 proot 中运行，`OrphanReaper` 在会话启动时放过它们。
++`FlathubApi` 读取 flathub.org 的公共 API：collections、过滤为 `aarch64` 的搜索以及 AppStream 详情。`droiddeck-flatpak` 通过 PyGObject 驱动 libflatpak，每行打印一个 JSON 对象（`op`、`progress`、`error`、`done`）。`FlatpakManager` 把这些行变成商店的进度条。商店命令在各自的 proot 中运行，会话启动时 `OrphanReaper` 会放过它们。
+ 
+ ## AppImages
+ 
+ Desktop 页面上的 "Add AppImage" 从存储导入一个 ARM64、type 2 AppImage。`AppImageManager` 首先检查其 ELF 头，因此 x86_64 镜像会被拒绝并给出说明消息。然后它复制镜像进来，因为共享存储是 noexec，并将其一次性解压到 `/opt/appimages/user/<id>/app`。proot 没有 FUSE，每次启动都解压会每次花费整个镜像。名称、注释和图标来自镜像自己的 desktop entry。菜单项进入 `/usr/local/share/applications`，桌面的 GPU wrapper 会在那里拾取它。
+ 
+-`bannerlator-appimage-run` 启动它：
++`droiddeck-appimage-run` 启动它：
+ 
+ - `APPIMAGE` 保持未设置，因此应用不会提供将自己添加到菜单或就地更新。
+ - Firefox 分支获得与 Flatpak 相同的沙箱开关。

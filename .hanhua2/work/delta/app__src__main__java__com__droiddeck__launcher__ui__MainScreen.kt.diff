@@ -1,0 +1,64 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/MainScreen.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/MainScreen.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.height
+@@ -25,17 +27,17 @@
+ ) {
+     AlertDialog(
+         onDismissRequest = onDismiss,
+-        title = { Text("启动 ${app.label}") },
++        title = { Text(stringResource(R.string.main_launch_named, app.label)) },
+         text = {
+             Text(
+-                secondaryDisplay?.let { "请选择屏幕。副屏：${it.label}。" }
+-                    ?: "副屏已不可用。",
++                secondaryDisplay?.let { stringResource(R.string.main_choose_screen, it.label) }
++                    ?: stringResource(R.string.main_secondary_gone),
+             )
+         },
+-        confirmButton = { TextButton(onClick = onPrimary) { Text("主屏") } },
++        confirmButton = { TextButton(onClick = onPrimary) { Text(stringResource(R.string.main_primary)) } },
+         dismissButton = {
+             TextButton(onClick = onSecondary, enabled = secondaryDisplay != null) {
+-                Text("副屏")
++                Text(stringResource(R.string.main_secondary))
+             }
+         },
+     )
+@@ -48,29 +50,7 @@
+         title = { Text(title) },
+         text = { Text(text) },
+         confirmButton = { TextButton(onClick = { onDismiss(); onConfirm() }) { Text(confirm) } },
+-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
++        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
+     )
+ }
+ 
+-@Composable
+-fun CreditsDialog(onDismiss: () -> Unit) {
+-    AlertDialog(
+-        onDismissRequest = onDismiss,
+-        title = { Text("致谢") },
+-        text = {
+-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+-                Text("The412Banner：应用、合成器、运行时与 Steam 会话。", style = MaterialTheme.typography.bodyMedium)
+-                Spacer(Modifier.height(10.dp))
+-                Text("maxjivi05：gamescope 运行时与手柄支持，基于 WinNative。", style = MaterialTheme.typography.bodyMedium)
+-                Spacer(Modifier.height(10.dp))
+-                Text(
+-                    "GPL-3.0。Steam、Steam Deck 与 Proton 是 Valve 的商标。与 Valve 无隶属关系。第三方软件仍遵循其作者的许可证。",
+-                    style = MaterialTheme.typography.bodySmall,
+-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                )
+-            }
+-        },
+-        confirmButton = { TextButton(onClick = onDismiss) { Text("确定") } },
+-    )
+-}
+-

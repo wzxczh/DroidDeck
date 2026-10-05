@@ -11,4 +11,6 @@
 - `0111-wayland-pointer-warps-in-passthrough.patch` - 此应用：嵌套指针的运动作为触摸 0 发送到 wlserver，而在 Passthrough（Big Picture 的触摸模式）中，未按下的触摸的运动不会移动任何东西——因此在应用的触控板模式中，Steam 客户端看不到悬停，点击落在指针最后所在的位置。运动现在也总是 warp 真实指针（`bAlwaysWarpCursor`），其他触摸模式已经这样做。
 - `0112-restore-iconified-game-on-resume.patch` - 此应用：Steam 菜单是一个 overlay，在不改变焦点窗口的情况下接受输入，而全屏 wine 游戏在失去输入时会最小化自己。gamescope 只在焦点窗口变化时将窗口从 iconic 中取出，而 wine 不会激活它认为 iconic 的窗口，因此在 Resume 后游戏保持最小化：黑屏，其小标题在左上角（Titanfall 2，GE-Proton 11）。iconify 请求被记住，窗口在输入返回它之前回到 NormalState，然后焦点再次移交。根窗口上的 `GAMESCOPE_RESTORE_FOCUS_WINDOW` 从外部请求相同的恢复（会话脚本的 resume 监视器）。
 
-Armada 的另外十六个补丁是用于原生显示的 DRM/lease/HDR-on-KMS 工作，此应用的 Wayland 托管 gamescope 永远不会到达，或者需要比运行时更新的 gamescope。
+- `0113-steam-overlay-keeps-game-keyboard-focus.patch` - 此应用：Steam 客户端在游戏上以 `STEAM_INPUT_FOCUS` 1 打开 Quick Access 菜单和 Steam 菜单，这会把 X 键盘焦点移到它的 overlay 上；wine 随后使游戏失活，全屏游戏于是自行最小化，卡在菜单后面而不是像 Steam Deck 上那样继续运行。现在，Steam 自己的 overlay 接管输入时会保持键盘焦点在游戏上（与模式 2 一致）；其输入来自手柄经由 Steam Input，而非 X 键盘。gamescope 在输入移向 Steam 及移回时做出的指针 warp 在它周围会被跳过，因为仍在接收输入的游戏会把这些当作鼠标跳变。
+
+Armada 的另外十六个补丁是面向原生显示的 DRM/lease/HDR-on-KMS 工作，此应用托管在 Wayland 下的 gamescope 永远触达不到；或者它们需要比运行时更新的 gamescope。

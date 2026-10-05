@@ -1,0 +1,179 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/PerformanceDialog.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/PerformanceDialog.kt
+@@ -1,5 +1,7 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
++import androidx.compose.ui.res.stringResource
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.border
+ import androidx.compose.foundation.layout.Column
+@@ -37,8 +39,13 @@
+     glThread: Boolean,
+     noGlError: Boolean,
+     noXalia: Boolean,
++    fastSync: Boolean,
++    syncFallback: Boolean,
++    fsyncFirst: Boolean,
+     gamescopeRealtime: Boolean,
++    gpuClockPin: Boolean,
+     prootNoSeccomp: Boolean,
++    prootFastPath: Boolean,
+     guestHostname: String,
+     phantomWarning: String?,
+     onClientOverride: (Boolean) -> Unit,
+@@ -47,8 +54,13 @@
+     onGlThread: (Boolean) -> Unit,
+     onNoGlError: (Boolean) -> Unit,
+     onNoXalia: (Boolean) -> Unit,
++    onFastSync: (Boolean) -> Unit,
++    onSyncFallback: (Boolean) -> Unit,
++    onFsyncFirst: (Boolean) -> Unit,
+     onGamescopeRealtime: (Boolean) -> Unit,
++    onGpuClockPin: (Boolean) -> Unit,
+     onProotNoSeccomp: (Boolean) -> Unit,
++    onProotFastPath: (Boolean) -> Unit,
+     onGuestHostname: (String) -> Unit,
+     onClientCore: (Int, Boolean) -> Unit,
+     onGameCore: (Int, Boolean) -> Unit,
+@@ -58,74 +70,102 @@
+     val colors = MaterialTheme.colorScheme
+     val coreItems = cores.map { it.core to it.label }
+     SettingsPage(
+-        host, title = "性能",
+-        lede = "CPU 核心、会话修复与主机名，下次会话生效。",
++        host, title = stringResource(R.string.perf_title),
++        lede = stringResource(R.string.perf_lede),
+         onBack = onDismiss,
+     ) {
+-        SettingsGroup("Steam 客户端核心") {
++        SettingsGroup(stringResource(R.string.perf_client_cores_group)) {
+             ToggleRow(
+-                host, "override", "覆盖 Steam 自身的核心选择",
+-                "将 Steam、其界面辅助进程和 gamescope 固定到下方核心，每隔几秒重新应用。",
++                host, "override", stringResource(R.string.perf_override),
++                stringResource(R.string.perf_override_hint),
+                 clientOverride, onChange = onClientOverride,
+             )
+             MultiRow(
+-                host, "clientCores", "客户端核心", if (clientOverride) "为 Steam 选择核心。" else "先启用覆盖开关再选择。",
++                host, "clientCores", stringResource(R.string.perf_client_cores), if (clientOverride) stringResource(R.string.perf_client_cores_on) else stringResource(R.string.perf_client_cores_off),
+                 coreItems, clientCores, enabled = clientOverride, onToggle = onClientCore,
+             )
+         }
+-        SettingsGroup("游戏核心") {
++        SettingsGroup(stringResource(R.string.perf_game_cores_group)) {
+             MultiRow(
+-                host, "gameCores", "游戏核心",
+-                "为游戏选择核心。全部选中时由 Android 在所有核心上调度。",
++                host, "gameCores", stringResource(R.string.perf_game_cores),
++                stringResource(R.string.perf_game_cores_hint),
+                 coreItems, gameCores, onToggle = onGameCore,
+             )
+         }
+-        SettingsGroup("客户端界面") {
++        SettingsGroup(stringResource(R.string.perf_client_ui)) {
+             ToggleRow(
+-                host, "glthread", "GL 多线程",
+-                "可能提升 Steam 菜单的响应速度，对设备整体的影响尚未验证。",
++                host, "glthread", stringResource(R.string.perf_glthread),
++                stringResource(R.string.perf_glthread_hint),
+                 glThread, onChange = onGlThread,
+             )
+             ToggleRow(
+-                host, "zink", "Zink：延迟描述符",
+-                "延迟且紧凑的描述符，推荐用于不支持描述符缓冲的驱动。",
++                host, "zink", stringResource(R.string.perf_zink),
++                stringResource(R.string.perf_zink_hint),
+                 zinkLazy, onChange = onZinkLazy,
+             )
+             ToggleRow(
+-                host, "noglerror", "跳过 GL 错误检查",
+-                "关闭每次调用时的 GL 校验。",
++                host, "noglerror", stringResource(R.string.perf_noglerror),
++                stringResource(R.string.perf_noglerror_hint),
+                 noGlError, onChange = onNoGlError,
+             )
+             ToggleRow(
+-                host, "gsrealtime", "gamescope：实时 GPU 队列",
+-                "让合成器的 GPU 任务优先于游戏。可使帧节奏更平稳，但会占用游戏的 GPU 时间。",
++                host, "gsrealtime", stringResource(R.string.perf_gsrealtime),
++                stringResource(R.string.perf_gsrealtime_hint),
+                 gamescopeRealtime, onChange = onGamescopeRealtime,
+             )
+         }
+-        SettingsGroup("会话修复") {
++        SettingsGroup(stringResource(R.string.perf_gpu)) {
+             ToggleRow(
+-                host, "sysmem", "Turnip：系统内存渲染",
+-                "默认开启：对 Steam 界面和大多数游戏更快。Adreno 710/720/722 必须开启。",
++                host, "gpuclock", stringResource(R.string.perf_gpuclock),
++                stringResource(R.string.perf_gpuclock_hint),
++                gpuClockPin, onChange = onGpuClockPin,
++            )
++        }
++        SettingsGroup(stringResource(R.string.perf_fixes)) {
++            ToggleRow(
++                host, "sysmem", stringResource(R.string.perf_sysmem),
++                stringResource(R.string.perf_sysmem_hint),
+                 tuSysmem, onChange = onTuSysmem,
+             )
+             ToggleRow(
+-                host, "xalia", "跳过 Steam 的 xalia 辅助",
+-                "关闭 Proton 的手柄导航辅助（它会消耗每个游戏的 CPU 时间）。仅当游戏需要时才关闭本开关。",
++                host, "xalia", stringResource(R.string.perf_xalia),
++                stringResource(R.string.perf_xalia_hint),
+                 noXalia, onChange = onNoXalia,
+             )
+             ToggleRow(
+-                host, "seccomp", "proot 不使用 seccomp",
+-                "可能修复部分内核上的系统调用缺失错误，但会降低性能。",
++                host, "syncfallback", stringResource(R.string.perf_esync),
++                stringResource(R.string.perf_esync_hint),
++                syncFallback, onChange = onSyncFallback,
++            )
++            ToggleRow(
++                host, "fsyncfirst", stringResource(R.string.perf_fsync),
++                stringResource(R.string.perf_fsync_hint),
++                fsyncFirst, onChange = onFsyncFirst,
++            )
++            ToggleRow(
++                host, "fastsync", stringResource(R.string.perf_fastsync),
++                stringResource(R.string.perf_fastsync_hint),
++                fastSync, onChange = onFastSync,
++            )
++            ToggleRow(
++                host, "seccomp", stringResource(R.string.perf_seccomp),
++                stringResource(R.string.perf_seccomp_hint),
+                 prootNoSeccomp, onChange = onProotNoSeccomp,
+             )
++            ToggleRow(
++                host, "fastpath", stringResource(R.string.perf_fastpath),
++                if (prootNoSeccomp) stringResource(R.string.perf_fastpath_needs_seccomp)
++                else stringResource(R.string.perf_fastpath_hint),
++                prootFastPath && !prootNoSeccomp, enabled = !prootNoSeccomp, onChange = onProotFastPath,
++            )
+         }
+-        SettingsGroup("会话标识") {
++        SettingsGroup(stringResource(R.string.perf_identity)) {
+             var draft by remember(guestHostname) { mutableStateOf(guestHostname) }
+             val valid = SessionPrefs.validGuestHostname(draft) != null
+             SettingsRow(
+-                "主机名",
+-                if (valid || draft.isBlank()) "会话与 Steam 向其他程序报告的本机名称。留空则恢复为 ${SessionPrefs.DEFAULT_GUEST_HOSTNAME}。"
+-                else "仅限字母、数字和中间的连字符，最多 63 个字符。输入合法后才会保存。",
++                stringResource(R.string.perf_hostname),
++                if (valid || draft.isBlank()) stringResource(R.string.perf_hostname_hint, SessionPrefs.DEFAULT_GUEST_HOSTNAME)
++                else stringResource(R.string.perf_hostname_invalid),
+             ) {
+                 OutlinedTextField(
+                     draft, { v ->
+@@ -144,7 +184,7 @@
+                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.error.copy(alpha = 0.08f))
+                     .border(1.dp, colors.error.copy(alpha = 0.4f), RoundedCornerShape(12.dp)).padding(12.dp),
+             ) {
+-                Text("Android 将会结束此会话", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = colors.error)
++                Text(stringResource(R.string.perf_phantom_warning), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = colors.error)
+                 Text(phantomWarning, fontSize = 12.sp, color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+             }
+         }

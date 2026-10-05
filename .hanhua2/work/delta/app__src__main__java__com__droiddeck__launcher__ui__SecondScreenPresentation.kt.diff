@@ -1,0 +1,96 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/ui/SecondScreenPresentation.kt
++++ final/app/src/main/java/com/droiddeck/launcher/ui/SecondScreenPresentation.kt
+@@ -1,5 +1,6 @@
+ package com.droiddeck.launcher.ui
+ 
++import com.droiddeck.launcher.R
+ import android.app.Presentation
+ import android.content.ClipboardManager
+ import android.content.Context
+@@ -99,7 +100,10 @@
+ 
+     override fun onWindowFocusChanged(hasFocus: Boolean) {
+         super.onWindowFocusChanged(hasFocus)
+-        if (hasFocus) applyImmersiveMode()
++        if (hasFocus) {
++            applyImmersiveMode()
++            sessionActivity.refreshClipboard()
++        }
+     }
+ 
+     private fun renderMode() {
+@@ -128,37 +132,37 @@
+         }
+         controls.addView(Button(context).apply {
+             text = "×"
+-            contentDescription = "关闭第二屏控件"
++            contentDescription = context.getString(R.string.deck_close)
+             minWidth = dp(48)
+             setOnClickListener { onClose() }
+         })
+         controls.addView(TextView(context).apply {
+-            text = "触控板"
++            text = context.getString(R.string.second_trackpad)
+             textSize = 14f
+             setTextColor(Color.WHITE)
+         }, LinearLayout.LayoutParams(0, -2, 1f))
+         val keyboardButton = Button(context).apply {
+-            text = "显示键盘"
++            text = context.getString(R.string.second_show_keyboard)
+             setOnClickListener {
+                 val host = keyboardHost ?: return@setOnClickListener
+                 if (host.shown) {
+                     host.hide()
+-                    text = "显示键盘"
++                    text = context.getString(R.string.second_show_keyboard)
+                 } else {
+                     host.show()
+-                    text = "隐藏键盘"
++                    text = context.getString(R.string.second_hide_keyboard)
+                 }
+             }
+         }
+         controls.addView(keyboardButton)
+         controls.addView(Button(context).apply {
+             text = "STEAM"
+-            contentDescription = "打开 Steam 菜单"
++            contentDescription = context.getString(R.string.deck_open_steam_menu)
+             setOnClickListener { onSteamMenu() }
+         })
+         controls.addView(Button(context).apply {
+             text = "…"
+-            contentDescription = "打开 Quick Access（QAM）菜单"
++            contentDescription = context.getString(R.string.drawer_open_qam)
+             setOnClickListener { onQam() }
+         })
+         panel.addView(controls, FrameLayout.LayoutParams(-1, -2, Gravity.TOP))
+@@ -179,17 +183,17 @@
+         }
+         bar.addView(Button(context).apply {
+             text = "×"
+-            contentDescription = "关闭第二屏控件"
++            contentDescription = context.getString(R.string.deck_close)
+             minWidth = dp(48)
+             setOnClickListener { onClose() }
+         })
+         bar.addView(TextView(context).apply {
+-            text = "Linux 终端"
++            text = context.getString(R.string.second_terminal)
+             textSize = 14f
+             setTextColor(Color.WHITE)
+         }, LinearLayout.LayoutParams(0, -2, 1f))
+         bar.addView(Button(context).apply {
+-            text = "键盘"
++            text = context.getString(R.string.drawer_keyboard)
+             setOnClickListener { showTerminalKeyboard() }
+         })
+         root.addView(bar, LinearLayout.LayoutParams(-1, -2))
+@@ -205,7 +209,7 @@
+         val session = SessionTerminal.create(terminalClient)
+         if (session == null) {
+             root.addView(TextView(context).apply {
+-                text = "Linux 会话尚未就绪，暂时无法使用终端。"
++                text = context.getString(R.string.second_terminal_not_ready)
+                 setTextColor(Color.WHITE)
+                 gravity = Gravity.CENTER
+             }, LinearLayout.LayoutParams(-1, 0, 1f))

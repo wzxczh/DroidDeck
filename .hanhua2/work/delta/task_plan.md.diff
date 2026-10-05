@@ -1,0 +1,90 @@
+--- ours/task_plan.md
++++ final/task_plan.md
+@@ -1,48 +1,48 @@
+-# DroidDeck 全项目汉化 — 任务计划
++# DroidDeck 汉化 — 第二轮：版本更新合并 + 全项目汉化
++
++## 背景（已查明的事实）
++- 仓库处于**未完成的 merge 状态**：`main`(0d98a9ae，已汉化并已提交) ← merge → `upstream/main`(eaa4a7a0，新版本 0.3.0)。
++- 工作区 518 个冲突 hunk / 80 个带标记文件，另有 6 个 rename/modify（bannerlator-* 被上游改名 droiddeck-*、store/AppImageState.kt 被上游删除重构）。
++- 上游重大变化：**UI 文案迁移到 `stringResource(R.string.*)` 资源**，values/strings.xml 77 键 → ~926 键，上游自带 zh-rCN 中文。
++- 本地含非汉化修复（EXPORT 宏顺序、gamescope/wlroots sha256、build.sh 执行权限、gradlew），合并不得丢失。
++- 约束：**不调用 git.exe、不编译、完成后项目必须能正常构建**。
++- 基建：Python 3.11 读 .git 对象（`.hanhua2/gread.py`）；工作目录 `C:\Users\wzxcz\AppData\Local\Temp\dsh-StYPwy\hanhua2-work`（下称 WORK）。
++- 沙箱：子进程不能写工作区（ACL 正常，属会话限制）→ 计算在 WORK，写回需 danger-full-access 批量执行；子工具（write/edit）可直接写工作区。
+ 
+ ## 目标
+-阅读全部 MD 文件理解项目后，对整个项目做完整汉化。用户确认：
+-- **方式**：直接把源码/文档中的英文替换为中文（不抽取字符串资源）。
+-- **范围**：① 应用全部可见 UI ② 项目自有 MD 文档 ③ 第三方 README ④ 日志与技术输出。
+-- **约束**（后加）：全程及结束后**不做任何编译**；不调用 git.exe。
++1. 解决全部冲突：语义 = 上游新代码 + 本地汉化/本地修复保留。
++2. 翻译上游新带入的全部英文（资源、代码串、脚本消息、文档）。
++3. 静态验证可构建（不编译）。
+ 
+-## 阶段状态
++## 阶段
++### Phase 1 取证 ✅
++- [x] merge-base=9ed25d8a；base/ours/theirs 三棵树落地 WORK；86 冲突路径清单（conflicts.json）
+ 
+-### Phase 1 盘点 ✅
+-- 29 个 MD 通读完毕；耦合清单与规则写入 findings.md。
++### Phase 2 冲突裁决 ✅（518/518 取上游侧，证据链完整）
++- [x] 三方分类：489 自动（我方仅字符串改动）+ 11 人工复核（骨架正则误报，逐一核过安全）+ 18 特殊文件 + 6 删除
++- [x] `audit_local.py`：52 文件含我方结构性改动，全部在冲突区之外（自动保留）或经复核安全
++- [x] 裁决规则：全部取 theirs（上游新代码），其英文由 Phase 4 翻译；取 ours 会丢上游重构
++- [x] 写回 80 文件 + 删 6 文件；全库 0 残留真冲突标记（build.yml 中为 CI 脚本字面量）
+ 
+-### Phase 2/3 文档 ✅
+-- tools/proot/PATCHES.md、directaudio README、adrenotools×6、dxbc README、winfg NOTICE、ZERO_COPY_SPIKE.md 全部译完。
+-- `dxbc/LICENSE.md` 保留英文（zlib 许可证法律文本）。
+-- `values/strings.xml` 默认资源同步中文（77 键与 zh-rCN 完全一致）。
++### Phase 3 资源 ✅（写回时处理）
++- [x] values-zh-rCN ← 上游完整中文；values 默认 ← 同步 zh-rCN
++- [x] 99 个仅在默认资源的键保留英文待译 → WORK/values_only_keys.json
+ 
+-### Phase 4 应用 UI ✅（6 并行子任务全部回收）
+-- fee01556 前端 15 文件 ≈221 处；8aa2d2e1 向导 9 文件 202 行；046c9106 会话 12 文件 246 行；42799b75 文件管理器 16 文件 ≈145 处；e68d4652 商店组件 19 文件 256 行；68545eef 散件 19 文件 77 处。
++### Phase 4 增量翻译 ⏳
++- [ ] delta.py 生成 ours↔final 增量报告
++- [ ] 分桶派发子任务翻译（代码串/脚本消息/文档/99 资源键）
++- [ ] 收尾残留英文扫描
+ 
+-### Phase 5 日志与技术输出 ✅
+-- 5a4bcf54 Kotlin/Java 50 文件 308 处。
+-- 2298213b C/C++ waylandcomp+fakeinput 337 处（verify.ps1 0 失败）。
+-- 5f4053bf+590edbec wl_color_mgmt.c 189 行（verify.ps1 全 21 文件 0 失败）。
+-- 协调者直翻：SessionService 42 行、Log.w 遗漏 52 处、ProtonExtras 15 条、framegen/lsfg 5 文件、SessionEvents/Artifacts marker。
++### Phase 5 终检（不编译）
++- [ ] 无真冲突标记；XML 可解析；引号括号平衡
++- [ ] live vs theirs diff 仅限字符串字面量（白名单：双语解析、本地修复）
++- [ ] R.string/R.plurals 引用 ⊆ 资源键；英文 UI 残留扫描
+ 
+-### Phase 6 加载管线耦合 ✅
+-- 脚本 step ↔ LoadingState 正则 ↔ stageOf/readableStep 双语 ↔ progressFor 四侧同步完成。
+-- BACK_* 常量、releaseStatus、"Linux runtime driver"、HDR refused 外壳等跨文件措辞统一完成。
++## 错误记录
++| 错误 | 解决 |
++|---|---|
++| idx fanout 按首字符而非首字节分桶 | 改 int(sha[:2],16) |
++| 子进程写工作区被拒（ACL 正常） | 诊断脚本确认属会话限制；计算放 TEMP、写回用 danger-full-access |
++| %TEMP% 按模式重映射导致路径不一致 | 固定 HANHUA_WORK 绝对路径 |
++| 正则 `%[1-9]$?` 非法 | 转义 `\$?` |
+ 
+-### Phase 7 终检 ✅（8 项扫描全过，未编译）
+-1. 测试断言串 8 项完整；2. 协议/解析串 16 项完整；3. BACK_* 零残留；
+-4. 158 文件含中文行引号配对 OK；5. 短词 UI 0 残留；6. 通知/Toast/对话框 0 残留；
+-7. MD 除许可证外全中文；8. 资源 77 键一致。
+-
+-### Phase 8 收尾 ⏳（进行中）
+-- [ ] b5e232cf：guest 脚本消息（tools/linuxfs 约 50 处，含测试保护约束）
+-- [ ] 回收该任务 → 报告用户
+-
+-## 报告需涵盖的"未覆盖说明"
+-- `.github/workflows/*.yml`（CI 开发者配置，不在四项范围内）
+-- `artwork/boot-animation-source/droiddeck-boot.html` 预览页控件文字（开发者工具，非成品视频）
+-- `dxbc/LICENSE.md`（许可证法律文本）
+-- 第三方禁区未动：adrenotools/thirdparty/termux/winfg 源码
+-- 刻意保留英文的协议/ABI/外部输出串（详见 findings.md 与 progress.md）
+-- `.hanhua-orig/` 备份目录 + verify.ps1 待用户决定去留
+-

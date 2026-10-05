@@ -1,0 +1,11 @@
+app/src/main/java/com/droiddeck/launcher/core/DeviceReport.kt
+app/src/main/java/com/droiddeck/launcher/core/GameEnvironment.kt
+app/src/main/java/com/droiddeck/launcher/core/GameEnvironmentOptions.kt
+app/src/main/java/com/droiddeck/launcher/core/NetworkReport.kt
+app/src/main/java/com/droiddeck/launcher/core/TextureFiltering.kt
+app/src/main/java/com/droiddeck/launcher/frontend/AddedGames.kt
+app/src/main/java/com/droiddeck/launcher/frontend/GameFileSync.kt
+app/src/main/java/com/droiddeck/launcher/frontend/GameFiles.kt
+app/src/main/java/com/droiddeck/launcher/frontend/GameLaunchLink.kt
+app/src/main/java/com/droiddeck/launcher/frontend/Library.kt
+app/src/main/java/com/droiddeck/launcher/frontend/LibraryCache.kt

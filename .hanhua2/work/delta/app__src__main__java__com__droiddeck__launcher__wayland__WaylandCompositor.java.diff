@@ -1,0 +1,164 @@
+--- ours/app/src/main/java/com/droiddeck/launcher/wayland/WaylandCompositor.java
++++ final/app/src/main/java/com/droiddeck/launcher/wayland/WaylandCompositor.java
+@@ -13,7 +13,7 @@
+  */
+ public final class WaylandCompositor {
+     static {
+-        System.loadLibrary("bannerwayland");
++        System.loadLibrary("droiddeckwayland");
+     }
+ 
+     private WaylandCompositor() {}
+@@ -30,7 +30,7 @@
+         if (firstFrameListener == r) firstFrameListener = null;
+     }
+ 
+-    /** Invoked from native (banner_on_first_frame) on the first present. */
++    /** Invoked from native (droiddeck_on_first_frame) on the first present. */
+     @SuppressWarnings("unused")
+     static void onFirstFramePresented() {
+         Runnable r = firstFrameListener;
+@@ -60,7 +60,7 @@
+         if (gameListener == l) gameListener = null;
+     }
+ 
+-    /** Invoked from native (banner_on_game_surface). */
++    /** Invoked from native (droiddeck_on_game_surface). */
+     @SuppressWarnings("unused")
+     static void onGameSurface(String window, String gpuName) {
+         GameListener l = gameListener;
+@@ -80,7 +80,7 @@
+         return Math.max(frameIntervalNanos, System.nanoTime() - last) / 1_000_000;
+     }
+ 
+-    /** Invoked from native (banner_on_game_frame) for every frame of the HUD's window. */
++    /** Invoked from native (droiddeck_on_game_frame) for every frame of the HUD's window. */
+     @SuppressWarnings("unused")
+     static void onGameFrame() {
+         long now = System.nanoTime();
+@@ -95,7 +95,7 @@
+         if (l != null) l.onGameFrame();
+     }
+ 
+-    /** Invoked from native (banner_on_game_program) once per game window that starts presenting. */
++    /** Invoked from native (droiddeck_on_game_program) once per game window that starts presenting. */
+     @SuppressWarnings("unused")
+     static void onGameProgram(int pid, String program) {
+         GameListener l = gameListener;
+@@ -115,7 +115,7 @@
+ 
+     public static void setPointerLockListener(PointerLockListener l) { pointerLockListener = l; }
+ 
+-    /** Invoked from native (banner_on_pointer_lock). */
++    /** Invoked from native (droiddeck_on_pointer_lock). */
+     @SuppressWarnings("unused")
+     static void onPointerLock(boolean locked, int x, int y) {
+         PointerLockListener l = pointerLockListener;
+@@ -132,7 +132,14 @@
+ 
+     public static void setClipboardListener(ClipboardListener l) { clipboardListener = l; }
+ 
+-    /** Invoked from native (banner_on_clipboard_text) with UTF-8 bytes. */
++    public static boolean isClipboardListener(ClipboardListener l) { return clipboardListener == l; }
++
++    /** A replaced activity must not unhook the clipboard listener of its successor. */
++    public static void clearClipboardListener(ClipboardListener l) {
++        if (clipboardListener == l) clipboardListener = null;
++    }
++
++    /** Invoked from native (droiddeck_on_clipboard_text) with UTF-8 bytes. */
+     @SuppressWarnings("unused")
+     static void onClipboardText(byte[] utf8) {
+         ClipboardListener l = clipboardListener;
+@@ -151,7 +158,7 @@
+ 
+     public static void setTextInputListener(TextInputListener l) { textInputListener = l; }
+ 
+-    /** Invoked from native (banner_on_text_input). */
++    /** Invoked from native (droiddeck_on_text_input). */
+     @SuppressWarnings("unused")
+     static void onTextInput(boolean enabled, String program, int x, int y, int w, int h) {
+         TextInputListener l = textInputListener;
+@@ -207,6 +214,9 @@
+      */
+     public static native int nativeCursorSnapshot(int[] out);
+ 
++    /** The serial {@link #nativeCursorSnapshot} would report, without copying the image. */
++    public static native int nativeCursorSerial();
++
+     /** Enough for the header plus a 256x256 cursor, the largest the compositor snapshots. */
+     public static final int CURSOR_BUF_INTS = 6 + 256 * 256;
+ 
+@@ -230,7 +240,7 @@
+     public static native void nativeSetOutputRefreshRate(float hz);
+ 
+     /** Show a single fullscreen window on its own Android layer (SurfaceControl) instead of blitting
+-     *  it into the compositor's swapchain. BANNER_WAYLAND_ZERO_COPY=1 in the container's environment
++     *  it into the compositor's swapchain. DROIDDECK_WAYLAND_ZERO_COPY=1 in the container's environment
+      *  variables is the launch default; see waylandcomp/ZERO_COPY_SPIKE.md.
+      *
+      *  Live and thread-safe: before the compositor starts this is the initial state, and afterwards
+@@ -254,12 +264,12 @@
+     /** Compressed (UBWC) game buffers: the compositor advertises DRM_FORMAT_MOD_QCOM_COMPRESSED next to
+      *  LINEAR on zwp_linux_dmabuf_v1 for every format its driver can import that way, so the game's
+      *  Turnip allocates compressed swapchain images instead of resolving every frame to a linear copy.
+-     *  Default on; BANNER_WAYLAND_UBWC=0 in the container's environment variables turns it off (A/B).
++     *  Default on; DROIDDECK_WAYLAND_UBWC=0 in the container's environment variables turns it off (A/B).
+      *  Set before the compositor starts. */
+     public static native void nativeSetUbwc(boolean on);
+ 
+     /** Debug: advertise no DRM device (main device 0:0) in the dma-buf feedback, as a phone that
+-     *  exposes no /dev/dri node to apps does. BANNER_WAYLAND_NO_RENDER_NODE=1 in the container's or
++     *  exposes no /dev/dri node to apps does. DROIDDECK_WAYLAND_NO_RENDER_NODE=1 in the container's or
+      *  shortcut's environment variables. Set before the compositor starts. */
+     public static native void nativeSetNoRenderNode(boolean on);
+ 
+@@ -301,13 +311,13 @@
+      *  already presented a previous one. */
+     public static native void nativeResetFirstFrame();
+ 
+-    // ── HDR10 output, round 1 (waylandcomp/src/banner_color.h, wl_color_mgmt.c) ─────────────────
+-    // Opt-in: BANNER_WAYLAND_HDR=1 in the container's or shortcut's env vars. The compositor offers
++    // ── HDR10 output, round 1 (waylandcomp/src/droiddeck_color.h, wl_color_mgmt.c) ─────────────────
++    // Opt-in: DROIDDECK_WAYLAND_HDR=1 in the container's or shortcut's env vars. The compositor offers
+     // games HDR10 (wp_color_manager_v1 + 10-bit buffers, frames tagged BT2020_PQ on the game's own
+     // display layer) only when the game's display lists HDR10 as well; otherwise nothing changes and
+     // the session log says why. Not the drawer's "HDR" effect, which is an SDR bloom/contrast filter.
+ 
+-    /** HDR_MODE_OFF / HDR_MODE_ON (BANNER_WAYLAND_HDR=1) / HDR_MODE_FORCE (=force: skip the display
++    /** HDR_MODE_OFF / HDR_MODE_ON (DROIDDECK_WAYLAND_HDR=1) / HDR_MODE_FORCE (=force: skip the display
+      *  check, for testing the negotiation on an SDR panel). */
+     public static final int HDR_MODE_OFF = 0, HDR_MODE_ON = 1, HDR_MODE_FORCE = 2;
+ 
+@@ -434,6 +444,14 @@
+      *  back to the game, like the X11 IdleNotify pacer, so the game itself slows to the cap. */
+     public static native void nativeSetFpsLimit(int fps);
+ 
++    /** KGSL power control off (true: the GPU held at its top clock) or back on. Device-wide and
++     *  outlives the process; see {@code GpuClockPin}. A no-op without /dev/kgsl-3d0. */
++    public static native void nativeSetGpuTurbo(boolean on);
++
++    /** setpriority() on one of our own processes or threads, only ever raising it (no cgroup move,
++     *  unlike android.os.Process.setThreadPriority). Returns the nice it is left at; 100 = unknown. */
++    public static native int nativeRaisePriority(int tid, int nice);
++
+     /** Inject the app's X-server input in scene (virtual desktop) pixels. type 2 = move to a,b;
+      *  3 = evdev button a (BTN_LEFT=0x110…) pressed (b=1) or released (b=0); 4 = a wheel steps,
+      *  negative = up. */
+@@ -450,10 +468,12 @@
+     public static native void nativeSetFrameGenEngine(int kind);
+ 
+     /** Arm (multiplier 2..4: one real frame plus multiplier-1 interpolated ones per game frame) or
+-     *  disarm. Generated frames are presented ahead of the real frame on consecutive vblanks. */
+-    public static native void nativeSetFrameGenArmed(boolean armed, int multiplier);
+-
+-    /** LSFG Native: the SPIR-V cache built from the user's Lossless.dll ({@code LsfgNative.cacheFile}). */
++     *  disarm. A targetFps above 0 makes LSFG adaptive instead: it generates 0..3 frames per game
++     *  frame, whatever reaches that rate. Generated frames are presented ahead of the real frame
++     *  on consecutive vblanks. */
++    public static native void nativeSetFrameGenArmed(boolean armed, int multiplier, int targetFps);
++
++    /** LSFG Native: the SPIR-V cache built from the user's Lossless.dll ({@code Lossless.cacheFile}). */
+     public static native void nativeSetLsfgCachePath(String path);
+ 
+     /** Flow scale (0.25-1.0) and the panel's real refresh rate (the pacer never generates above it). */

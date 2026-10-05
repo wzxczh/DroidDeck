@@ -1,0 +1,17 @@
+tools/linuxfs/build-x86-preloads.sh
+tools/linuxfs/licenses/uruntime-LICENSE
+tools/linuxfs/overlay/usr/local/bin/droiddeck-appimage-run
+tools/linuxfs/overlay/usr/local/bin/droiddeck-bwrap
+tools/linuxfs/overlay/usr/local/bin/droiddeck-desktop-bookmarks
+tools/linuxfs/overlay/usr/local/bin/droiddeck-desktop-games
+tools/linuxfs/overlay/usr/local/bin/droiddeck-esync
+tools/linuxfs/overlay/usr/local/bin/droiddeck-fex
+tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak
+tools/linuxfs/overlay/usr/local/bin/droiddeck-flatpak-setup
+tools/linuxfs/overlay/usr/local/bin/droiddeck-game-env
+tools/linuxfs/overlay/usr/local/bin/droiddeck-login1
+tools/linuxfs/overlay/usr/local/bin/droiddeck-netmanager
+tools/linuxfs/overlay/usr/local/bin/droiddeck-pad-defaults
+tools/linuxfs/overlay/usr/local/bin/droiddeck-proton-extra
+tools/linuxfs/overlay/usr/local/bin/droiddeck-script-run
+tools/linuxfs/overlay/usr/local/bin/droiddeck-seed-redists

@@ -1,0 +1,5 @@
+#TARGET=D:\DroidDeck\app\src\main\cpp\waylandcomp\src\compositor.c
+#OLD
+WLOGE("keymap open failed: %s", path);
+#NEW
+WLOGE("keymap 打开失败：%s", path);

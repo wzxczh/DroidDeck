@@ -1,0 +1,16 @@
+tools/tests/test_appimage_run.py
+tools/tests/test_desktop_bookmarks.py
+tools/tests/test_droiddeck_fex.py
+tools/tests/test_esync_packs.py
+tools/tests/test_fsync_preload.py
+tools/tests/test_game_environment.py
+tools/tests/test_login1.py
+tools/tests/test_netmanager.py
+tools/tests/test_request_fex.py
+tools/tests/test_session_assets.py
+tools/tests/test_session_log.py
+tools/tests/test_steam_compat_live.py
+tools/tests/test_steam_games.py
+tools/tests/test_steam_install.py
+tools/tests/test_steam_ui_scale.py
+tools/tests/test_update_catalog.py

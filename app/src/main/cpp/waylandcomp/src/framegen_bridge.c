@@ -11,14 +11,15 @@
 #include <time.h>
 #include <android/log.h>
 
-void banner_log(const char *tag, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
-#define FGLOG(...) banner_log("framegen", __VA_ARGS__)
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "BannerWayland", __VA_ARGS__)
+void droiddeck_log(const char *tag, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+#define FGLOG(...) droiddeck_log("framegen", __VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "DroidDeckWayland", __VA_ARGS__)
 
 /* ---- app controls (written from any thread, read on the compositor thread) ------------- */
 static _Atomic int   g_kind = VKP_FG_ENGINE_LSFG;
 static _Atomic int   g_armed;
 static _Atomic int   g_mult = 2;
+static _Atomic int   g_target;                      /* LSFG adaptive fps, 0 = fixed multiplier */
 static _Atomic int   g_model = 3;
 static _Atomic int   g_preset = 2;
 static _Atomic int   g_cfg_dirty = 1;
@@ -51,6 +52,7 @@ static struct {
 
 /* ---- engine + generation ring (compositor thread) ------------------------------------ */
 static int g_engine_kind = -1;      /* kind of the running engine, -1 = none */
+static int g_engine_cache_gen = -1; /* the LSFG cache it loaded */
 static int g_engine_ok;
 /* The engine of this kind (with this cache) could not start or build its chain; not retried
  * every frame - a new engine selection or a new cache clears it. */
@@ -92,15 +94,20 @@ static int64_t now_ns(void) {
 void vkp_framegen_set_engine(int kind) {
     if (kind != VKP_FG_ENGINE_LSFG && kind != VKP_FG_ENGINE_WINFG) kind = VKP_FG_ENGINE_LSFG;
     atomic_store(&g_kind, kind);
+    atomic_store(&g_failed_kind, -1);
     atomic_store(&g_cfg_dirty, 1);
 }
 
-void vkp_framegen_set_armed(int armed, int multiplier) {
+void vkp_framegen_set_armed(int armed, int multiplier, int target_fps) {
+    if (target_fps < 0) target_fps = 0;
+    /* Adaptive sizes the ring and the swapchain for the most it may ever generate. */
+    if (target_fps) multiplier = VKP_FG_MAX_GENERATIONS + 1;
     if (multiplier < 2) multiplier = 2;
     if (multiplier > VKP_FG_MAX_GENERATIONS + 1) multiplier = VKP_FG_MAX_GENERATIONS + 1;
     if (atomic_exchange(&g_mult, multiplier) != multiplier) atomic_store(&g_cfg_dirty, 1);
+    if (atomic_exchange(&g_target, target_fps) != target_fps) atomic_store(&g_cfg_dirty, 1);
     atomic_store(&g_armed, armed ? 1 : 0);
-    LOGD("framegen: set_armed(%d, x%d)", armed, multiplier);
+    LOGD("framegen: set_armed(%d, x%d，目标 %d fps)", armed, multiplier, target_fps);
 }
 
 void vkp_framegen_set_lsfg_cache_path(const char *path) {
@@ -285,7 +292,9 @@ int vkp_framegen_extra_images(void) {
 }
 
 static int ensure_engine(int kind) {
-    if (g_engine_ok && g_engine_kind == kind) return 1;
+    const int cache_gen = atomic_load(&g_cache_gen);
+    if (g_engine_ok && g_engine_kind == kind && (kind != VKP_FG_ENGINE_LSFG || g_engine_cache_gen == cache_gen))
+        return 1;
     if (start_failed_for(kind)) return 0;
     if (g_engine_ok) { destroy_ring(); fge_stop(); g_engine_ok = 0; g_engine_kind = -1; }
     char *path = NULL;
@@ -293,7 +302,7 @@ static int ensure_engine(int kind) {
     if (g_cache_path) path = strdup(g_cache_path);
     pthread_mutex_unlock(&g_lock);
     if (kind == VKP_FG_ENGINE_LSFG && !path) {
-        FGLOG("LSFG Native 无法启动：没有着色器缓存（在设置中导入 Lossless.dll）");
+        FGLOG("LSFG Native 无法启动：没有来自 Lossless.dll 的着色器缓存");
         mark_failed(kind);
         return 0;
     }
@@ -305,29 +314,39 @@ static int ensure_engine(int kind) {
         mark_failed(kind);
         return 0;
     }
-    g_engine_ok = 1; g_engine_kind = kind;
+    g_engine_ok = 1; g_engine_kind = kind; g_engine_cache_gen = cache_gen;
     atomic_store(&g_cfg_dirty, 1);
     g_built_w = g_built_h = 0;
     FGLOG("%s 引擎就绪（%s）", fge_engine_name(kind), fge_build_info());
     return 1;
 }
 
-static int g_logged_mult;
+/* "x3 (2 interpolated frames per game frame)" or "adaptive to 90 fps (up to 3 ...)". */
+static const char *describe_mode(char *buf, size_t n, int mult, int target) {
+    if (target) snprintf(buf, n, "自适应至 %d fps（每个游戏帧最多插入 %d 帧）", target, mult - 1);
+    else snprintf(buf, n, "x%d（每个游戏帧插入 %d 帧%s）", mult, mult - 1, mult == 2 ? "" : "");
+    return buf;
+}
+
+static int g_logged_mult, g_logged_target;
 static void log_arm_transition(int armed, int kind, int mult) {
+    const int target = atomic_load(&g_target);
+    char mode[96];
     if (armed == g_was_armed) {
-        if (armed && mult != g_logged_mult) {
-            g_logged_mult = mult;
-            FGLOG("%s 倍数改为 x%d（每个游戏帧插入 %d 帧）", fge_engine_name(kind), mult, mult - 1);
+        if (armed && (mult != g_logged_mult || target != g_logged_target)) {
+            g_logged_mult = mult; g_logged_target = target;
+            FGLOG("%s 现为 %s", fge_engine_name(kind), describe_mode(mode, sizeof(mode), mult, target));
         }
         return;
     }
     g_was_armed = armed;
     if (armed) {
-        g_logged_mult = mult;
+        g_logged_mult = mult; g_logged_target = target;
         float flow, hz;
         pthread_mutex_lock(&g_lock); flow = g_flow; hz = g_refresh_hz; pthread_mutex_unlock(&g_lock);
-        FGLOG("%s x%d 已启用（光流缩放 %.2f，面板 %.0f Hz）：真实帧延后一格呈现，"
-              "插值帧排在它们前面", fge_engine_name(kind), mult, (double)flow, (double)hz);
+        FGLOG("%s %s 已启用（光流缩放 %.2f，面板 %.0f Hz）：真实帧延后一格呈现，"
+              "插值帧排在它们前面", fge_engine_name(kind),
+              describe_mode(mode, sizeof(mode), mult, target), (double)flow, (double)hz);
     } else {
         FGLOG("帧生成已关闭（本次会话共生成 %llu 帧）", (unsigned long long)g_total_generated);
         g_generating_logged = 0;
@@ -348,7 +367,8 @@ int vkp_framegen_run(VkCommandBuffer cmd, VkImage scene, VkImageView scene_view,
     if (atomic_exchange(&g_cfg_dirty, 0)) {
         float flow, hz;
         pthread_mutex_lock(&g_lock); flow = g_flow; hz = g_refresh_hz; pthread_mutex_unlock(&g_lock);
-        fge_configure((uint32_t)mult, flow, hz, atomic_load(&g_model), atomic_load(&g_preset));
+        fge_configure((uint32_t)mult, (uint32_t)atomic_load(&g_target), flow, hz,
+                      atomic_load(&g_model), atomic_load(&g_preset));
     }
     if (!fge_prepare((uint32_t)w, (uint32_t)h, fmt)) {
         if (fmt != VK_FORMAT_R8G8B8A8_UNORM && fge_unavailable()) {
@@ -426,8 +446,9 @@ int vkp_framegen_run(VkCommandBuffer cmd, VkImage scene, VkImageView scene_view,
                               0, 0, NULL, 0, NULL, nb, bars);
         if (!g_generating_logged) {
             g_generating_logged = 1;
-            FGLOG("生成中：%s x%d，%dx%d（每个游戏帧插入 %u 帧%s%s）",
-                  fge_engine_name(kind), mult, w, h, n_gen, n_gen == 1 ? "" : "",
+            char mode[96];
+            FGLOG("生成中：%s %s，%dx%d%s", fge_engine_name(kind),
+                  describe_mode(mode, sizeof(mode), mult, atomic_load(&g_target)), w, h,
                   fmt == VK_FORMAT_R16G16B16A16_SFLOAT ? "，FP16：HDR 画面" : "");
         }
     }

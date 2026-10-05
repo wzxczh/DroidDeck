@@ -23,6 +23,34 @@
 - `0012-android-hardlink-denial.patch` - Android 的 SELinux 策略禁止应用建立硬链接，因此 `linkat` 以 `EACCES` 失败，Flatpak 无法创建它的仓库（`Creating repo: linkat: Permission denied`）。`O_TMPFILE` 应答 `EOPNOTSUPP`，于是 libglnx 改为写一个具名临时文件再重命名它；被拒绝的链接应答 `EPERM`，ostree 的 checkout 遇到这种情况改为复制。
 由 DroidDeck 添加：
 
-- `0011-kompat-utsname-only.patch` - `--kernel-release`（guest 的 `DroidDeck` 主机名）会加载 kompat，它的过滤器拦截 `futex`、`fcntl`、`epoll_pwait`、`pselect6`、`pipe2`、`eventfd2`、`socket` 等调用，并在每次 `execve` 时剥离 `AT_SYSINFO_EHDR`，让 glibc 在没有 vDSO 的情况下运行。当虚拟的 release 不比真实内核更旧、且 hwcap 不被改动时，这些处理程序全都是 no-op：kompat 现在只跟踪 `uname`、`sethostname` 和 `setdomainname`，并让 auxv 保持内核写入的原样。在一台 SD 8 Gen 2 guest 上，这让一次 futex 往返从 467 us 降到 97 us，`epoll_pwait` 从 60 us 降到 0.8 us，`fcntl` 从 40–107 us 降到 0.4 us，并让 `clock_gettime` 回到 vDSO。
-- `0012-fake_id0-identity-only.patch` - `-i uid:gid`（用于 Xwayland 在运行 xkbcomp 之前的 setgid/setuid）会加载 fake_id0，它的过滤器拦截每一次 `fstat`/`newfstatat`/`stat`（进入与退出）、每一次 `sendmsg`（全部 Wayland、X11、Chromium 和 PulseAudio 流量）、`socket`、`getsockopt`、`get*id` 系列以及 chown/chmod 系列。当给定的 id 就是 proot 实际拥有的、且不为 0 时，这些处理程序全都是 no-op；fake_id0 现在只跟踪 `set*id` 系列和 xattr 权限修正，并在 `execve` 时不管 set-user-ID 位（Android 以 `nosuid` 挂载应用的数据分区，内核同样不会理会它们），从而让 id 保持不变。在相同选项下的 x86_64 host 构建：`fstat` 41.7 -> 1.3 us，`sendmsg` 18.0 -> 2.5 us。
-- `0013-seccomp-ioctl-by-request-and-kernel-exit-stops.patch` - 过去每一个 `ioctl` 都在进入和退出时停止，也就是每一次 GPU 提交和每一次等待。过滤器现在只跟踪 enter.c 和 exit.c 会处理的那些请求（`TCSETSF`、四个 termios2 请求、`FICLONE`），其余的立刻放行，而且 ioctl 块最先被生成（沿用 WinNative 53836ca9 的做法，它只跟踪 termios2 那几个）。当运行中的内核足够新时，`faccessat2` 的退出停止（termux 5ba8b95，用于 5.8 之前内核上 glibc 的 ENOSYS 回退）和 `statx` 的退出停止（4.11 之前内核上的模拟）被去掉。host 构建：`ioctl` 31.6 -> 0.5 us；`stat`/`statx`/`faccessat2` 约 44 -> 28 us（一次停止）。
+- `0011-kompat-utsname-only.patch` - `--kernel-release`（guest 的 `DroidDeck` 主机名）加载 kompat，
+  它的过滤器拦截 `futex`、`fcntl`、`epoll_pwait`、`pselect6`、`pipe2`、`eventfd2`、`socket` 等调用，
+  并在每次 `execve` 时剥掉 `AT_SYSINFO_EHDR`，让 glibc 在没有 vDSO 的情况下运行。当虚拟 release 不比
+  真实内核更旧、且 hwcap 未被改动时，这些处理器全都是 no-op：kompat 现在只跟踪 `uname`、`sethostname`
+  与 `setdomainname`，并让 auxv 保持内核写入的原样。在一台 SD 8 Gen 2 guest 上，这把 futex 往返从
+  467 降到 97 us，`epoll_pwait` 从 60 降到 0.8 us，`fcntl` 从 40-107 降到 0.4 us，并让
+  `clock_gettime` 回到 vDSO。
+- `0012-fake_id0-identity-only.patch` - `-i uid:gid`（用于 Xwayland 在运行 xkbcomp 之前的
+  setgid/setuid）加载 fake_id0，它的过滤器拦截每一次 `fstat`/`newfstatat`/`stat`（进入与退出）、每一次
+  `sendmsg`（全部 Wayland、X11、Chromium 与 PulseAudio 流量）、`socket`、`getsockopt`、`get*id` 系列
+  以及 chown/chmod 系列。当给定的 id 就是 proot 真正拥有的且不为 0 时，这些处理器全都是 no-op；
+  fake_id0 现在只跟踪 `set*id` 系列与 xattr 权限修正，并在 `execve` 时不管 set-user-ID 位（Android 以
+  `nosuid` 挂载应用的数据分区，内核同样不会理会它们），从而保持 id 不变。相同选项下的 x86_64 host 构建：
+  `fstat` 41.7 -> 1.3 us，`sendmsg` 18.0 -> 2.5 us。
+- `0013-seccomp-ioctl-by-request-and-kernel-exit-stops.patch` - 过去每个 `ioctl` 都在进入和退出时
+  停止，也就是每次 GPU 提交与等待。过滤器现在只跟踪 enter.c 与 exit.c 会处理的请求（`TCSETSF`、四个
+  termios2 请求、`FICLONE`），其余立刻放行；并且 ioctl 块最先生成（沿用 WinNative 53836ca9，它只跟踪
+  termios2 那几个）。当运行中的内核足够新时，`faccessat2` 的退出停止（termux 5ba8b95，用于 5.8 之前
+  内核上 glibc 的 ENOSYS 回退）与 `statx` 的停止（4.11 之前内核上的模拟）被去掉。host 构建：
+  `ioctl` 31.6 -> 0.5 us；`stat`/`statx`/`faccessat2` 约 44 -> 28 us（一次停止）。
+
+原型（除非设置了 `PROOT_FASTPATH`，否则不生效；见 `docs/development/proot-performance.md`）：
+
+- `0014-fastpath-trampoline.patch` - 开启 `PROOT_FASTPATH` 后，过滤器中每个 `SECCOMP_RET_TRACE`
+  之前都会检查调用者地址，来自快速路径 trampoline 页（`fastpath/fastpath.c`，`0xffff00000`）的系统调用
+  不再停止：tracee 已经翻译过它。检查排在系统调用号分发之后，因此未被追踪的调用保持恒定 ALLOW，保住
+  内核的 seccomp 动作缓存（先检查会让每次调用跑完整个过滤器：每次 exec +0.5 ms）。仍在被模拟的
+  `chdir`/`fchdir` 也会把内核 cwd 移到宿主目录，且第一个 tracee 从 `-w` 的目录开始，于是 tracee 内部的
+  相对查找解析到 proot 会解析到的位置。SM8850（adb shell）：`stat` 25.3 -> 0.6 us，`open+close`
+  25.3 -> 0.9 us，ENOENT 22.9 -> 1.6 us，8 线程 `stat` 从 89k -> 3.6M/s；等价性测试（`bench/equiv.py`）
+  与 proot 逐字节一致。
